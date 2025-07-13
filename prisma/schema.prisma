@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Config {
+  id        String   @id @default(cuid())
+  name      String
+  value     String
+  createdAt DateTime @default(now())
+
+  @@unique([name])
+}
+
+enum QuestionType {
+  multiChoice
+  shortAnswer
+}
+
+model Question {
+  id        String   @id @default(cuid())
+  question  String
+  questionType QuestionType
+  createdAt    DateTime       @default(now())
+
+  multiChoice  MultiChoiceQuestion?
+  shortAnswer  ShortAnswerQuestion?
+
+  currentQuestions CurrentQuestion[]
+}
+
+model MultiChoiceQuestion {
+  questionId   String   @id
+  correctIndex Int
+  option1      String
+  option2      String
+  option3      String
+  option4      String
+
+  question     Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+	@@map("MultiChoiceQuestion")
+}
+
+model ShortAnswerQuestion {
+  questionId String @id
+  answer     String
+
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  currentQuestions CurrentQuestion[]
+
+  CurrentCategory CurrentCategory[]
+}
+
+model CurrentQuestion {
+  questionId String
+  categoryId String
+  indexWithinCategory Int
+
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  @@id([questionId, categoryId])
+	@@map("CurrentQuestion")
+}
+
+model CurrentCategory {
+  categoryId String
+  index Int
+
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  @@id([categoryId, index])
+  @@map("CurrentCategory")
+}
