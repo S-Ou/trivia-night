@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import "@radix-ui/themes/styles.css";
 import "./globals.css";
+import { Theme, ThemePanel } from "@radix-ui/themes";
 
 export const metadata: Metadata = {
   title: "Trivia Night",
@@ -13,7 +15,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Theme>
+          {children}
+          <ThemePanel />
+        </Theme>
+      </body>
     </html>
   );
 }
