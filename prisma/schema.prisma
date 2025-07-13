@@ -29,11 +29,11 @@ model Question {
   id        String   @id @default(cuid())
   question  String
   questionType QuestionType
+  imageUrl  String?
   createdAt    DateTime       @default(now())
 
-  currentQuestions CurrentQuestion[]
-
   Option Option[]
+  QuestionCategory QuestionCategory[]
 }
 
 model Option {
@@ -44,35 +44,33 @@ model Option {
 
   question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
-  @@unique([questionId, option])
+  @@unique([questionId, id])
 }
 
-
 model Category {
-  id        String   @id @default(cuid())
-  name      String
+  name      String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  CurrentQuestion CurrentQuestion[]
+  QuestionCategory QuestionCategory[]
   CurrentCategory CurrentCategory[]
 }
 
-model CurrentQuestion {
+model QuestionCategory {
   questionId String
-  categoryId String
+  categoryName String
   indexWithinCategory Int
 
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  @@id([questionId, categoryId])
-	@@map("CurrentQuestion")
+  category   Category @relation(fields: [categoryName], references: [name], onDelete: Cascade)
+  @@id([questionId, categoryName])
+	@@map("QuestionCategory")
 }
 
 model CurrentCategory {
-  categoryId String
+  categoryName String
   index Int
 
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  @@id([categoryId, index])
+  category   Category @relation(fields: [categoryName], references: [name], onDelete: Cascade)
+  @@id([categoryName, index])
   @@map("CurrentCategory")
 }
