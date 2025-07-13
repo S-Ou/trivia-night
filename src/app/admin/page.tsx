@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  downloadBlankCsvTemplate,
-  parseCsvFile,
-  RowData,
-} from "@/utils/csvHandler";
+import { exportCsv, parseCsvFile, RowData } from "@/utils/csvHandler";
 import { Button } from "@radix-ui/themes";
 import React from "react";
 
@@ -12,7 +8,6 @@ function UploadButton() {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   async function handleQuestionUpload(questions: RowData[]) {
-    console.log("Uploading questions:");
     const response = await fetch("/api/upload-questions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -20,14 +15,13 @@ function UploadButton() {
     });
 
     if (!response.ok) throw new Error("Failed to upload");
-    console.log("Upload successful!");
   }
 
-  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     parseCsvFile(file, handleQuestionUpload);
-  };
+  }
 
   return (
     <div>
@@ -43,12 +37,20 @@ function UploadButton() {
   );
 }
 
-function DownloadButton() {
-  return (
-    <Button onClick={() => downloadBlankCsvTemplate()}>
-      Download Template
-    </Button>
-  );
+function ExportButton() {
+  async function fetchQuestions() {
+    const response = await fetch("/api/download-questions");
+    if (!response.ok) throw new Error("Failed to fetch questions");
+    return response.json();
+  }
+
+  async function handleExport() {
+    await fetchQuestions().then((questions) => {
+      exportCsv(questions);
+    });
+  }
+
+  return <Button onClick={handleExport}>Export</Button>;
 }
 
 export default function AdminPage() {
@@ -56,7 +58,7 @@ export default function AdminPage() {
     <>
       <h1>Admin Page</h1>
       <UploadButton />
-      <DownloadButton />
+      <ExportButton />
     </>
   );
 }

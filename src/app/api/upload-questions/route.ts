@@ -106,8 +106,6 @@ async function uploadQuestions(questions: Question[]) {
 
 export async function POST(req: NextRequest) {
   try {
-    console.log("Received upload request");
-
     const body = await req.json();
     const questions = body.questions;
 
