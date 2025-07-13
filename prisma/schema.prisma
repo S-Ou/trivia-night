@@ -31,38 +31,29 @@ model Question {
   questionType QuestionType
   createdAt    DateTime       @default(now())
 
-  multiChoice  MultiChoiceQuestion?
-  shortAnswer  ShortAnswerQuestion?
-
   currentQuestions CurrentQuestion[]
+
+  Option Option[]
 }
 
-model MultiChoiceQuestion {
-  questionId   String   @id
-  correctIndex Int
-  option1      String
-  option2      String
-  option3      String
-  option4      String
+model Option {
+  id        String   @id @default(cuid())
+  questionId String
+  option    String
+  isCorrect Boolean
 
-  question     Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-	@@map("MultiChoiceQuestion")
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([questionId, option])
 }
 
-model ShortAnswerQuestion {
-  questionId String @id
-  answer     String
-
-  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-}
 
 model Category {
   id        String   @id @default(cuid())
   name      String
   createdAt DateTime @default(now())
 
-  currentQuestions CurrentQuestion[]
-
+  CurrentQuestion CurrentQuestion[]
   CurrentCategory CurrentCategory[]
 }
 
