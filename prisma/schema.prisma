@@ -29,11 +29,13 @@ model Question {
   id        String   @id @default(cuid())
   question  String
   questionType QuestionType
+  categoryName String
   imageUrl  String?
-  createdAt    DateTime       @default(now())
+  indexWithinCategory Int
+
+  category   Category @relation(fields: [categoryName], references: [name], onDelete: Cascade)
 
   Option Option[]
-  QuestionCategory QuestionCategory[]
 }
 
 model Option {
@@ -49,28 +51,7 @@ model Option {
 
 model Category {
   name      String   @id @default(cuid())
-  createdAt DateTime @default(now())
-
-  QuestionCategory QuestionCategory[]
-  CurrentCategory CurrentCategory[]
-}
-
-model QuestionCategory {
-  questionId String
-  categoryName String
-  indexWithinCategory Int
-
-  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  category   Category @relation(fields: [categoryName], references: [name], onDelete: Cascade)
-  @@id([questionId, categoryName])
-	@@map("QuestionCategory")
-}
-
-model CurrentCategory {
-  categoryName String
   index Int
 
-  category   Category @relation(fields: [categoryName], references: [name], onDelete: Cascade)
-  @@id([categoryName, index])
-  @@map("CurrentCategory")
+  Question Question[]
 }

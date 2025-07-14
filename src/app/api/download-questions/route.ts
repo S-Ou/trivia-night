@@ -2,38 +2,27 @@ import { prisma } from "@/client";
 import { NextResponse } from "next/server";
 
 async function fetchQuestions() {
-  const questions = await prisma.questionCategory.findMany({
+  const questions = await prisma.question.findMany({
     include: {
-      question: {
-        include: {
-          Option: true,
-        },
-      },
+      Option: true,
       category: true,
     },
+    orderBy: [
+      {
+        category: {
+          index: "asc",
+        },
+      },
+      {
+        indexWithinCategory: "asc",
+      },
+    ],
   });
 
-  const categoryOrder = await prisma.currentCategory.findMany({
-    orderBy: { index: "asc" },
-    select: { categoryName: true },
-  });
+  const maxOptions = Math.max(...questions.map((q) => q.Option.length));
 
-  const orderedCategories = categoryOrder.map((c) => c.categoryName);
-
-  const sortedQuestions = questions.sort((a, b) => {
-    const catA = orderedCategories.indexOf(a.categoryName);
-    const catB = orderedCategories.indexOf(b.categoryName);
-
-    if (catA !== catB) return catA - catB;
-    return a.indexWithinCategory - b.indexWithinCategory;
-  });
-
-  const maxOptions = Math.max(
-    ...sortedQuestions.map((q) => q.question.Option.length)
-  );
-
-  const csvRows = sortedQuestions.map((q) => {
-    const opts = q.question.Option;
+  const csvRows = questions.map((q) => {
+    const opts = q.Option;
 
     const correctOption = opts.find((o) => o.isCorrect)?.option || "";
     const otherOptions = opts.filter((o) => !o.isCorrect).map((o) => o.option);
@@ -44,7 +33,7 @@ async function fetchQuestions() {
 
     return {
       Category: q.categoryName,
-      Question: q.question.question,
+      Question: q.question,
       "Correct Option": correctOption,
       ...Object.fromEntries(
         otherOptions.map((opt, i) => [`Option ${i + 2}`, opt])

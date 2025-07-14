@@ -29,9 +29,7 @@ export function convertToQuestionData(row: RowData): Question {
     .filter((opt) => row[opt]);
   const category = row["Category"];
 
-  console.log(options.map((opt) => row[opt]));
   const allOptions = [correctOption, ...options.map((opt) => row[opt])];
-  console.log(allOptions);
 
   if (!question || allOptions.length <= 0 || !category) {
     throw new Error("Missing required fields in row data");
@@ -41,7 +39,7 @@ export function convertToQuestionData(row: RowData): Question {
     question: question,
     questionType: options ? "multiChoice" : "shortAnswer",
     imageUrl: row["Image URL"] || "",
-    category: { name: category, createdAt: new Date() },
+    categoryName: category,
     options: allOptions.map((opt, index) => ({
       option: opt,
       isCorrect: opt === correctOption,
@@ -50,7 +48,7 @@ export function convertToQuestionData(row: RowData): Question {
       questionId: "",
     })),
     id: "",
-    createdAt: new Date(),
+    indexWithinCategory: -1,
   };
 
   return questionData;
