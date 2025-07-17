@@ -7,6 +7,9 @@ import { Separator, Text } from "@radix-ui/themes";
 import { Question } from "@/types/Question";
 import { Category } from "@/generated/prisma";
 import { Accordion } from "radix-ui";
+import { motion } from "framer-motion";
+
+const MotionContent = motion(Accordion.Content);
 
 const ButtonWrapper = styled.div`
   display: flex;
@@ -41,7 +44,7 @@ const CategoryAccordionTrigger = styled(Accordion.Trigger)`
   font-weight: 600;
 `;
 
-const CategoryAccordionContent = styled(Accordion.Content)`
+const CategoryAccordionContent = styled(MotionContent)`
   padding: 1rem;
 `;
 
@@ -69,14 +72,16 @@ const QuestionAccordionTrigger = styled(Accordion.Trigger)`
   width: 100%;
 `;
 
-const QuestionAccordionContent = styled(Accordion.Content)`
+const QuestionAccordionContent = styled(MotionContent)``;
+
+const OptionsWrapper = styled.div`
+  display: flex;
+  gap: 0.25rem;
   background-color: var(--accent-4);
   border-radius: max(var(--radius-3), var(--radius-full));
   color: var(--foreground);
-  display: flex;
   flex-direction: column;
   font-size: 1rem;
-  gap: 0.25rem;
   padding: 0.5rem;
 `;
 
@@ -149,17 +154,19 @@ function Questions({ questions }: { questions: Question[] }) {
             {question.question}
           </QuestionAccordionTrigger>
           <QuestionAccordionContent>
-            {question.options.map((option) => (
-              <p key={option.id}>
-                {question.questionType === "multiChoice" &&
-                  String.fromCharCode(65 + question.options.indexOf(option)) +
-                    ": "}
-                {option.option}
-                {option.isCorrect && question.questionType === "multiChoice"
-                  ? " (Correct)"
-                  : ""}
-              </p>
-            ))}
+            <OptionsWrapper>
+              {question.options.map((option) => (
+                <p key={option.id}>
+                  {question.questionType === "multiChoice" &&
+                    String.fromCharCode(65 + question.options.indexOf(option)) +
+                      ": "}
+                  {option.option}
+                  {option.isCorrect && question.questionType === "multiChoice"
+                    ? " (Correct)"
+                    : ""}
+                </p>
+              ))}
+            </OptionsWrapper>
           </QuestionAccordionContent>
         </QuestionAccordionItem>
       ))}
