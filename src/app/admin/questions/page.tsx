@@ -192,6 +192,9 @@ export default function QuestionsPage() {
         Click &quot;Export&quot; to obtain the CSV file format
       </Text>
       <Separator size="4" />
+      <Text size="5" weight="bold" style={{ textAlign: "center" }}>
+        Reorder questions and categories by dragging and dropping them below.
+      </Text>
       <Categories />
     </AdminPage>
   );

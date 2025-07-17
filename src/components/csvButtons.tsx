@@ -61,5 +61,5 @@ export function ExportButton() {
     });
   }
 
-  return <StyledButton onClick={handleExport}>Export from CSV</StyledButton>;
+  return <StyledButton onClick={handleExport}>Export to CSV</StyledButton>;
 }
