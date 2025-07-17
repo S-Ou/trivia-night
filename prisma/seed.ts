@@ -3,13 +3,13 @@ import { PrismaClient } from "@/generated/prisma";
 const prisma = new PrismaClient();
 
 async function seedConfig() {
-  const defaults = [{ name: "title", value: "Trivia Night" }];
+  const defaults = [{ id: 1, title: "Trivia Night" }];
 
-  for (const config of defaults) {
+  for (const event of defaults) {
     await prisma.event.upsert({
-      where: { name: config.name },
+      where: { id: event.id },
       update: {},
-      create: config,
+      create: event,
     });
   }
 }

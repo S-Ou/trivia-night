@@ -103,6 +103,15 @@ function Categories() {
     return <Text size="2">Loading...</Text>;
   }
 
+  if (categories.length === 0) {
+    return (
+      <Text size="2">
+        No questions uploaded. Import them using the button above! You can
+        download the template from the export button.
+      </Text>
+    );
+  }
+
   return (
     <QuestionSetWrapper>
       <CategoryAccordionRoot
