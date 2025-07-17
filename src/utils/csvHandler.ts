@@ -57,21 +57,15 @@ export function convertToQuestionData(row: RowData): Question {
   return questionData;
 }
 
-export function exportCsvTemplate() {
-  const headers = [
-    {
-      Category: "",
-      Question: "",
-      "Image URL": "",
-      "Correct Option": "",
-      "Option 2": "",
-      "Option 3": "",
-      "Option 4": "",
-    },
-  ];
-
-  exportCsv(headers, "blank_template.csv");
-}
+export const csvTemplate = {
+  Category: "",
+  Question: "",
+  "Image URL": "",
+  "Correct Option": "",
+  "Option 2": "",
+  "Option 3": "",
+  "Option 4": "",
+};
 
 export function exportCsv(data: Array<object>, filename = "export.csv") {
   const csv = Papa.unparse(data);

@@ -1,7 +1,16 @@
 import { fetchQuestions } from "@/services/questionService";
+import { csvTemplate } from "@/utils/csvHandler";
 import { NextResponse } from "next/server";
 
-async function processQuestions() {
+interface ExportQuestion {
+  Category: string;
+  Question: string;
+  "Correct Option": string;
+  "Option Order"?: number;
+  [key: string]: string | number | undefined;
+}
+
+async function processQuestions(): Promise<ExportQuestion[]> {
   const questions = await fetchQuestions();
 
   const maxOptions = Math.max(...questions.map((q) => q.Option.length));
@@ -32,13 +41,10 @@ async function processQuestions() {
 
 export async function GET() {
   try {
-    const questions = await processQuestions();
+    let questions = await processQuestions();
 
     if (questions.length === 0) {
-      return NextResponse.json(
-        { error: "No questions found" },
-        { status: 404 }
-      );
+      questions = [csvTemplate];
     }
 
     return NextResponse.json(questions, {
