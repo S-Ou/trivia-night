@@ -1,23 +1,8 @@
-import { prisma } from "@/client";
+import { fetchQuestions } from "@/app/services/questionService";
 import { NextResponse } from "next/server";
 
-async function fetchQuestions() {
-  const questions = await prisma.question.findMany({
-    include: {
-      Option: true,
-      Category: true,
-    },
-    orderBy: [
-      {
-        Category: {
-          index: "asc",
-        },
-      },
-      {
-        indexWithinCategory: "asc",
-      },
-    ],
-  });
+async function processQuestions() {
+  const questions = await fetchQuestions();
 
   const maxOptions = Math.max(...questions.map((q) => q.Option.length));
 
@@ -47,7 +32,7 @@ async function fetchQuestions() {
 
 export async function GET() {
   try {
-    const questions = await fetchQuestions();
+    const questions = await processQuestions();
 
     if (questions.length === 0) {
       return NextResponse.json(

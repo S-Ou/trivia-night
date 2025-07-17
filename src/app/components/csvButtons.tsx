@@ -1,6 +1,12 @@
 import { exportCsv, parseCsvFile, RowData } from "@/utils/csvHandler";
 import { Button } from "@radix-ui/themes";
 import { useRef } from "react";
+import styled from "styled-components";
+
+const StyledButton = styled(Button).attrs({
+  size: "3",
+  variant: "solid",
+})``;
 
 export function ImportButton() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -24,7 +30,9 @@ export function ImportButton() {
 
   return (
     <div>
-      <Button onClick={() => inputRef.current?.click()}>Import</Button>
+      <StyledButton onClick={() => inputRef.current?.click()}>
+        Import from CSV
+      </StyledButton>
       <input
         accept=".csv"
         onChange={handleImport}
@@ -49,5 +57,5 @@ export function ExportButton() {
     });
   }
 
-  return <Button onClick={handleExport}>Export</Button>;
+  return <StyledButton onClick={handleExport}>Export from CSV</StyledButton>;
 }

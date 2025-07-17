@@ -2,20 +2,27 @@ import { TabNav } from "@radix-ui/themes";
 import styled from "styled-components";
 
 const BodyWrapper = styled.div`
-  max-width: 800px;
   margin: auto;
-  padding-inline: 1rem;
+  max-width: 800px;
   padding-block: 2rem;
+  padding-inline: 1rem;
 `;
 
 const PageTitle = styled.h1`
-  text-align: center;
-  margin-bottom: 1rem;
   font-size: 3rem;
+  margin-bottom: 1rem;
+  text-align: center;
 `;
 
 const TabNavRoot = styled(TabNav.Root)`
   margin-bottom: 2rem;
+`;
+
+const ChildrenWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 export enum Page {
@@ -71,7 +78,7 @@ export function AdminPage({
           Results
         </TabNav.Link>
       </TabNavRoot>
-      {children}
+      <ChildrenWrapper>{children}</ChildrenWrapper>
     </BodyWrapper>
   );
 }
