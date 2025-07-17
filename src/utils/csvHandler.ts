@@ -12,11 +12,8 @@ export function parseCsvFile(
   Papa.parse<RowData>(file, {
     header: true,
     skipEmptyLines: true,
-    complete: async (results) => {
-      await callback(results.data);
-    },
-    error: (err) => {
-      console.error("Error parsing CSV:", err);
+    complete: (results) => {
+      callback(results.data);
     },
   });
 }
@@ -32,8 +29,17 @@ export function convertToQuestionData(row: RowData): Question {
 
   const allOptions = [correctOption, ...options.map((opt) => row[opt])];
 
-  if (!question || allOptions.length <= 0 || !category) {
-    throw new Error("Missing required fields in row data");
+  if (!question || question.trim() === "") {
+    throw new Error("Question field is required");
+  }
+  if (!correctOption || correctOption.trim() === "") {
+    throw new Error("Correct Option field is required");
+  }
+  if (allOptions.length === 0) {
+    throw new Error("At least one option is required");
+  }
+  if (!category || category.trim() === "") {
+    throw new Error("Category field is required");
   }
 
   const questionData: Question = {

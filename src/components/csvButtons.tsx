@@ -14,6 +14,11 @@ export function ImportButton() {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
+  function onError(error: Error) {
+    console.error("Error parsing CSV:", error);
+    alert(`Failed to parse CSV file. ${error.message}`);
+  }
+
   async function handleQuestionImport(questions: RowData[]) {
     const response = await fetch("/api/import-questions", {
       method: "POST",
@@ -21,7 +26,12 @@ export function ImportButton() {
       body: JSON.stringify({ questions: questions }),
     });
 
-    if (!response.ok) throw new Error("Failed to upload");
+    if (!response.ok) {
+      const errorBody = await response.json();
+      const errorMessage = errorBody.error || response.statusText;
+      onError(new Error(errorMessage));
+      throw new Error(errorMessage);
+    }
     fetchQuestions();
   }
 

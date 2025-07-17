@@ -33,7 +33,10 @@ async function createQuestions(questions: Question[]) {
       indexWithinCategory: indexMap
         .set(q.categoryName, (indexMap.get(q.categoryName) ?? -1) + 1)
         .get(q.categoryName)!,
-      optionOrder: q.optionOrder != -1 ? q.optionOrder : randomPermutationIndex(q.options.length),
+      optionOrder:
+        q.optionOrder != -1
+          ? q.optionOrder
+          : randomPermutationIndex(q.options.length),
     })),
   });
 
@@ -69,10 +72,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Upload error:", err);
+    console.error("Import error:", err);
     return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
+      { error: (err as Error).message },
+      { status: 422 }
     );
   }
 }
