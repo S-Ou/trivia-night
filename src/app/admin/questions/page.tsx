@@ -5,9 +5,10 @@ import { AdminPage, Page } from "../pageTemplate";
 import styled from "styled-components";
 import { Separator, Text } from "@radix-ui/themes";
 import { Question } from "@/types/Question";
-import { Category } from "@/generated/prisma";
+import { Category, Option, QuestionType } from "@/generated/prisma";
 import { Accordion } from "radix-ui";
 import { motion } from "framer-motion";
+import { indexToPermutation } from "@/utils/permutations";
 
 const MotionContent = motion(Accordion.Content);
 
@@ -154,23 +155,40 @@ function Questions({ questions }: { questions: Question[] }) {
             {question.question}
           </QuestionAccordionTrigger>
           <QuestionAccordionContent>
-            <OptionsWrapper>
-              {question.options.map((option) => (
-                <p key={option.id}>
-                  {question.questionType === "multiChoice" &&
-                    String.fromCharCode(65 + question.options.indexOf(option)) +
-                      ": "}
-                  {option.option}
-                  {option.isCorrect && question.questionType === "multiChoice"
-                    ? " (Correct)"
-                    : ""}
-                </p>
-              ))}
-            </OptionsWrapper>
+            <Options
+              options={question.options}
+              order={question.optionOrder}
+              type={question.questionType}
+            />
           </QuestionAccordionContent>
         </QuestionAccordionItem>
       ))}
     </QuestionAccordionRoot>
+  );
+}
+
+function Options({
+  options,
+  order,
+  type,
+}: {
+  options: Option[];
+  order: number;
+  type: QuestionType;
+}) {
+  const permutations = indexToPermutation(order, options.length);
+  const isMultiChoice = type === "multiChoice";
+
+  return (
+    <OptionsWrapper>
+      {permutations.map((optionIndex, index) => (
+        <p key={optionIndex}>
+          {isMultiChoice && String.fromCharCode(65 + index)}:{" "}
+          {options[optionIndex].option}
+          {options[optionIndex].isCorrect && isMultiChoice ? " (Correct)" : ""}
+        </p>
+      ))}
+    </OptionsWrapper>
   );
 }
 
