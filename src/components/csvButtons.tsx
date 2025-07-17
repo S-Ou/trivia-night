@@ -8,7 +8,11 @@ const StyledButton = styled(Button).attrs({
   variant: "solid",
 })``;
 
-export function ImportButton() {
+export function ImportButton({
+  onImportComplete,
+}: {
+  onImportComplete?: () => void;
+}) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   async function handleQuestionImport(questions: RowData[]) {
@@ -19,6 +23,7 @@ export function ImportButton() {
     });
 
     if (!response.ok) throw new Error("Failed to upload");
+    onImportComplete?.();
   }
 
   function handleImport(e: React.ChangeEvent<HTMLInputElement>) {

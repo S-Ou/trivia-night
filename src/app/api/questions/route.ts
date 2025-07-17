@@ -1,4 +1,4 @@
-import { fetchQuestions } from "@/app/services/questionService";
+import { fetchQuestions } from "@/services/questionService";
 import { Category } from "@/generated/prisma";
 import { Question } from "@/types/Question";
 

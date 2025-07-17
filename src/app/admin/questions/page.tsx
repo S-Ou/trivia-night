@@ -1,6 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { ImportButton, ExportButton } from "../../components/csvButtons";
+import React, { useCallback, useEffect, useState } from "react";
+import { ImportButton, ExportButton } from "../../../components/csvButtons";
 import { AdminPage, Page } from "../pageTemplate";
 import styled from "styled-components";
 import { Separator, Text } from "@radix-ui/themes";
@@ -13,7 +13,72 @@ const ButtonWrapper = styled.div`
   gap: 1rem;
 `;
 
-const QuestionSetWrapper = styled.div``;
+const QuestionSetWrapper = styled.div`
+  padding-inline: 1rem;
+  width: 100%;
+`;
+
+const CategoryAccordionRoot = styled(Accordion.Root)`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const CategoryAccordionItem = styled(Accordion.Item)`
+  width: 100%;
+  background-color: var(--accent-3);
+  border-radius: max(var(--radius-3), var(--radius-full));
+`;
+
+const CategoryAccordionTrigger = styled(Accordion.Trigger)`
+  width: 100%;
+  padding: 0.5rem;
+  background-color: var(--accent-9);
+  border-radius: max(var(--radius-3), var(--radius-full));
+  border: none;
+  font-size: 2rem;
+  font-weight: 600;
+`;
+
+const CategoryAccordionContent = styled(Accordion.Content)`
+  padding: 1rem;
+`;
+
+const QuestionAccordionRoot = styled(Accordion.Root)`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+`;
+
+const QuestionAccordionItem = styled(Accordion.Item)`
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: max(var(--radius-3), var(--radius-full));
+  border: 2px solid var(--accent-7);
+`;
+
+const QuestionAccordionTrigger = styled(Accordion.Trigger)`
+  background-color: inherit;
+  border: none;
+  color: var(--foreground);
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: left;
+  width: 100%;
+`;
+
+const QuestionAccordionContent = styled(Accordion.Content)`
+  background-color: var(--accent-4);
+  border-radius: max(var(--radius-3), var(--radius-full));
+  color: var(--foreground);
+  display: flex;
+  flex-direction: column;
+  font-size: 1rem;
+  gap: 0.25rem;
+  padding: 0.5rem;
+`;
 
 function Categories({
   questions,
@@ -45,20 +110,20 @@ function Categories({
 
   return (
     <QuestionSetWrapper>
-      <Accordion.Root
+      <CategoryAccordionRoot
         type="multiple"
         value={openCategories}
         onValueChange={setOpenCategories}
       >
         {categories.map((category) => (
-          <Accordion.Item key={category.name} value={category.name}>
-            <Accordion.Trigger>{category.name}</Accordion.Trigger>
-            <Accordion.Content>
+          <CategoryAccordionItem key={category.name} value={category.name}>
+            <CategoryAccordionTrigger>{category.name}</CategoryAccordionTrigger>
+            <CategoryAccordionContent>
               <Questions questions={combinedQuestions[category.name] || []} />
-            </Accordion.Content>
-          </Accordion.Item>
+            </CategoryAccordionContent>
+          </CategoryAccordionItem>
         ))}
-      </Accordion.Root>
+      </CategoryAccordionRoot>
     </QuestionSetWrapper>
   );
 }
@@ -71,7 +136,7 @@ function Questions({ questions }: { questions: Question[] }) {
   }, [questions]);
 
   return (
-    <Accordion.Root
+    <QuestionAccordionRoot
       type="multiple"
       value={openQuestions}
       onValueChange={(value) => {
@@ -79,22 +144,26 @@ function Questions({ questions }: { questions: Question[] }) {
       }}
     >
       {questions.map((question) => (
-        <Accordion.Item key={question.id} value={question.id}>
-          <Accordion.Trigger>{question.question}</Accordion.Trigger>
-          <Accordion.Content>
-            <div key={question.id}>
-              <ul>
-                {question.options.map((option) => (
-                  <li key={option.id}>
-                    {option.option} {option.isCorrect ? "(Correct)" : ""}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Accordion.Content>
-        </Accordion.Item>
+        <QuestionAccordionItem key={question.id} value={question.id}>
+          <QuestionAccordionTrigger>
+            {question.question}
+          </QuestionAccordionTrigger>
+          <QuestionAccordionContent>
+            {question.options.map((option) => (
+              <p key={option.id}>
+                {question.questionType === "multiChoice" &&
+                  String.fromCharCode(65 + question.options.indexOf(option)) +
+                    ": "}
+                {option.option}
+                {option.isCorrect && question.questionType === "multiChoice"
+                  ? " (Correct)"
+                  : ""}
+              </p>
+            ))}
+          </QuestionAccordionContent>
+        </QuestionAccordionItem>
       ))}
-    </Accordion.Root>
+    </QuestionAccordionRoot>
   );
 }
 
@@ -102,28 +171,26 @@ export default function QuestionsPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
 
-  useEffect(() => {
-    async function fetchQuestions() {
-      const response = await fetch("/api/questions");
-      if (!response.ok) {
-        throw new Error("Failed to fetch questions");
-      }
-      return response.json();
+  const fetchQuestions = useCallback(async () => {
+    const response = await fetch("/api/questions");
+    if (!response.ok) {
+      throw new Error("Failed to fetch questions");
     }
-
-    fetchQuestions()
-      .then((data) => {
-        setQuestions(data.questions);
-        setCategories(data.categories);
-      })
-      .catch((error) => {
-        console.error("Error fetching questions:", error);
-      });
+    const data = await response.json();
+    setQuestions(data.questions);
+    setCategories(data.categories);
   }, []);
+
+  useEffect(() => {
+    fetchQuestions().catch((error) => {
+      console.error("Error fetching questions:", error);
+    });
+  }, [fetchQuestions]);
+
   return (
     <AdminPage currentPage={Page.Questions}>
       <ButtonWrapper>
-        <ImportButton />
+        <ImportButton onImportComplete={fetchQuestions} />
         <ExportButton />
       </ButtonWrapper>
       <Text size={"2"}>

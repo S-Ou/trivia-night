@@ -1,6 +1,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --font-family: "Mona Sans", Arial, Helvetica, sans-serif;
 }
 
 html,
@@ -12,9 +14,17 @@ body {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.radix-themes {
+  --default-font-family: var(--font-family);
+  --heading-font-family: var(--font-family);
+  --strong-font-family: var(--font-family);
+  --em-font-family: var(--font-family);
+  --quote-font-family: var(--font-family);
 }
 
 * {
@@ -32,4 +42,13 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+@font-face {
+  font-family: "Mona Sans";
+  src: url("../fonts/mona-sans.woff2") format("woff2 supports variations"),
+    url("../fonts/mona-sans.woff2") format("woff2 variations"),
+    url("../fonts/mona-sans.ttf") format("truetype");
+  font-weight: 200 900;
+  font-stretch: 75% 125%;
 }

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
+import { Theme, ThemePanel } from "@radix-ui/themes";
+import StyledComponentsRegistry from "../lib/registry";
 import "@radix-ui/themes/styles.css";
 import "./globals.css";
-import { Theme, ThemePanel } from "@radix-ui/themes";
-import StyledComponentsRegistry from "./lib/registry";
 
 export const metadata: Metadata = {
   title: "Trivia Night",

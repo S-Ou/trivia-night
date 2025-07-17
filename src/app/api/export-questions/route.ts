@@ -1,4 +1,4 @@
-import { fetchQuestions } from "@/app/services/questionService";
+import { fetchQuestions } from "@/services/questionService";
 import { NextResponse } from "next/server";
 
 async function processQuestions() {
