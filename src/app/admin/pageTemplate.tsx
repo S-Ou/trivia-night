@@ -1,4 +1,5 @@
 import { TabNav } from "@radix-ui/themes";
+import Link from "next/link";
 import styled from "styled-components";
 
 const BodyWrapper = styled.div`
@@ -54,30 +55,24 @@ export function AdminPage({
     <BodyWrapper>
       <PageTitle>Admin Page</PageTitle>
       <TabNavRoot justify={"center"}>
-        <TabNav.Link
-          href={getHref(Page.Config)}
-          active={currentPage === Page.Config}
-        >
-          Config
-        </TabNav.Link>
-        <TabNav.Link
-          href={getHref(Page.Questions)}
-          active={currentPage === Page.Questions}
-        >
-          Questions
-        </TabNav.Link>
-        <TabNav.Link
-          href={getHref(Page.Answers)}
-          active={currentPage === Page.Answers}
-        >
-          Answers
-        </TabNav.Link>
-        <TabNav.Link
-          href={getHref(Page.Results)}
-          active={currentPage === Page.Results}
-        >
-          Results
-        </TabNav.Link>
+        <Link href={getHref(Page.Config)} passHref>
+          <TabNav.Link active={currentPage === Page.Config}>Config</TabNav.Link>
+        </Link>
+        <Link href={getHref(Page.Questions)} passHref>
+          <TabNav.Link active={currentPage === Page.Questions}>
+            Questions
+          </TabNav.Link>
+        </Link>
+        <Link href={getHref(Page.Answers)} passHref>
+          <TabNav.Link active={currentPage === Page.Answers}>
+            Answers
+          </TabNav.Link>
+        </Link>
+        <Link href={getHref(Page.Results)} passHref>
+          <TabNav.Link active={currentPage === Page.Results}>
+            Results
+          </TabNav.Link>
+        </Link>
       </TabNavRoot>
       <ChildrenWrapper>{children}</ChildrenWrapper>
     </BodyWrapper>

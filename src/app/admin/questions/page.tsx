@@ -88,28 +88,19 @@ const OptionsWrapper = styled.div`
 `;
 
 function Categories() {
-  const { questions, categories } = useQuestionContext();
+  const { combinedQuestions, categories, isLoading } = useQuestionContext();
 
   const [openCategories, setOpenCategories] = useState<string[]>(
     categories.map((cat) => cat.name)
   );
 
-  const combinedQuestions = React.useMemo(
-    () => ({
-      ...questions.reduce((acc, question) => {
-        if (!acc[question.categoryName]) {
-          acc[question.categoryName] = [];
-        }
-        acc[question.categoryName].push(question);
-        return acc;
-      }, {} as Record<string, Question[]>),
-    }),
-    [questions]
-  );
-
   useEffect(() => {
     setOpenCategories(categories.map((cat) => cat.name));
   }, [categories]);
+
+  if (isLoading) {
+    return <Text size="2">Loading...</Text>;
+  }
 
   return (
     <QuestionSetWrapper>
