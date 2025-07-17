@@ -8,7 +8,6 @@ function factorial(n: number): number {
 
 export function randomPermutationIndex(n: number): number {
   const max = factorial(n);
-  console.log(`Generating random permutation index for n=${n}, max=${max}`);
   return Math.floor(Math.random() * max);
 }
 

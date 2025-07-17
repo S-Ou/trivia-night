@@ -21,6 +21,7 @@ function ImportButton() {
     const file = e.target.files?.[0];
     if (!file) return;
     parseCsvFile(file, handleQuestionImport);
+    e.target.value = "";
   }
 
   return (
