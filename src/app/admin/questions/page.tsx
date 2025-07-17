@@ -10,6 +10,7 @@ import { Accordion } from "radix-ui";
 import { motion } from "framer-motion";
 import { indexToPermutation } from "@/utils/permutations";
 import { useQuestionContext } from "@/contexts/QuestionContext";
+import { letterIndex } from "@/utils";
 
 const MotionContent = motion(Accordion.Content);
 
@@ -171,7 +172,7 @@ function Options({
     <OptionsWrapper>
       {permutations.map((optionIndex, index) => (
         <p key={optionIndex}>
-          {isMultiChoice && String.fromCharCode(65 + index) + ": "}
+          {isMultiChoice && letterIndex(index) + ": "}
           {options[optionIndex].option}
           {options[optionIndex].isCorrect && isMultiChoice ? " (Correct)" : ""}
         </p>
