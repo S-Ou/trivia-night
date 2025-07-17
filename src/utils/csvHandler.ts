@@ -39,7 +39,7 @@ export function convertToQuestionData(row: RowData): Question {
   const questionData: Question = {
     eventId: 0, // Default
     question: question,
-    questionType: options.length > 1 ? "multiChoice" : "shortAnswer",
+    questionType: options.length > 0 ? "multiChoice" : "shortAnswer",
     imageUrl: row["Image URL"] || "",
     categoryName: category,
     options: allOptions.map((opt, index) => ({

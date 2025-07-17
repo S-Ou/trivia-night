@@ -1,3 +1,4 @@
+import { useQuestionContext } from "@/contexts/QuestionContext";
 import { exportCsv, parseCsvFile, RowData } from "@/utils/csvHandler";
 import { Button } from "@radix-ui/themes";
 import { useRef } from "react";
@@ -8,11 +9,9 @@ const StyledButton = styled(Button).attrs({
   variant: "solid",
 })``;
 
-export function ImportButton({
-  onImportComplete,
-}: {
-  onImportComplete?: () => void;
-}) {
+export function ImportButton() {
+  const { fetchQuestions } = useQuestionContext();
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   async function handleQuestionImport(questions: RowData[]) {
@@ -23,7 +22,7 @@ export function ImportButton({
     });
 
     if (!response.ok) throw new Error("Failed to upload");
-    onImportComplete?.();
+    fetchQuestions();
   }
 
   function handleImport(e: React.ChangeEvent<HTMLInputElement>) {

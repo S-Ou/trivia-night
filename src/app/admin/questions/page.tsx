@@ -1,14 +1,15 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ImportButton, ExportButton } from "../../../components/csvButtons";
 import { AdminPage, Page } from "../pageTemplate";
 import styled from "styled-components";
 import { Separator, Text } from "@radix-ui/themes";
 import { Question } from "@/types/Question";
-import { Category, Option, QuestionType } from "@/generated/prisma";
+import { Option, QuestionType } from "@/generated/prisma";
 import { Accordion } from "radix-ui";
 import { motion } from "framer-motion";
 import { indexToPermutation } from "@/utils/permutations";
+import { useQuestionContext } from "@/contexts/QuestionContext";
 
 const MotionContent = motion(Accordion.Content);
 
@@ -86,13 +87,9 @@ const OptionsWrapper = styled.div`
   padding: 0.5rem;
 `;
 
-function Categories({
-  questions,
-  categories,
-}: {
-  questions: Question[];
-  categories: Category[];
-}) {
+function Categories() {
+  const { questions, categories } = useQuestionContext();
+
   const [openCategories, setOpenCategories] = useState<string[]>(
     categories.map((cat) => cat.name)
   );
@@ -149,10 +146,10 @@ function Questions({ questions }: { questions: Question[] }) {
         setOpenQuestions(value);
       }}
     >
-      {questions.map((question) => (
+      {questions.map((question, index) => (
         <QuestionAccordionItem key={question.id} value={question.id}>
           <QuestionAccordionTrigger>
-            {question.question}
+            {index + 1}. {question.question}
           </QuestionAccordionTrigger>
           <QuestionAccordionContent>
             <Options
@@ -183,7 +180,7 @@ function Options({
     <OptionsWrapper>
       {permutations.map((optionIndex, index) => (
         <p key={optionIndex}>
-          {isMultiChoice && String.fromCharCode(65 + index)}:{" "}
+          {isMultiChoice && String.fromCharCode(65 + index) + ": "}
           {options[optionIndex].option}
           {options[optionIndex].isCorrect && isMultiChoice ? " (Correct)" : ""}
         </p>
@@ -193,36 +190,17 @@ function Options({
 }
 
 export default function QuestionsPage() {
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-
-  const fetchQuestions = useCallback(async () => {
-    const response = await fetch("/api/questions");
-    if (!response.ok) {
-      throw new Error("Failed to fetch questions");
-    }
-    const data = await response.json();
-    setQuestions(data.questions);
-    setCategories(data.categories);
-  }, []);
-
-  useEffect(() => {
-    fetchQuestions().catch((error) => {
-      console.error("Error fetching questions:", error);
-    });
-  }, [fetchQuestions]);
-
   return (
     <AdminPage currentPage={Page.Questions}>
       <ButtonWrapper>
-        <ImportButton onImportComplete={fetchQuestions} />
+        <ImportButton />
         <ExportButton />
       </ButtonWrapper>
       <Text size={"2"}>
         Click &quot;Export&quot; to obtain the CSV file format
       </Text>
       <Separator size="4" />
-      <Categories questions={questions} categories={categories} />
+      <Categories />
     </AdminPage>
   );
 }
