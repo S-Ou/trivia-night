@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { ImportButton, ExportButton } from "../../../components/csvButtons";
-import { AdminPage, Page } from "../pageTemplate";
+import { ImportButton, ExportButton } from "../../components/csvButtons";
+import { PageTemplate, Page } from "../pageTemplate";
 import styled from "styled-components";
 import { Separator, Text } from "@radix-ui/themes";
 import { Question } from "@/types/Question";
@@ -183,7 +183,7 @@ function Options({
 
 export default function QuestionsPage() {
   return (
-    <AdminPage currentPage={Page.Questions}>
+    <PageTemplate currentPage={Page.Questions}>
       <ButtonWrapper>
         <ImportButton />
         <ExportButton />
@@ -196,6 +196,6 @@ export default function QuestionsPage() {
         Reorder questions and categories by dragging and dropping them below.
       </Text>
       <Categories />
-    </AdminPage>
+    </PageTemplate>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { AdminPage, Page } from "../pageTemplate";
+import { PageTemplate, Page } from "../pageTemplate";
 import { Text } from "@radix-ui/themes";
 import { useQuestionContext } from "@/contexts/QuestionContext";
 import React from "react";
@@ -49,7 +49,7 @@ export default function QuestionsPage() {
   }
 
   return (
-    <AdminPage currentPage={Page.Answers}>
+    <PageTemplate currentPage={Page.Answers}>
       <StyledTable>
         <thead>
           <LegendHeader>
@@ -93,6 +93,6 @@ export default function QuestionsPage() {
           ))}
         </tbody>
       </StyledTable>
-    </AdminPage>
+    </PageTemplate>
   );
 }

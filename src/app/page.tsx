@@ -1,3 +1,7 @@
+"use client";
+
+import { PageTemplate, Page } from "./pageTemplate";
+
 export default function Home() {
-  return <div>Hi</div>;
+  return <PageTemplate currentPage={Page.Home}>Hi</PageTemplate>;
 }

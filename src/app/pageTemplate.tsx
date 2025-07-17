@@ -28,6 +28,7 @@ const ChildrenWrapper = styled.div`
 `;
 
 export enum Page {
+  Home = "Home",
   Config = "Config",
   Questions = "Questions",
   Answers = "Answers",
@@ -35,13 +36,14 @@ export enum Page {
 }
 
 const pageRoutes: Record<Page, string> = {
+  [Page.Home]: "",
   [Page.Config]: "config",
   [Page.Questions]: "questions",
   [Page.Answers]: "answers",
   [Page.Results]: "results",
 };
 
-export function AdminPage({
+export function PageTemplate({
   currentPage,
   children,
 }: {
@@ -53,8 +55,11 @@ export function AdminPage({
 
   return (
     <BodyWrapper>
-      <PageTitle>Admin Page</PageTitle>
+      <PageTitle>Trivia Night</PageTitle>
       <TabNavRoot justify={"center"}>
+        <Link href={getHref(Page.Home)} passHref>
+          <TabNav.Link active={currentPage === Page.Home}>Home</TabNav.Link>
+        </Link>
         <Link href={getHref(Page.Config)} passHref>
           <TabNav.Link active={currentPage === Page.Config}>Config</TabNav.Link>
         </Link>
