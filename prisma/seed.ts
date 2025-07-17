@@ -6,7 +6,7 @@ async function seedConfig() {
   const defaults = [{ name: "title", value: "Trivia Night" }];
 
   for (const config of defaults) {
-    await prisma.config.upsert({
+    await prisma.event.upsert({
       where: { name: config.name },
       update: {},
       create: config,

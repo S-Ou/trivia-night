@@ -5,11 +5,11 @@ async function fetchQuestions() {
   const questions = await prisma.question.findMany({
     include: {
       Option: true,
-      category: true,
+      Category: true,
     },
     orderBy: [
       {
-        category: {
+        Category: {
           index: "asc",
         },
       },
@@ -38,6 +38,7 @@ async function fetchQuestions() {
       ...Object.fromEntries(
         otherOptions.map((opt, i) => [`Option ${i + 2}`, opt])
       ),
+      "Option Order": q.optionOrder,
     };
   });
 

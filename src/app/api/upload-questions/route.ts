@@ -1,6 +1,7 @@
 import { prisma } from "@/client";
 import { Question } from "@/types/Question";
 import { convertToQuestionData } from "@/utils/csvHandler";
+import { randomPermutationIndex } from "@/utils/permutations";
 import { NextRequest, NextResponse } from "next/server";
 
 async function clearExistingData() {
@@ -32,6 +33,7 @@ async function createQuestions(questions: Question[]) {
       indexWithinCategory: indexMap
         .set(q.categoryName, (indexMap.get(q.categoryName) ?? -1) + 1)
         .get(q.categoryName)!,
+      optionOrder: q.optionOrder != -1 ? q.optionOrder : randomPermutationIndex(q.options.length),
     })),
   });
 

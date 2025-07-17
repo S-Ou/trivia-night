@@ -11,13 +11,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Config {
-  id        String   @id @default(cuid())
+model Event {
+  id        Int   @id @default(autoincrement())
   name      String
   value     String
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([name])
+  Question Question[]
+  Category Category[]
 }
 
 enum QuestionType {
@@ -26,14 +29,17 @@ enum QuestionType {
 }
 
 model Question {
+  eventId   Int   @default(1)
   id        String   @id @default(cuid())
   question  String
   questionType QuestionType
   categoryName String
   imageUrl  String?
   indexWithinCategory Int
+  optionOrder Int
 
-  category   Category @relation(fields: [categoryName], references: [name], onDelete: Cascade)
+  Event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  Category   Category @relation(fields: [categoryName], references: [name], onDelete: Cascade)
 
   Option Option[]
 }
@@ -50,8 +56,10 @@ model Option {
 }
 
 model Category {
+  eventId Int  @default(1)
   name      String   @id @default(cuid())
   index Int
 
+  Event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
   Question Question[]
 }

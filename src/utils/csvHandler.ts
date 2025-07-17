@@ -28,6 +28,7 @@ export function convertToQuestionData(row: RowData): Question {
     .filter((key) => key.startsWith("Option "))
     .filter((opt) => row[opt]);
   const category = row["Category"];
+  const order = row["Option Order"] ? parseInt(row["Option Order"], 10) : null;
 
   const allOptions = [correctOption, ...options.map((opt) => row[opt])];
 
@@ -36,6 +37,7 @@ export function convertToQuestionData(row: RowData): Question {
   }
 
   const questionData: Question = {
+    eventId: 0, // Default
     question: question,
     questionType: options ? "multiChoice" : "shortAnswer",
     imageUrl: row["Image URL"] || "",
@@ -49,6 +51,7 @@ export function convertToQuestionData(row: RowData): Question {
     })),
     id: "",
     indexWithinCategory: -1,
+    optionOrder: order ?? -1,
   };
 
   return questionData;
@@ -59,6 +62,7 @@ export function exportCsvTemplate() {
     {
       Category: "",
       Question: "",
+      "Image URL": "",
       "Correct Option": "",
       "Option 2": "",
       "Option 3": "",
