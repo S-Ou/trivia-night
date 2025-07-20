@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuestionContext } from "@/contexts/QuestionContext";
+import { CircleCheckBig } from "lucide-react";
 import Link from "next/link";
 
 export default function Present() {
@@ -19,6 +20,9 @@ export default function Present() {
             <div key={category.name || index}>
               <h3>
                 <Link href={`./category/${index}`}>{category.name}</Link>
+                <Link href={`./category/${index}?answers=true`}>
+                  <CircleCheckBig />
+                </Link>
               </h3>
             </div>
           ))

@@ -20,7 +20,6 @@ export function ImportButton() {
   }
 
   async function handleQuestionImport(questions: RowData[]) {
-    console.log("Importing questions:", questions);
     const response = await fetch("/api/import-questions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

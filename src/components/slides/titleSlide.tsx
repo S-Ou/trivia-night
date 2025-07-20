@@ -18,16 +18,20 @@ const Subtitle = styled.p`
 export function TitleSlide({
   category,
   questions,
+  showAnswers = false,
 }: {
   category: Category;
   questions: Question[];
+  showAnswers?: boolean;
 }) {
   return (
     <BaseSlide>
       <Title>{category.name}</Title>
       <Separator size="3" />
       <Subtitle>
-        {questions.length} question{questions.length !== 1 ? "s" : ""}
+        {showAnswers
+          ? "Answers"
+          : `${questions.length} question${questions.length !== 1 ? "s" : ""}`}
       </Subtitle>
     </BaseSlide>
   );

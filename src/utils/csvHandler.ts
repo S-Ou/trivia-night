@@ -48,8 +48,6 @@ export function convertToQuestionData(row: RowData): Question {
 
   const allOptions = [correctOption, ...options.map((opt) => row[opt])];
 
-  console.log(row);
-
   if (!question || question.trim() === "") {
     throw new Error("Question field is required");
   }

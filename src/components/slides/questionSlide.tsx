@@ -31,6 +31,7 @@ const QuestionText = styled.h2`
 `;
 
 const Image = styled.img`
+  border-radius: 1rem;
   height: auto;
   max-height: 30vh;
   max-width: 800%;
@@ -53,13 +54,21 @@ const OptionWrapper = styled.div`
   gap: 2rem;
 `;
 
-const OptionDenominator = styled.strong`
+const OptionDenominator = styled.strong<{ $isCorrect?: boolean }>`
   font-size: 5rem;
   font-weight: 1000;
   opacity: 0.5;
+
+  ${({ $isCorrect }) =>
+    $isCorrect === true
+      ? `
+        color: var(--accent-10);
+        opacity: 0.8;
+      `
+      : ""}
 `;
 
-const OptionContent = styled.span`
+const OptionContent = styled.span<{ $isCorrect?: boolean }>`
   font-size: 2.5rem;
   line-height: 1.2;
   max-width: 100%;
@@ -69,6 +78,18 @@ const OptionContent = styled.span`
   word-break: break-word;
   letter-spacing: 0.005em;
   font-weight: 300;
+
+  ${({ $isCorrect }) =>
+    $isCorrect === true
+      ? `
+        color: var(--accent-10);
+        font-weight: 600;
+      `
+      : $isCorrect === false
+      ? `
+        opacity: 0.5;
+      `
+      : ""}
 `;
 
 const ShortAnswerWrapper = styled.div`
@@ -86,14 +107,20 @@ const ShortAnswerWrapper = styled.div`
 function Option({
   denominator,
   content,
+  isCorrect = undefined,
 }: {
-  denominator: string;
+  denominator: string | null;
   content: string;
+  isCorrect?: boolean | undefined;
 }) {
   return (
     <OptionWrapper>
-      <OptionDenominator>{denominator}</OptionDenominator>
-      <OptionContent>{content}</OptionContent>
+      {denominator !== null && (
+        <OptionDenominator $isCorrect={isCorrect}>
+          {denominator}
+        </OptionDenominator>
+      )}
+      <OptionContent $isCorrect={isCorrect}>{content}</OptionContent>
     </OptionWrapper>
   );
 }
@@ -101,9 +128,11 @@ function Option({
 export function QuestionSlide({
   category,
   question,
+  showAnswers = false,
 }: {
   category: Category;
   question: Question;
+  showAnswers?: boolean;
 }) {
   const order = question.options
     ? indexToPermutation(question.optionOrder, question.options.length)
@@ -135,12 +164,23 @@ export function QuestionSlide({
               key={option.id}
               denominator={letterIndex(index)}
               content={option.option}
+              isCorrect={showAnswers ? option.isCorrect : undefined}
             />
           ))
         ) : (
           <ShortAnswerWrapper>
-            <PencilLine size={48} />
-            <p>Write your answer</p>
+            {!showAnswers ? (
+              <>
+                <PencilLine size={48} />
+                <p>Write your answer</p>
+              </>
+            ) : (
+              <Option
+                denominator={null}
+                content={question.options?.[0]?.option}
+                isCorrect={true}
+              />
+            )}
           </ShortAnswerWrapper>
         )}
       </OptionsWrapper>

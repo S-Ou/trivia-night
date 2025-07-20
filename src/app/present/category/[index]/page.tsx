@@ -6,8 +6,8 @@ import { QuestionSlide } from "../../../../components/slides/questionSlide";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { SummarySlide } from "@/components/slides/summarySlide";
-import { Title } from "@radix-ui/themes/components/alert-dialog";
 import { TitleSlide } from "@/components/slides/titleSlide";
+import { useSearchParams } from "next/navigation";
 
 enum PageState {
   Title,
@@ -20,13 +20,19 @@ export default function CategoryPage() {
   const { index } = useParams();
   const parsedIndex = parseInt(typeof index === "string" ? index : "0", 10);
 
+  const searchParams = useSearchParams();
+  const showAnswers = searchParams?.get("answers") === "true";
+
   const [pageState, setPageState] = useState<PageState>(PageState.Title);
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
 
   const { getCategory, categories, isLoading } = useQuestionContext();
 
+  function goHome() {
+    router.push("../../");
+  }
+
   function incrementState() {
-    console.log("Incrementing state", pageState, currentQuestion);
     switch (pageState) {
       case PageState.Title:
         setPageState(PageState.Question);
@@ -35,18 +41,19 @@ export default function CategoryPage() {
 
       case PageState.Question:
         const questionCount = questions.length;
-        console.log(
-          `Current question: ${currentQuestion}, Total questions: ${questionCount}`
-        );
         if (currentQuestion < questionCount - 1) {
           setCurrentQuestion((prev) => prev + 1);
         } else {
-          setPageState(PageState.Summary);
+          if (!showAnswers) {
+            setPageState(PageState.Summary);
+          } else {
+            goHome();
+          }
         }
         break;
 
       case PageState.Summary:
-        router.push("../../");
+        goHome();
         break;
     }
   }
@@ -67,7 +74,7 @@ export default function CategoryPage() {
         break;
 
       case PageState.Title:
-        router.push("../../");
+        goHome();
         break;
     }
   }
@@ -75,7 +82,6 @@ export default function CategoryPage() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight" || e.key === " ") {
-        console.log("Incrementing state with key press");
         incrementState();
       } else if (e.key === "ArrowLeft") {
         decrementState();
@@ -92,27 +98,25 @@ export default function CategoryPage() {
 
   const { category, questions } = getCategory(parsedIndex);
 
-  console.log(currentQuestion, questions[currentQuestion]);
-
   return (
     <div>
-      {(() => {
-        switch (pageState) {
-          case PageState.Title:
-            return <TitleSlide category={category} questions={questions} />;
-          case PageState.Question:
-            return (
-              <QuestionSlide
-                category={category}
-                question={questions[currentQuestion]}
-              />
-            );
-          case PageState.Summary:
-            return <SummarySlide category={category} questions={questions} />;
-          default:
-            return null;
-        }
-      })()}
+      {pageState === PageState.Title && (
+        <TitleSlide
+          category={category}
+          questions={questions}
+          showAnswers={showAnswers}
+        />
+      )}
+      {pageState === PageState.Question && (
+        <QuestionSlide
+          category={category}
+          question={questions[currentQuestion]}
+          showAnswers={showAnswers}
+        />
+      )}
+      {pageState === PageState.Summary && (
+        <SummarySlide category={category} questions={questions} />
+      )}
     </div>
   );
 }
