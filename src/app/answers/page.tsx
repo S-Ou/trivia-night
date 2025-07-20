@@ -3,7 +3,7 @@
 import { PageTemplate, Page } from "../pageTemplate";
 import { Text } from "@radix-ui/themes";
 import { useQuestionContext } from "@/contexts/QuestionContext";
-import React from "react";
+import React, { Fragment } from "react";
 import styled from "styled-components";
 import { letterIndex } from "@/utils";
 import { indexToPermutation } from "@/utils/permutations";
@@ -41,7 +41,7 @@ const BoldTD = styled.td`
   font-weight: 600;
 `;
 
-export default function QuestionsPage() {
+export default function AnswersPage() {
   const { combinedQuestions, categories, isLoading } = useQuestionContext();
 
   if (isLoading) {
@@ -60,8 +60,8 @@ export default function QuestionsPage() {
         </thead>
         <tbody>
           {categories.map((category) => (
-            <>
-              <CategoryHeader>
+            <Fragment key={category.name}>
+              <CategoryHeader key={category.name}>
                 <th colSpan={4}>{category.name}</th>
               </CategoryHeader>
               {combinedQuestions[category.name].map((question, index) => {
@@ -75,7 +75,7 @@ export default function QuestionsPage() {
                 const correctAnswerIndex = letterIndex(permutations.indexOf(0));
 
                 return (
-                  <tr key={question.id}>
+                  <tr key={category.name + question.id}>
                     <BoldTD>{index + 1}</BoldTD>
                     <td>{question.question}</td>
                     {question.questionType === "multiChoice" ? (
@@ -89,7 +89,7 @@ export default function QuestionsPage() {
                   </tr>
                 );
               })}
-            </>
+            </Fragment>
           ))}
         </tbody>
       </StyledTable>

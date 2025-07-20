@@ -57,27 +57,21 @@ export function PageTemplate({
     <BodyWrapper>
       <PageTitle>Trivia Night</PageTitle>
       <TabNavRoot justify={"center"}>
-        <Link href={getHref(Page.Home)} passHref>
-          <TabNav.Link active={currentPage === Page.Home}>Home</TabNav.Link>
-        </Link>
-        <Link href={getHref(Page.Config)} passHref>
-          <TabNav.Link active={currentPage === Page.Config}>Config</TabNav.Link>
-        </Link>
-        <Link href={getHref(Page.Questions)} passHref>
-          <TabNav.Link active={currentPage === Page.Questions}>
-            Questions
-          </TabNav.Link>
-        </Link>
-        <Link href={getHref(Page.Answers)} passHref>
-          <TabNav.Link active={currentPage === Page.Answers}>
-            Answers
-          </TabNav.Link>
-        </Link>
-        <Link href={getHref(Page.Results)} passHref>
-          <TabNav.Link active={currentPage === Page.Results}>
-            Results
-          </TabNav.Link>
-        </Link>
+        <TabNav.Link asChild active={currentPage === Page.Home}>
+          <Link href={getHref(Page.Home)}>{Page.Home}</Link>
+        </TabNav.Link>
+        <TabNav.Link asChild active={currentPage === Page.Config}>
+          <Link href={getHref(Page.Config)}>{Page.Config}</Link>
+        </TabNav.Link>
+        <TabNav.Link asChild active={currentPage === Page.Questions}>
+          <Link href={getHref(Page.Questions)}>{Page.Questions}</Link>
+        </TabNav.Link>
+        <TabNav.Link asChild active={currentPage === Page.Answers}>
+          <Link href={getHref(Page.Answers)}>{Page.Answers}</Link>
+        </TabNav.Link>
+        <TabNav.Link asChild active={currentPage === Page.Results}>
+          <Link href={getHref(Page.Results)}>{Page.Results}</Link>
+        </TabNav.Link>
       </TabNavRoot>
       <ChildrenWrapper>{children}</ChildrenWrapper>
     </BodyWrapper>
