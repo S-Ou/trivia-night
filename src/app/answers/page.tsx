@@ -7,6 +7,7 @@ import React, { Fragment } from "react";
 import styled from "styled-components";
 import { letterIndex } from "@/utils";
 import { indexToPermutation } from "@/utils/permutations";
+import { PencilLine } from "lucide-react";
 
 const StyledTable = styled.table`
   width: 100%;
@@ -39,6 +40,12 @@ const CategoryHeader = styled.tr`
 
 const BoldTD = styled.td`
   font-weight: 600;
+`;
+
+const IconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  height: 100%;
 `;
 
 export default function AnswersPage() {
@@ -79,13 +86,15 @@ export default function AnswersPage() {
                     <BoldTD>{index + 1}</BoldTD>
                     <td>{question.question}</td>
                     {question.questionType === "multiChoice" ? (
-                      <>
-                        <BoldTD>{correctAnswerIndex}</BoldTD>
-                        <td>{correctAnswer.option}</td>
-                      </>
+                      <BoldTD>{correctAnswerIndex}</BoldTD>
                     ) : (
-                      <td colSpan={2}>{correctAnswer.option}</td>
+                      <td>
+                        <IconWrapper>
+                          <PencilLine size={16} />
+                        </IconWrapper>
+                      </td>
                     )}
+                    <td>{correctAnswer.option}</td>
                   </tr>
                 );
               })}
