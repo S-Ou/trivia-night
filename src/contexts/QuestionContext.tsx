@@ -4,11 +4,17 @@ import { Category } from "@/generated/prisma";
 import { Question } from "@/types/Question";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
+interface CategoryBundle {
+  category: Category;
+  questions: Question[];
+}
+
 interface QuestionContextType {
   questions: Question[];
   categories: Category[];
   combinedQuestions: Record<string, Question[]>;
   fetchQuestions: () => Promise<void>;
+  getCategory: (index: number) => CategoryBundle;
   isLoading: boolean;
 }
 
@@ -17,6 +23,9 @@ export const QuestionContext = createContext<QuestionContextType>({
   categories: [],
   combinedQuestions: {},
   fetchQuestions: async () => {},
+  getCategory: () => {
+    throw new Error("getCategory not implemented in default context");
+  },
   isLoading: false,
 });
 
@@ -60,6 +69,15 @@ export const QuestionProvider = ({ children }: QuestionProviderProps) => {
     fetchQuestions();
   }, []);
 
+  function getCategory(index: number): CategoryBundle {
+    if (index < 0 || index >= categories.length) {
+      throw new Error("Category index out of bounds");
+    }
+    const category = categories[index];
+    const questionsForCategory = combinedQuestions[category.name] || [];
+    return { category, questions: questionsForCategory };
+  }
+
   return (
     <QuestionContext.Provider
       value={{
@@ -67,6 +85,7 @@ export const QuestionProvider = ({ children }: QuestionProviderProps) => {
         categories,
         combinedQuestions,
         fetchQuestions,
+        getCategory,
         isLoading,
       }}
     >
