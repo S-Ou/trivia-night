@@ -1,11 +1,16 @@
-import { Category, Question } from "@/generated/prisma";
+import { Category } from "@/generated/prisma";
+import BaseSlide from "./baseSlide";
+import { Question } from "@/types/Question";
 
-export function SummarySlide({category, questions}: {
+export function SummarySlide({
+  category,
+  questions,
+}: {
   category: Category;
   questions: Question[];
 }) {
   return (
-    <div>
+    <BaseSlide>
       <h1>{category.name}</h1>
       <h2>Summary of Questions</h2>
       <ul>
@@ -15,6 +20,6 @@ export function SummarySlide({category, questions}: {
           </li>
         ))}
       </ul>
-    </div>
+    </BaseSlide>
   );
 }

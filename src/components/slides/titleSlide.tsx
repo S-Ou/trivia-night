@@ -1,0 +1,34 @@
+import { Category } from "@/generated/prisma";
+import styled from "styled-components";
+import BaseSlide from "./baseSlide";
+import { Separator } from "@radix-ui/themes";
+import { Question } from "@/types/Question";
+
+const Title = styled.h1`
+  margin-top: 20vh;
+  font-size: 10rem;
+  font-weight: 800;
+`;
+
+const Subtitle = styled.p`
+  font-size: 2rem;
+  margin-top: 1rem;
+`;
+
+export function TitleSlide({
+  category,
+  questions,
+}: {
+  category: Category;
+  questions: Question[];
+}) {
+  return (
+    <BaseSlide>
+      <Title>{category.name}</Title>
+      <Separator size="3" />
+      <Subtitle>
+        {questions.length} question{questions.length !== 1 ? "s" : ""}
+      </Subtitle>
+    </BaseSlide>
+  );
+}

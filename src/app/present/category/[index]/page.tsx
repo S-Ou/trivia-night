@@ -6,6 +6,8 @@ import { QuestionSlide } from "../../../../components/slides/questionSlide";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { SummarySlide } from "@/components/slides/summarySlide";
+import { Title } from "@radix-ui/themes/components/alert-dialog";
+import { TitleSlide } from "@/components/slides/titleSlide";
 
 enum PageState {
   Title,
@@ -97,7 +99,7 @@ export default function CategoryPage() {
       {(() => {
         switch (pageState) {
           case PageState.Title:
-            return <h2>{category.name}</h2>;
+            return <TitleSlide category={category} questions={questions} />;
           case PageState.Question:
             return (
               <QuestionSlide
