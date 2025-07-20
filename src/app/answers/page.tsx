@@ -7,17 +7,17 @@ import React, { Fragment } from "react";
 import styled from "styled-components";
 import { letterIndex } from "@/utils";
 import { indexToPermutation } from "@/utils/permutations";
-import { PencilLine } from "lucide-react";
+import { Hash, PencilLine } from "lucide-react";
 
 const StyledTable = styled.table`
-  width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
+  width: 100%;
 
   th,
   td {
-    padding: 0.5rem;
     border-bottom: 2px solid var(--accent-5);
+    padding: 0.5rem;
   }
 
   th {
@@ -33,18 +33,19 @@ const CategoryHeader = styled.tr`
   text-align: center;
 
   th {
-    font-weight: 800;
     font-size: 1.5rem;
+    font-weight: 800;
   }
 `;
 
 const BoldTD = styled.td`
   font-weight: 600;
+  text-align: center;
 `;
 
 const IconWrapper = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   height: 100%;
 `;
 
@@ -60,7 +61,11 @@ export default function AnswersPage() {
       <StyledTable>
         <thead>
           <LegendHeader>
-            <th>#</th>
+            <th>
+              <IconWrapper>
+                <Hash size={16} />
+              </IconWrapper>
+            </th>
             <th>Question</th>
             <th colSpan={2}>Answer</th>
           </LegendHeader>
