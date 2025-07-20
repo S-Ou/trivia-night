@@ -6,7 +6,10 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "setup": "pnpm install && pnpm prisma:setup && pnpm build",
+    "prisma:setup": "npx prisma db push && npx prisma generate && npx prisma db seed",
+    "prisma:migrate": "npx prisma migrate deploy"
   },
   "dependencies": {
     "@prisma/client": "^6.11.1",
