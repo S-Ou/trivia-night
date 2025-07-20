@@ -14,7 +14,9 @@
   "dependencies": {
     "@prisma/client": "^6.11.1",
     "@radix-ui/themes": "^3.2.1",
+    "buffer": "^6.0.3",
     "framer-motion": "^12.23.6",
+    "iconv-lite": "^0.6.3",
     "next": "15.3.5",
     "papaparse": "^5.5.3",
     "prisma": "^6.11.1",
