@@ -2,7 +2,7 @@
 
 import { Event } from "@/generated/prisma";
 import { UpdateEventDTO } from "@/services/eventService";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 interface EventContextType {
   event: Event;
@@ -56,6 +56,10 @@ export const EventProvider = ({ children }: EventProviderProps) => {
       console.error("Error updating event:", error);
     }
   }
+
+  useEffect(() => {
+    fetchEvent();
+  }, []);
 
   return (
     <EventContext.Provider
