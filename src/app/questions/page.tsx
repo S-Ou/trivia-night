@@ -25,26 +25,27 @@ const QuestionSetWrapper = styled.div`
 `;
 
 const CategoryAccordionRoot = styled(Accordion.Root)`
-  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 100%;
 `;
 
 const CategoryAccordionItem = styled(Accordion.Item)`
-  width: 100%;
   background-color: var(--accent-3);
   border-radius: max(var(--radius-3), var(--radius-full));
+  width: 100%;
 `;
 
 const CategoryAccordionTrigger = styled(Accordion.Trigger)`
-  width: 100%;
-  padding: 0.5rem;
   background-color: var(--accent-9);
   border-radius: max(var(--radius-3), var(--radius-full));
   border: none;
   font-size: 2rem;
+  font-stretch: expanded;
   font-weight: 600;
+  padding: 0.5rem;
+  width: 100%;
 `;
 
 const CategoryAccordionContent = styled(MotionContent)`
@@ -59,10 +60,10 @@ const QuestionAccordionRoot = styled(Accordion.Root)`
 `;
 
 const QuestionAccordionItem = styled(Accordion.Item)`
-  width: 100%;
-  padding: 0.5rem;
   border-radius: max(var(--radius-3), var(--radius-full));
   border: 2px solid var(--accent-7);
+  padding: 0.5rem;
+  width: 100%;
 `;
 
 const QuestionAccordionTrigger = styled(Accordion.Trigger)`
@@ -78,13 +79,13 @@ const QuestionAccordionTrigger = styled(Accordion.Trigger)`
 const QuestionAccordionContent = styled(MotionContent)``;
 
 const OptionsWrapper = styled.div`
-  display: flex;
-  gap: 0.25rem;
   background-color: var(--accent-4);
   border-radius: max(var(--radius-3), var(--radius-full));
   color: var(--foreground);
+  display: flex;
   flex-direction: column;
   font-size: 1rem;
+  gap: 0.25rem;
   padding: 0.5rem;
 `;
 

@@ -7,7 +7,7 @@ import React, { Fragment } from "react";
 import styled from "styled-components";
 import { letterIndex } from "@/utils";
 import { indexToPermutation } from "@/utils/permutations";
-import { Hash, PencilLine } from "lucide-react";
+import { Hash, PencilLine, SquareCheck } from "lucide-react";
 
 const StyledTable = styled.table`
   border-collapse: collapse;
@@ -30,6 +30,7 @@ const LegendHeader = styled.tr`
 `;
 
 const CategoryHeader = styled.tr`
+  font-stretch: expanded;
   text-align: center;
 
   th {
@@ -67,7 +68,12 @@ export default function AnswersPage() {
               </IconWrapper>
             </th>
             <th>Question</th>
-            <th colSpan={2}>Answer</th>
+            <th>
+              <IconWrapper>
+                <SquareCheck size={16} />
+              </IconWrapper>
+            </th>
+            <th>Answer</th>
           </LegendHeader>
         </thead>
         <tbody>
