@@ -27,7 +27,7 @@ export async function POST(request: Request) {
   try {
     const { eventId, data } = await request.json();
 
-    if (!eventId || !data || typeof data.name !== "string") {
+    if (!eventId || !data || typeof data.title !== "string") {
       return NextResponse.json(
         { error: "Invalid request data" },
         { status: 400 }

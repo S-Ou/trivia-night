@@ -1,7 +1,7 @@
 import { prisma } from "@/client";
 
 export interface UpdateEventDTO {
-  name: string;
+  title: string;
   description?: string;
 }
 

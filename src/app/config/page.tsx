@@ -1,5 +1,6 @@
 "use client";
 import React, { ChangeEvent, useEffect, useState } from "react";
+import { Toaster, toast } from "sonner";
 import { PageTemplate, Page } from "../pageTemplate";
 import styled from "styled-components";
 import { Switch, TextArea, TextField } from "@radix-ui/themes";
@@ -48,19 +49,25 @@ enum ConfigComponentType {
   TextField,
 }
 
+type ConfigField = {
+  key: string;
+  label: string;
+  type: ConfigComponentType;
+  value: string | boolean;
+  required?: boolean;
+  onChange: (value: string | boolean) => void;
+  onBlur?: () => void;
+};
+
 function ConfigComponent({
   label,
   type,
   value,
-  onChange,
   required = false,
-}: {
-  label: string;
-  type: ConfigComponentType;
-  value?: string | boolean;
-  onChange: (value: string | boolean) => void;
-  required?: boolean;
-}) {
+  onChange,
+  onBlur,
+}: ConfigField) {
+  const error = required && !value;
   return (
     <>
       <ConfigLabel>
@@ -75,7 +82,8 @@ function ConfigComponent({
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               onChange(e.target.value)
             }
-            $error={required && !value}
+            onBlur={onBlur}
+            $error={error}
           />
         ) : type === ConfigComponentType.TextArea ? (
           <StyledTextArea
@@ -84,7 +92,8 @@ function ConfigComponent({
             onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
               onChange(e.target.value)
             }
-            $error={required && !value}
+            onBlur={onBlur}
+            $error={error}
           />
         ) : type === ConfigComponentType.Switch ? (
           <Switch checked={value as boolean} onCheckedChange={onChange} />
@@ -95,19 +104,11 @@ function ConfigComponent({
 }
 
 export default function ConfigPage() {
-  const { event, isLoading } = useEventContext();
+  const { event, isLoading, updateEvent } = useEventContext();
 
-  const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [enableAnimations, setEnableAnimations] = useState<boolean>(true);
-
-  useEffect(() => {
-    console.log("Config updated:", {
-      name: title,
-      description,
-      enableAnimations,
-    });
-  }, [title, description, enableAnimations]);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [enableAnimations, setEnableAnimations] = useState(true);
 
   useEffect(() => {
     if (event && !isLoading) {
@@ -117,34 +118,79 @@ export default function ConfigPage() {
     }
   }, [event?.id, isLoading]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const handleUpdate = (
+    key: string,
+    value: string | boolean,
+    required?: boolean
+  ) => {
+    if (required && !value) {
+      toast.error("Info failed to save, field is required");
+      return;
+    }
+
+    if (
+      (key === "title" && value === event.title) ||
+      (key === "description" && value === event.description)
+    ) {
+      return;
+    }
+
+    let updatePromise: Promise<void> | undefined;
+    switch (key) {
+      case "title":
+        updatePromise = updateEvent({ title: value as string, description });
+        break;
+      case "description":
+        updatePromise = updateEvent({ title, description: value as string });
+        break;
+    }
+    if (updatePromise) {
+      updatePromise
+        .then(() => toast.success("Config saved!"))
+        .catch(() => toast.error("Failed to save config"));
+    }
+  };
+
+  const configFields: ConfigField[] = [
+    {
+      key: "title",
+      label: "Title",
+      type: ConfigComponentType.TextField,
+      value: title,
+      required: true,
+      onChange: (val) => setTitle(val as string),
+      onBlur: () => handleUpdate("title", title, true),
+    },
+    {
+      key: "description",
+      label: "Description",
+      type: ConfigComponentType.TextArea,
+      value: description,
+      onChange: (val) => setDescription(val as string),
+      onBlur: () => handleUpdate("description", description),
+    },
+    {
+      key: "enableAnimations",
+      label: "Enable animations",
+      type: ConfigComponentType.Switch,
+      value: enableAnimations,
+      onChange: (val) => {
+        setEnableAnimations(val as boolean);
+        // handleUpdate("enableAnimations", val as boolean); // enable later
+      },
+    },
+  ];
+
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <PageTemplate currentPage={Page.Config}>
+      <Toaster richColors position="top-right" />
       <ConfigWrapper>
-        <ConfigComponent
-          label="Title"
-          type={ConfigComponentType.TextField}
-          required
-          value={title}
-          onChange={(val: string | boolean) => setTitle(val as string)}
-        />
-        <ConfigComponent
-          label="Description"
-          type={ConfigComponentType.TextArea}
-          value={description}
-          onChange={(val: string | boolean) => setDescription(val as string)}
-        />
-        <ConfigComponent
-          label="Enable animations"
-          type={ConfigComponentType.Switch}
-          value={enableAnimations}
-          onChange={(val: string | boolean) =>
-            setEnableAnimations(val as boolean)
-          }
-        />
+        {configFields.map((field) => {
+          const { key, ...rest } = field;
+          return <ConfigComponent key={key} {...rest} />;
+        })}
       </ConfigWrapper>
     </PageTemplate>
   );

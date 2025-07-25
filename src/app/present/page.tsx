@@ -1,19 +1,25 @@
 "use client";
 
+import { useEventContext } from "@/contexts/EventContext";
 import { useQuestionContext } from "@/contexts/QuestionContext";
 import { CircleCheckBig } from "lucide-react";
 import Link from "next/link";
 
 export default function Present() {
-  const { categories, isLoading } = useQuestionContext();
+  const { event, isLoading: isEventLoading, updateEvent } = useEventContext();
+  const { categories, isLoading: isQuestionLoading } = useQuestionContext();
+
+  if (isEventLoading) {
+    return <p>Loading event...</p>;
+  }
 
   return (
     <div>
-      <h1>Trivia Night</h1>
-      <h2>Presented by our generous sponsor</h2>
+      <h1>{event.title}</h1>
+      <h2>{event.description}</h2>
 
       <div>
-        {isLoading ? (
+        {isQuestionLoading ? (
           <p>Loading questions...</p>
         ) : (
           categories.map((category, index) => (
