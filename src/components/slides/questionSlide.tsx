@@ -9,6 +9,7 @@ import { PencilLine } from "lucide-react";
 
 const CategoryTitle = styled.h1`
   font-size: 3rem;
+  font-stretch: expanded;
   font-weight: 800;
 `;
 

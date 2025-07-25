@@ -6,6 +6,7 @@ import { Separator } from "@radix-ui/themes";
 
 const CategoryTitle = styled.h1`
   font-size: 3rem;
+  font-stretch: expanded;
   font-weight: 800;
 `;
 

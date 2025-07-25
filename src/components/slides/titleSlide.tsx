@@ -5,9 +5,10 @@ import { Separator } from "@radix-ui/themes";
 import { Question } from "@/types/Question";
 
 const Title = styled.h1`
-  margin-top: 20vh;
   font-size: 10rem;
+  font-stretch: expanded;
   font-weight: 800;
+  margin-top: 20vh;
 `;
 
 const Subtitle = styled.p`

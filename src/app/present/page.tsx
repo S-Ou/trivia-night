@@ -2,11 +2,85 @@
 
 import { useEventContext } from "@/contexts/EventContext";
 import { useQuestionContext } from "@/contexts/QuestionContext";
-import { CircleCheckBig } from "lucide-react";
+import { ChevronRight, CircleCheckBig } from "lucide-react";
 import Link from "next/link";
+import styled from "styled-components";
+
+const BaseWrapper = styled.div`
+  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+  justify-content: center;
+  padding-block: 8rem;
+  padding-inline: 10rem;
+`;
+
+const Title = styled.h1`
+  font-size: 12rem;
+  font-stretch: expanded;
+  font-weight: 1000;
+  margin-left: -2rem;
+`;
+
+const Description = styled.h2`
+  font-size: 2rem;
+  font-weight: 300;
+`;
+
+const CategoryWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 2rem;
+`;
+
+const Category = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 2rem;
+  justify-content: start;
+`;
+
+const CategoryLabel = styled.h3`
+  font-size: 2.5rem;
+  font-stretch: expanded;
+  font-variation-settings: "slnt" -10;
+  font-weight: 600;
+`;
+
+const CategoryLink = styled(Link)`
+  align-items: center;
+  color: inherit;
+  display: flex;
+  font-size: 3rem;
+  font-weight: 600;
+  gap: 0.5rem;
+  justify-content: center;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    text-decoration: underline;
+    transform: translateX(0.25rem);
+  }
+`;
+
+const CategoryAnswersLink = styled(Link)`
+  align-items: center;
+  display: flex;
+  font-size: 1rem;
+  gap: 0.25rem;
+  opacity: 0.8;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
 
 export default function Present() {
-  const { event, isLoading: isEventLoading, updateEvent } = useEventContext();
+  const { event, isLoading: isEventLoading } = useEventContext();
   const { categories, isLoading: isQuestionLoading } = useQuestionContext();
 
   if (isEventLoading) {
@@ -14,26 +88,28 @@ export default function Present() {
   }
 
   return (
-    <div>
-      <h1>{event.title}</h1>
-      <h2>{event.description}</h2>
+    <BaseWrapper>
+      <Title>{event.title}</Title>
+      <Description>{event.description}</Description>
 
-      <div>
+      <CategoryWrapper>
+        <CategoryLabel>Today's Categories</CategoryLabel>
         {isQuestionLoading ? (
           <p>Loading questions...</p>
         ) : (
           categories.map((category, index) => (
-            <div key={category.name || index}>
-              <h3>
-                <Link href={`./category/${index}`}>{category.name}</Link>
-                <Link href={`./category/${index}?answers=true`}>
-                  <CircleCheckBig />
-                </Link>
-              </h3>
-            </div>
+            <Category key={category.name || index}>
+              <CategoryLink href={`./category/${index}`}>
+                <ChevronRight size={32} />
+                {category.name}
+              </CategoryLink>
+              <CategoryAnswersLink href={`./category/${index}?answers=true`}>
+                <CircleCheckBig size={16} /> Answers
+              </CategoryAnswersLink>
+            </Category>
           ))
         )}
-      </div>
-    </div>
+      </CategoryWrapper>
+    </BaseWrapper>
   );
 }
