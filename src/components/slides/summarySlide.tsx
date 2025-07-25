@@ -23,7 +23,7 @@ const SummaryList = styled.table`
 
 const SummaryItem = styled.tr`
   font-size: 2.5rem;
-  font-weight: 400;
+  font-weight: 300;
 `;
 
 const SummaryLabel = styled.td`
