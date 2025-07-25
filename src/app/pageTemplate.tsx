@@ -1,3 +1,4 @@
+import Footer from "@/components/footer";
 import { TabNav } from "@radix-ui/themes";
 import Link from "next/link";
 import styled from "styled-components";
@@ -75,6 +76,7 @@ export function PageTemplate({
         </TabNav.Link>
       </TabNavRoot>
       <ChildrenWrapper>{children}</ChildrenWrapper>
+      <Footer />
     </BodyWrapper>
   );
 }
