@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { PageTemplate, Page } from "../pageTemplate";
 import { Result, useResultsContext } from "@/contexts/ResultsContext";
@@ -7,6 +7,13 @@ import { intToOrdinal } from "@/utils";
 import { Plus, Trash, Trophy } from "lucide-react";
 import { Button, TextField } from "@radix-ui/themes";
 import { Results } from "@/generated/prisma";
+import { useEventContext } from "@/contexts/EventContext";
+import { handleConfigUpdate } from "@/components/handleConfigUpdate";
+import {
+  ConfigComponentType,
+  ConfigField,
+  ConfigForm,
+} from "@/components/ConfigForm";
 
 const StyledTable = styled.table`
   border-collapse: collapse;
@@ -81,9 +88,21 @@ const AddNewButton = styled(Button)`
 `;
 
 export default function ResultsPage() {
-  const { results, isLoading, updateResults, deleteResult } =
-    useResultsContext();
-  const [hoveredId, setHoveredId] = React.useState<string | null>(null);
+  const {
+    results,
+    isLoading: isResultsLoading,
+    updateResults,
+    deleteResult,
+  } = useResultsContext();
+  const { event, isLoading: isEventLoading, updateEvent } = useEventContext();
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [hideResults, setHideResults] = useState(event.hideResults || false);
+
+  useEffect(() => {
+    if (event && !isEventLoading) {
+      setHideResults(event.hideResults || false);
+    }
+  }, [event?.id, isEventLoading]);
 
   function onBlurHandler(updatedResult: Result) {
     const updatedResults = results.map((result) =>
@@ -112,6 +131,37 @@ export default function ResultsPage() {
   function handleDelete(playerId: string) {
     deleteResult(playerId);
   }
+
+  const handleUpdate = (
+    key: string,
+    value: string | boolean,
+    required?: boolean
+  ) => {
+    handleConfigUpdate({
+      key,
+      value,
+      required,
+      event,
+      updateEvent,
+      title: event.title,
+      description: event.description,
+      hideResults,
+    });
+  };
+
+  const configFields: ConfigField[] = [
+    {
+      key: "hideResults",
+      label: "Hide results",
+      type: ConfigComponentType.Switch,
+      value: hideResults,
+      disabled: isEventLoading,
+      onChange: (val) => {
+        setHideResults(val as boolean);
+        handleUpdate("hideResults", val as boolean);
+      },
+    },
+  ];
 
   return (
     <PageTemplate currentPage={Page.Results}>
@@ -181,7 +231,7 @@ export default function ResultsPage() {
               </ScoreTD>
             </tr>
           ))}
-          {!isLoading && (
+          {!isResultsLoading && (
             <tr>
               <AddNewTD colSpan={3}>
                 <AddNewButton variant="ghost" onClick={addNewPlayer}>
@@ -193,6 +243,7 @@ export default function ResultsPage() {
           )}
         </tbody>
       </StyledTable>
+      <ConfigForm fields={configFields} />
     </PageTemplate>
   );
 }
