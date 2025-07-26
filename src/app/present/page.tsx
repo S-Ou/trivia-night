@@ -107,19 +107,17 @@ export default function Present() {
     }
   }, [isQuestionLoading]);
 
-  if (isEventLoading) {
-    return <p>Loading event...</p>;
-  }
-
   return (
     <BaseWrapper>
-      <Title>{event.title}</Title>
-      <Description>{event.description}</Description>
+      <Title>{!isEventLoading ? event.title : "Loading..."}</Title>
+      <Description>
+        {!isEventLoading ? event.description : "Loading..."}
+      </Description>
 
       <CategoryWrapper>
         <CategoryLabel>Today's Categories</CategoryLabel>
         {isQuestionLoading ? (
-          <p>Loading questions...</p>
+          <p>Loading categories...</p>
         ) : (
           categories.map((category, index) => (
             <Category key={category.name || index}>
