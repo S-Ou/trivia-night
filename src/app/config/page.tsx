@@ -22,10 +22,14 @@ const ConfigLabel = styled.h2`
 `;
 
 const ConfigInput = styled.div`
+  align-items: center;
+  display: flex;
   width: 100%;
 `;
 
 const StyledTextField = styled(TextField.Root)<{ $error?: boolean }>`
+  width: 100%;
+
   ${({ $error }) =>
     $error &&
     `
@@ -35,6 +39,8 @@ const StyledTextField = styled(TextField.Root)<{ $error?: boolean }>`
 `;
 
 const StyledTextArea = styled(TextArea)<{ $error?: boolean }>`
+  width: 100%;
+
   ${({ $error }) =>
     $error &&
     `
@@ -42,6 +48,8 @@ const StyledTextArea = styled(TextArea)<{ $error?: boolean }>`
       outline-color: red;
     `}
 `;
+
+const StyledSwitch = styled(Switch)``;
 
 enum ConfigComponentType {
   Switch,
@@ -100,7 +108,7 @@ function ConfigComponent({
             $error={error}
           />
         ) : type === ConfigComponentType.Switch ? (
-          <Switch
+          <StyledSwitch
             checked={value as boolean}
             onCheckedChange={onChange}
             disabled={disabled}
@@ -116,13 +124,13 @@ export default function ConfigPage() {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [enableAnimations, setEnableAnimations] = useState(true);
+  const [hideResults, setHideResults] = useState(event.hideResults || false);
 
   useEffect(() => {
     if (event && !isLoading) {
       setTitle(event.title || "");
       setDescription(event.description || "");
-      setEnableAnimations(true);
+      setHideResults(event.hideResults || false);
     }
   }, [event?.id, isLoading]);
 
@@ -138,7 +146,8 @@ export default function ConfigPage() {
 
     if (
       (key === "title" && value === event.title) ||
-      (key === "description" && value === event.description)
+      (key === "description" && value === event.description) ||
+      (key === "hideResults" && value === event.hideResults)
     ) {
       return;
     }
@@ -146,18 +155,26 @@ export default function ConfigPage() {
     let updatePromise: Promise<void> | undefined;
     switch (key) {
       case "title": {
-        const strippedTitle = (value as string).trim();
         updatePromise = updateEvent({
-          title: strippedTitle,
+          title: (value as string).trim(),
           description: description.trim(),
+          hideResults,
         });
         break;
       }
       case "description": {
-        const strippedDescription = (value as string).trim();
         updatePromise = updateEvent({
           title: title.trim(),
-          description: strippedDescription,
+          description: (value as string).trim(),
+          hideResults,
+        });
+        break;
+      }
+      case "hideResults": {
+        updatePromise = updateEvent({
+          title: title.trim(),
+          description: description.trim(),
+          hideResults: value as boolean,
         });
         break;
       }
@@ -198,14 +215,14 @@ export default function ConfigPage() {
       },
     },
     {
-      key: "enableAnimations",
-      label: "Enable animations",
+      key: "hideResults",
+      label: "Hide results",
       type: ConfigComponentType.Switch,
-      value: enableAnimations,
+      value: hideResults,
       disabled: isLoading,
       onChange: (val) => {
-        setEnableAnimations(val as boolean);
-        // handleUpdate("enableAnimations", val as boolean); // enable later
+        setHideResults(val as boolean);
+        handleUpdate("hideResults", val as boolean);
       },
     },
   ];

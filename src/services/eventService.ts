@@ -3,6 +3,7 @@ import { prisma } from "@/client";
 export interface UpdateEventDTO {
   title: string;
   description?: string;
+  hideResults?: boolean;
 }
 
 export async function fetchEvent(eventId: number) {
