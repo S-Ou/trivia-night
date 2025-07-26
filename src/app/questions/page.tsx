@@ -42,7 +42,7 @@ const CategoryItem = styled(Accordion.Item)`
   width: 100%;
 `;
 
-const CategoryHeader = styled(Accordion.Trigger)`
+const CategoryHeader = styled.div`
   align-items: center;
   background-color: var(--accent-9);
   border-radius: max(var(--radius-3), var(--radius-full));
@@ -172,6 +172,8 @@ const CategoryGrip = styled.span`
   justify-content: center;
   max-width: 2.5rem;
   min-width: 2.5rem;
+  color: var(--background);
+  opacity: 0.9;
 `;
 
 const QuestionGrip = styled.span`
