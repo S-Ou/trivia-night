@@ -4,8 +4,8 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { ImportButton, ExportButton } from "../../components/csvButtons";
 import { PageTemplate, Page } from "../pageTemplate";
 import styled from "styled-components";
-import { Separator, Text } from "@radix-ui/themes";
-import { ChevronDown } from "lucide-react";
+import { Button, Separator, Text } from "@radix-ui/themes";
+import { ChevronDown, GripVertical } from "lucide-react";
 import { Accordion } from "radix-ui";
 import { Question } from "@/types/Question";
 import { Option, QuestionType } from "@/generated/prisma";
@@ -44,23 +44,22 @@ const CategoryList = styled.div`
 const CategoryItem = styled(Accordion.Item)`
   background-color: var(--accent-3);
   border-radius: max(var(--radius-3), var(--radius-full));
-  width: 100%;
   margin-bottom: 1rem;
+  width: 100%;
 `;
 
 const CategoryHeader = styled(Accordion.Trigger)`
+  align-items: center;
   background-color: var(--accent-9);
   border-radius: max(var(--radius-3), var(--radius-full));
   border: none;
+  display: flex;
   font-size: 2rem;
   font-stretch: expanded;
   font-weight: 600;
+  gap: 0.5rem;
   padding: 0.5rem;
   width: 100%;
-  cursor: grab;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
 `;
 
 const CategoryContent = styled(Accordion.Content)`
@@ -75,20 +74,20 @@ const QuestionList = styled.div`
 const QuestionItem = styled.div`
   border-radius: max(var(--radius-3), var(--radius-full));
   border: 2px solid var(--accent-7);
+  margin-bottom: 1rem;
   padding: 0.5rem;
   width: 100%;
-  margin-bottom: 1rem;
 `;
 
 const QuestionHeader = styled.div`
   background-color: inherit;
   border: none;
   color: var(--foreground);
+  cursor: grab;
   font-size: 1.5rem;
   font-weight: 600;
   text-align: left;
   width: 100%;
-  cursor: grab;
 `;
 
 const QuestionContent = styled(MotionContent)``;
@@ -105,19 +104,34 @@ const OptionsWrapper = styled.div`
 const OptionItem = styled.div<{ $draggable?: boolean; $isDragging?: boolean }>`
   cursor: ${({ $draggable }) => ($draggable ? "grab" : "default")};
   margin-bottom: 0.25rem;
+  opacity: ${({ $isDragging }) => ($isDragging ? 0.5 : 1)};
   user-select: none;
   width: 100%;
-  opacity: ${({ $isDragging }) => ($isDragging ? 0.5 : 1)};
 `;
 
 const AccordionChevron = styled.span`
   align-items: center;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
   display: flex;
-  margin-right: 0.5rem;
+  justify-content: center;
   transition: transform 0.2s;
-  [data-state="open"] & {
+
+  &[data-state="open"] {
     transform: rotate(180deg);
   }
+`;
+
+const CategoryGrip = styled.span`
+  align-items: center;
+  aspect-ratio: 1 / 1;
+  cursor: grab;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  max-width: 2.5rem;
+  min-width: 2.5rem;
 `;
 
 function Categories() {
@@ -172,11 +186,17 @@ function Categories() {
                         style={snapshot.isDragging ? { opacity: 0.5 } : {}}
                         {...dragProvided.draggableProps}
                       >
-                        <CategoryHeader {...dragProvided.dragHandleProps}>
-                          <AccordionChevron>
+                        <CategoryHeader>
+                          <AccordionChevron
+                            as={Accordion.Trigger}
+                            value={category.name}
+                          >
                             <ChevronDown size={28} />
                           </AccordionChevron>
-                          {category.name}
+                          <span style={{ flex: 1 }}>{category.name}</span>
+                          <CategoryGrip {...dragProvided.dragHandleProps}>
+                            <GripVertical size={24} />
+                          </CategoryGrip>
                         </CategoryHeader>
                         <CategoryContent>
                           <Questions
