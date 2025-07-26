@@ -5,6 +5,8 @@ import { ImportButton, ExportButton } from "../../components/csvButtons";
 import { PageTemplate, Page } from "../pageTemplate";
 import styled from "styled-components";
 import { Separator, Text } from "@radix-ui/themes";
+import { ChevronDown } from "lucide-react";
+import { Accordion } from "radix-ui";
 import { Question } from "@/types/Question";
 import { Option, QuestionType } from "@/generated/prisma";
 import { motion, AnimatePresence } from "framer-motion";
@@ -39,14 +41,14 @@ const CategoryList = styled.div`
   width: 100%;
 `;
 
-const CategoryItem = styled.div`
+const CategoryItem = styled(Accordion.Item)`
   background-color: var(--accent-3);
   border-radius: max(var(--radius-3), var(--radius-full));
   width: 100%;
   margin-bottom: 1rem;
 `;
 
-const CategoryHeader = styled.div`
+const CategoryHeader = styled(Accordion.Trigger)`
   background-color: var(--accent-9);
   border-radius: max(var(--radius-3), var(--radius-full));
   border: none;
@@ -56,9 +58,12 @@ const CategoryHeader = styled.div`
   padding: 0.5rem;
   width: 100%;
   cursor: grab;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 `;
 
-const CategoryContent = styled(MotionContent)`
+const CategoryContent = styled(Accordion.Content)`
   padding: 1rem;
 `;
 
@@ -105,6 +110,16 @@ const OptionItem = styled.div<{ $draggable?: boolean; $isDragging?: boolean }>`
   opacity: ${({ $isDragging }) => ($isDragging ? 0.5 : 1)};
 `;
 
+const AccordionChevron = styled.span`
+  align-items: center;
+  display: flex;
+  margin-right: 0.5rem;
+  transition: transform 0.2s;
+  [data-state="open"] & {
+    transform: rotate(180deg);
+  }
+`;
+
 function Categories() {
   const { combinedQuestions, categories, isLoading } = useQuestionContext();
   const [orderedCategories, setOrderedCategories] = useState(categories);
@@ -139,34 +154,43 @@ function Categories() {
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="categories-droppable">
           {(provided) => (
-            <CategoryList ref={provided.innerRef} {...provided.droppableProps}>
-              {orderedCategories.map((category, idx) => (
-                <Draggable
-                  key={category.name}
-                  draggableId={category.name}
-                  index={idx}
-                >
-                  {(dragProvided, snapshot) => (
-                    <CategoryItem
-                      ref={dragProvided.innerRef}
-                      style={snapshot.isDragging ? { opacity: 0.5 } : {}}
-                      {...dragProvided.draggableProps}
-                    >
-                      <CategoryHeader {...dragProvided.dragHandleProps}>
-                        {category.name}
-                      </CategoryHeader>
-                      <CategoryContent>
-                        <Questions
-                          questions={combinedQuestions[category.name] || []}
-                          categoryName={category.name}
-                        />
-                      </CategoryContent>
-                    </CategoryItem>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </CategoryList>
+            <Accordion.Root type="multiple" asChild>
+              <CategoryList
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
+                {orderedCategories.map((category, idx) => (
+                  <Draggable
+                    key={category.name}
+                    draggableId={category.name}
+                    index={idx}
+                  >
+                    {(dragProvided, snapshot) => (
+                      <CategoryItem
+                        value={category.name}
+                        ref={dragProvided.innerRef}
+                        style={snapshot.isDragging ? { opacity: 0.5 } : {}}
+                        {...dragProvided.draggableProps}
+                      >
+                        <CategoryHeader {...dragProvided.dragHandleProps}>
+                          <AccordionChevron>
+                            <ChevronDown size={28} />
+                          </AccordionChevron>
+                          {category.name}
+                        </CategoryHeader>
+                        <CategoryContent>
+                          <Questions
+                            questions={combinedQuestions[category.name] || []}
+                            categoryName={category.name}
+                          />
+                        </CategoryContent>
+                      </CategoryItem>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </CategoryList>
+            </Accordion.Root>
           )}
         </Droppable>
       </DragDropContext>
