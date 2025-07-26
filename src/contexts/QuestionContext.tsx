@@ -18,6 +18,10 @@ interface QuestionContextType {
   isLoading: boolean;
   nextCategoryIndex: number | null;
   setNextCategoryIndex: (index: number | null) => void;
+  updateQuestionOrders: (
+    updatedQuestions: Question[] | null,
+    updatedCategories: Category[] | null
+  ) => Promise<void>;
 }
 
 export const QuestionContext = createContext<QuestionContextType>({
@@ -32,6 +36,9 @@ export const QuestionContext = createContext<QuestionContextType>({
   nextCategoryIndex: null,
   setNextCategoryIndex: () => {
     throw new Error("setNextCategoryIndex not implemented in default context");
+  },
+  updateQuestionOrders: async () => {
+    throw new Error("updateQuestionOrders not implemented in default context");
   },
 });
 
@@ -73,6 +80,43 @@ export const QuestionProvider = ({ children }: QuestionProviderProps) => {
     }
   }
 
+  async function updateQuestionOrders(
+    updatedQuestions: Question[] | null,
+    updatedCategories: Category[] | null
+  ) {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/questions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          questions: (updatedQuestions ?? questions).map((q) => ({
+            id: q.id,
+            indexWithinCategory: q.indexWithinCategory,
+            optionOrder: q.optionOrder,
+            eventId: q.eventId,
+          })),
+          categories: (updatedCategories ?? categories).map((c) => ({
+            name: c.name,
+            index: c.index,
+            eventId: c.eventId,
+          })),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update questions");
+      }
+      await fetchQuestions();
+    } catch (error) {
+      console.error("Error updating questions:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   useEffect(() => {
     fetchQuestions();
   }, []);
@@ -97,6 +141,7 @@ export const QuestionProvider = ({ children }: QuestionProviderProps) => {
         isLoading,
         nextCategoryIndex,
         setNextCategoryIndex,
+        updateQuestionOrders,
       }}
     >
       {children}

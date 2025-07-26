@@ -18,6 +18,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { indexToPermutation } from "@/utils/permutations";
 import { useQuestionContext } from "@/contexts/QuestionContext";
 import { letterIndex } from "@/utils";
+import { toast } from "sonner";
 
 const ButtonWrapper = styled.div`
   display: flex;
@@ -192,26 +193,45 @@ const OptionGrip = styled.span`
 `;
 
 function Categories() {
-  const { combinedQuestions, categories, isLoading } = useQuestionContext();
-  const [orderedCategories, setOrderedCategories] = useState(categories);
+  const { combinedQuestions, categories, isLoading, updateQuestionOrders } =
+    useQuestionContext();
+  const [localCategories, setLocalCategories] = useState(categories);
+  const [localCombinedQuestions, setLocalCombinedQuestions] =
+    useState(combinedQuestions);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    setOrderedCategories(categories);
-  }, [categories]);
+    setLocalCategories(categories);
+    setLocalCombinedQuestions(combinedQuestions);
+  }, [categories, combinedQuestions]);
 
-  const onDragEnd = (result: any) => {
+  const onDragEnd = async (result: any) => {
+    if (isSaving) return;
     if (!result.destination) return;
-    const newOrder = Array.from(orderedCategories);
+    setIsSaving(true);
+    const newOrder = Array.from(localCategories);
     const [removed] = newOrder.splice(result.source.index, 1);
     newOrder.splice(result.destination.index, 0, removed);
-    setOrderedCategories(newOrder);
+    setLocalCategories(newOrder);
+    await updateQuestionOrders(
+      null,
+      newOrder.map((cat, idx) => ({ ...cat, index: idx }))
+    )
+      .then(() => {
+        toast.success("Categories updated successfully");
+      })
+      .catch((error) => {
+        console.error("Error updating categories:", error);
+        toast.error("Failed to update categories");
+      });
+    setIsSaving(false);
   };
 
-  if (isLoading) {
+  if (isLoading && localCategories.length === 0) {
     return <Text size="2">Loading...</Text>;
   }
 
-  if (orderedCategories.length === 0) {
+  if (localCategories.length === 0) {
     return (
       <Text size="2">
         No questions uploaded. Import them using the button above! You can
@@ -228,13 +248,13 @@ function Categories() {
             <Accordion.Root
               type="multiple"
               asChild
-              defaultValue={orderedCategories.map((cat) => cat.name)}
+              defaultValue={localCategories.map((cat) => cat.name)}
             >
               <CategoryList
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
-                {orderedCategories.map((category, idx) => (
+                {localCategories.map((category, idx) => (
                   <Draggable
                     key={category.name}
                     draggableId={category.name}
@@ -263,7 +283,9 @@ function Categories() {
                         </CategoryHeader>
                         <CategoryContent>
                           <Questions
-                            questions={combinedQuestions[category.name] || []}
+                            questions={
+                              localCombinedQuestions[category.name] || []
+                            }
                             categoryName={category.name}
                           />
                         </CategoryContent>
@@ -289,17 +311,34 @@ function Questions({
   categoryName: string;
 }) {
   const [orderedQuestions, setOrderedQuestions] = useState(questions);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     setOrderedQuestions(questions);
   }, [questions]);
 
-  const onDragEnd = (result: any) => {
+  const { updateQuestionOrders } = useQuestionContext();
+  const onDragEnd = async (result: any) => {
+    if (isSaving) return;
     if (!result.destination) return;
+    setIsSaving(true);
     const newOrder = Array.from(orderedQuestions);
     const [removed] = newOrder.splice(result.source.index, 1);
     newOrder.splice(result.destination.index, 0, removed);
-    setOrderedQuestions(newOrder);
+    const updatedQuestions = newOrder.map((q, idx) => ({
+      ...q,
+      indexWithinCategory: idx,
+    }));
+    setOrderedQuestions(updatedQuestions);
+    await updateQuestionOrders(updatedQuestions, null)
+      .then(() => {
+        toast.success("Questions updated successfully");
+      })
+      .catch((error) => {
+        console.error("Error updating questions:", error);
+        toast.error("Failed to update questions");
+      });
+    setIsSaving(false);
   };
 
   return (
@@ -336,6 +375,8 @@ function Questions({
                         order={question.optionOrder}
                         type={question.questionType}
                         questionId={question.id}
+                        questions={orderedQuestions}
+                        setOrderedQuestions={setOrderedQuestions}
                       />
                     </QuestionContent>
                   </QuestionItem>
@@ -355,27 +396,51 @@ function Options({
   order,
   type,
   questionId,
+  questions,
+  setOrderedQuestions,
 }: {
   options: Option[];
   order: number;
   type: QuestionType;
   questionId: string;
+  questions: Question[];
+  setOrderedQuestions: (qs: Question[]) => void;
 }) {
   const [orderedOptions, setOrderedOptions] = useState(
     indexToPermutation(order, options.length)
   );
+  const [isSaving, setIsSaving] = useState(false);
   const isMultiChoice = type === "multiChoice";
 
   useEffect(() => {
     setOrderedOptions(indexToPermutation(order, options.length));
   }, [options, order]);
 
-  const onDragEnd = (result: any) => {
+  const { updateQuestionOrders } = useQuestionContext();
+  const { permutationToIndex } = require("@/utils/permutations");
+  const onDragEnd = async (result: any) => {
+    if (isSaving) return;
     if (!result.destination) return;
+    setIsSaving(true);
     const newOrder = Array.from(orderedOptions);
     const [removed] = newOrder.splice(result.source.index, 1);
     newOrder.splice(result.destination.index, 0, removed);
     setOrderedOptions(newOrder);
+    const updatedQuestions = questions.map((q) =>
+      q.id === questionId
+        ? { ...q, optionOrder: permutationToIndex(newOrder) }
+        : q
+    );
+    setOrderedQuestions(updatedQuestions);
+    await updateQuestionOrders(updatedQuestions, null)
+      .then(() => {
+        toast.success("Options updated successfully");
+      })
+      .catch((error) => {
+        console.error("Error updating options:", error);
+        toast.error("Failed to update options");
+      });
+    setIsSaving(false);
   };
 
   return (

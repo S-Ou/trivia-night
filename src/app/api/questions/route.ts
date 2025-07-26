@@ -1,4 +1,7 @@
-import { fetchQuestions } from "@/services/questionService";
+import {
+  fetchQuestions,
+  updateQuestionOrders,
+} from "@/services/questionService";
 import { Category } from "@/generated/prisma";
 import { Question } from "@/types/Question";
 
@@ -32,4 +35,21 @@ export async function GET() {
       headers: { "Content-Type": "application/json" },
     }
   );
+}
+
+export async function POST(request: Request) {
+  const { questions, categories } = await request.json();
+
+  if (!Array.isArray(questions) || !Array.isArray(categories)) {
+    return new Response("Invalid input", { status: 400 });
+  }
+
+  try {
+    await updateQuestionOrders(questions, categories);
+
+    return new Response("Questions updated successfully", { status: 200 });
+  } catch (error) {
+    console.error("Error saving questions:", error);
+    return new Response("Internal Server Error", { status: 500 });
+  }
 }
