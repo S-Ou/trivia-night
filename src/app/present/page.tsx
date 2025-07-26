@@ -2,7 +2,7 @@
 
 import { useEventContext } from "@/contexts/EventContext";
 import { useQuestionContext } from "@/contexts/QuestionContext";
-import { ChevronRight, CircleCheckBig } from "lucide-react";
+import { ChevronRight, CircleCheckBig, Trophy } from "lucide-react";
 import next from "next";
 import Link from "next/link";
 import { useEffect } from "react";
@@ -35,7 +35,7 @@ const CategoryWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding-top: 2rem;
+  padding-block: 2rem;
 `;
 
 const Category = styled.div`
@@ -90,6 +90,17 @@ const CategoryAnswersLink = styled(Link)`
   }
 `;
 
+const ResultsLink = styled(Link)`
+  align-items: center;
+  display: flex;
+  font-size: 2.5rem;
+  gap: 1rem;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 export default function Present() {
   const { event, isLoading: isEventLoading } = useEventContext();
   const {
@@ -137,6 +148,11 @@ export default function Present() {
           ))
         )}
       </CategoryWrapper>
+
+      <ResultsLink href="./results">
+        <Trophy size={32} />
+        Current Results
+      </ResultsLink>
     </BaseWrapper>
   );
 }
