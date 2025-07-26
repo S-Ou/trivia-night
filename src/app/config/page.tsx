@@ -137,12 +137,22 @@ export default function ConfigPage() {
 
     let updatePromise: Promise<void> | undefined;
     switch (key) {
-      case "title":
-        updatePromise = updateEvent({ title: value as string, description });
+      case "title": {
+        const strippedTitle = (value as string).trim();
+        updatePromise = updateEvent({
+          title: strippedTitle,
+          description: description.trim(),
+        });
         break;
-      case "description":
-        updatePromise = updateEvent({ title, description: value as string });
+      }
+      case "description": {
+        const strippedDescription = (value as string).trim();
+        updatePromise = updateEvent({
+          title: title.trim(),
+          description: strippedDescription,
+        });
         break;
+      }
     }
     if (updatePromise) {
       updatePromise
@@ -159,7 +169,11 @@ export default function ConfigPage() {
       value: title,
       required: true,
       onChange: (val) => setTitle(val as string),
-      onBlur: () => handleUpdate("title", title, true),
+      onBlur: () => {
+        const trimmed = title.trim();
+        setTitle(trimmed);
+        handleUpdate("title", trimmed, true);
+      },
     },
     {
       key: "description",
@@ -167,7 +181,11 @@ export default function ConfigPage() {
       type: ConfigComponentType.TextArea,
       value: description,
       onChange: (val) => setDescription(val as string),
-      onBlur: () => handleUpdate("description", description),
+      onBlur: () => {
+        const trimmed = description.trim();
+        setDescription(trimmed);
+        handleUpdate("description", trimmed);
+      },
     },
     {
       key: "enableAnimations",
