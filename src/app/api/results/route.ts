@@ -1,4 +1,4 @@
-import { fetchResults, updateResults } from "@/services/resultsService";
+import { deleteResult, fetchResults, updateResults } from "@/services/resultsService";
 
 export async function GET() {
   try {
@@ -26,6 +26,23 @@ export async function POST(request: Request) {
     return new Response(JSON.stringify(updatedResults), { status: 200 });
   } catch (error) {
     console.error("Error saving results:", error);
+    return new Response("Internal Server Error", { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  const { eventId, playerId } = await request.json();
+
+  if (!eventId || !playerId) {
+    return new Response("Invalid input", { status: 400 });
+  }
+
+  try {
+    const results = await deleteResult(eventId, playerId);
+
+    return new Response(JSON.stringify(results), { status: 200 });
+  } catch (error) {
+    console.error("Error deleting result:", error);
     return new Response("Internal Server Error", { status: 500 });
   }
 }

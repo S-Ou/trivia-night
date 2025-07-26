@@ -13,6 +13,7 @@ interface ResultsContextType {
   isLoading: boolean;
   fetchResults: () => Promise<void>;
   updateResults: (results: Results[]) => Promise<void>;
+  deleteResult: (playerId: string) => Promise<void>;
 }
 
 export const ResultsContext = createContext<ResultsContextType>({
@@ -21,6 +22,9 @@ export const ResultsContext = createContext<ResultsContextType>({
   fetchResults: async () => {},
   updateResults: async () => {
     throw new Error("updateResults not implemented in default context");
+  },
+  deleteResult: async () => {
+    throw new Error("deleteResult not implemented in default context");
   },
 });
 
@@ -92,6 +96,25 @@ export const ResultsProvider = ({ children }: ResultsProviderProps) => {
     }
   }
 
+  async function deleteResult(playerId: string) {
+    try {
+      const response = await fetch("/api/results", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ eventId: 1, playerId }),
+      });
+      const updatedResults = await response.json();
+      setResults(calculatePlaces(updatedResults));
+      if (!response.ok) {
+        throw new Error("Failed to delete result");
+      }
+    } catch (error) {
+      console.error("Error deleting result:", error);
+    }
+  }
+
   useEffect(() => {
     fetchResults();
   }, []);
@@ -103,6 +126,7 @@ export const ResultsProvider = ({ children }: ResultsProviderProps) => {
         isLoading,
         fetchResults,
         updateResults,
+        deleteResult,
       }}
     >
       {children}
@@ -111,4 +135,3 @@ export const ResultsProvider = ({ children }: ResultsProviderProps) => {
 };
 
 export const useResultsContext = () => useContext(ResultsContext);
-import * as React from "react";

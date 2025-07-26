@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { PageTemplate, Page } from "../pageTemplate";
 import { Result, useResultsContext } from "@/contexts/ResultsContext";
 import { intToOrdinal } from "@/utils";
-import { Plus, Trophy } from "lucide-react";
+import { Plus, Trash, Trophy } from "lucide-react";
 import { Button, TextField } from "@radix-ui/themes";
 import { Results } from "@/generated/prisma";
 
@@ -26,6 +26,7 @@ const StyledTable = styled.table`
 
 const PlaceTH = styled.th`
   white-space: nowrap;
+  min-width: 3rem;
 `;
 
 const IconWrapper = styled.div`
@@ -47,6 +48,10 @@ const PlayerTH = styled.th`
 const PlaceTD = styled.td`
   font-weight: 600;
   white-space: nowrap;
+  position: relative;
+  &:hover .delete-btn {
+    display: flex;
+  }
 `;
 
 const ScoreTD = styled.td`
@@ -76,7 +81,9 @@ const AddNewButton = styled(Button)`
 `;
 
 export default function ResultsPage() {
-  const { results, isLoading, updateResults } = useResultsContext();
+  const { results, isLoading, updateResults, deleteResult } =
+    useResultsContext();
+  const [hoveredId, setHoveredId] = React.useState<string | null>(null);
 
   if (isLoading) {
     return <div>Loading results...</div>;
@@ -92,7 +99,6 @@ export default function ResultsPage() {
             score: updatedResult.score,
           }
     );
-
     updateResults(updatedResults);
   }
 
@@ -103,10 +109,12 @@ export default function ResultsPage() {
       playerName: `Player ${results.length + 1}`,
       score: 0,
     };
-
     const updatedResults = [...results, newPlayer];
-
     updateResults(updatedResults);
+  }
+
+  function handleDelete(playerId: string) {
+    deleteResult(playerId);
   }
 
   return (
@@ -126,9 +134,26 @@ export default function ResultsPage() {
         <tbody>
           {results.map((result) => (
             <tr key={result.playerId}>
-              <PlaceTD>
-                {intToOrdinal(result.place)}
-                {result.tied && " ="}
+              <PlaceTD
+                onMouseEnter={() => setHoveredId(result.playerId)}
+                onMouseLeave={() => setHoveredId(null)}
+              >
+                {hoveredId === result.playerId ? (
+                  <Button
+                    className="delete-btn"
+                    variant="ghost"
+                    color="red"
+                    style={{ display: "flex", alignItems: "center" }}
+                    onClick={() => handleDelete(result.playerId)}
+                  >
+                    <Trash size={16} />
+                  </Button>
+                ) : (
+                  <span>
+                    {intToOrdinal(result.place)}
+                    {result.tied && " ="}
+                  </span>
+                )}
               </PlaceTD>
               <PlayerTD>
                 <TextField.Root

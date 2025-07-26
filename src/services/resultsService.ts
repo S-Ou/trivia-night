@@ -13,19 +13,28 @@ export async function fetchResults(eventId: number) {
 }
 
 export async function updateResults(eventId: number, results: Results[]) {
-  const updatePromises = results.map((result) =>
-    prisma.results.upsert({
-      where: { eventId, playerId: result.playerId },
+  const updatePromises = results.map((result) => {
+    return prisma.results.upsert({
+      where: { eventId_playerId: { eventId, playerId: result.playerId } },
       update: { score: result.score, playerName: result.playerName },
       create: {
         eventId,
+        playerId: result.playerId,
         playerName: result.playerName,
         score: result.score,
       },
-    })
-  );
+    });
+  });
 
   await Promise.all(updatePromises);
+
+  return fetchResults(eventId);
+}
+
+export async function deleteResult(eventId: number, playerId: string) {
+  await prisma.results.deleteMany({
+    where: { eventId, playerId },
+  });
 
   return fetchResults(eventId);
 }
