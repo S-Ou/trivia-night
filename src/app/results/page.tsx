@@ -4,13 +4,14 @@ import styled from "styled-components";
 import { PageTemplate, Page } from "../pageTemplate";
 import { Result, useResultsContext } from "@/contexts/ResultsContext";
 import { intToOrdinal } from "@/utils";
-import { RefreshCcw } from "lucide-react";
-import { TextField } from "@radix-ui/themes";
+import { Plus, Trophy } from "lucide-react";
+import { Button, TextField } from "@radix-ui/themes";
+import { Results } from "@/generated/prisma";
 
 const StyledTable = styled.table`
   border-collapse: collapse;
-  width: 75%;
   column-gap: 1rem;
+  width: 75%;
 
   th,
   td {
@@ -25,6 +26,14 @@ const StyledTable = styled.table`
 
 const PlaceTH = styled.th`
   white-space: nowrap;
+`;
+
+const IconWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
 `;
 
 const ScoreTH = styled.th`
@@ -50,6 +59,22 @@ const PlayerTD = styled.td`
   width: 100%;
 `;
 
+const AddNewTD = styled.td``;
+
+const AddNewButton = styled(Button)`
+  align-items: center;
+  color: var(--accent-9);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  width: 100%;
+
+  &:hover {
+    background-color: var(--accent-2);
+  }
+`;
+
 export default function ResultsPage() {
   const { results, isLoading, updateResults } = useResultsContext();
 
@@ -71,13 +96,28 @@ export default function ResultsPage() {
     updateResults(updatedResults);
   }
 
+  function addNewPlayer() {
+    const newPlayer: Results = {
+      playerId: "",
+      eventId: 1,
+      playerName: `Player ${results.length + 1}`,
+      score: 0,
+    };
+
+    const updatedResults = [...results, newPlayer];
+
+    updateResults(updatedResults);
+  }
+
   return (
     <PageTemplate currentPage={Page.Results}>
       <StyledTable>
         <thead>
           <tr>
             <PlaceTH>
-              <RefreshCcw size={16} />
+              <IconWrapper>
+                <Trophy size={16} />
+              </IconWrapper>
             </PlaceTH>
             <PlayerTH>Player</PlayerTH>
             <ScoreTH>Score</ScoreTH>
@@ -120,6 +160,14 @@ export default function ResultsPage() {
               </ScoreTD>
             </tr>
           ))}
+          <tr>
+            <AddNewTD colSpan={3}>
+              <AddNewButton variant="ghost" onClick={addNewPlayer}>
+                <Plus size={16} />
+                Add new player
+              </AddNewButton>
+            </AddNewTD>
+          </tr>
         </tbody>
       </StyledTable>
     </PageTemplate>
