@@ -4,7 +4,7 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { ImportButton, ExportButton } from "../../components/csvButtons";
 import { PageTemplate, Page } from "../pageTemplate";
 import styled from "styled-components";
-import { Button, Separator, Text } from "@radix-ui/themes";
+import { Separator, Text } from "@radix-ui/themes";
 import {
   ChevronDown,
   GripVertical,
@@ -18,8 +18,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { indexToPermutation } from "@/utils/permutations";
 import { useQuestionContext } from "@/contexts/QuestionContext";
 import { letterIndex } from "@/utils";
-
-const MotionContent = motion.div;
 
 const ButtonWrapper = styled.div`
   display: flex;
@@ -49,12 +47,19 @@ const CategoryHeader = styled(Accordion.Trigger)`
   border-radius: max(var(--radius-3), var(--radius-full));
   border: none;
   display: flex;
+  width: 100%;
+  padding: 0.5rem;
+`;
+
+const CategoryHeaderContent = styled.div`
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 0.5rem;
   font-size: 2rem;
   font-stretch: expanded;
   font-weight: 600;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  width: 100%;
+  color: var(--foreground);
 `;
 
 const CategoryContent = styled(Accordion.Content)`
@@ -78,17 +83,24 @@ const QuestionItem = styled.div`
 `;
 
 const QuestionHeader = styled.div`
+  align-items: center;
   background-color: inherit;
   border: none;
-  color: var(--foreground);
-  cursor: grab;
-  font-size: 1.5rem;
-  font-weight: 600;
-  text-align: left;
+  display: flex;
   width: 100%;
 `;
 
-const QuestionContent = styled(MotionContent)``;
+const QuestionHeaderContent = styled.div`
+  align-items: center;
+  color: var(--foreground);
+  display: flex;
+  flex: 1;
+  font-size: 1.5rem;
+  font-weight: 600;
+  gap: 0.5rem;
+`;
+
+const QuestionContent = styled.div``;
 
 const OptionsWrapper = styled.div`
   display: block;
@@ -96,10 +108,10 @@ const OptionsWrapper = styled.div`
 `;
 
 const OptionItem = styled.div<{ $draggable?: boolean; $isDragging?: boolean }>`
+  align-items: center;
   background-color: var(--accent-4);
   border-radius: max(var(--radius-3), var(--radius-full));
   color: var(--foreground);
-  cursor: ${({ $draggable }) => ($draggable ? "grab" : "default")};
   display: flex;
   margin-bottom: 0.5rem;
   opacity: ${({ $isDragging }) => ($isDragging ? 0.5 : 1)};
@@ -107,6 +119,12 @@ const OptionItem = styled.div<{ $draggable?: boolean; $isDragging?: boolean }>`
   padding-inline: 0.5rem;
   user-select: none;
   width: 100%;
+`;
+
+const OptionItemContent = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
   gap: 0.5rem;
 `;
 
@@ -151,6 +169,24 @@ const CategoryGrip = styled.span`
   justify-content: center;
   max-width: 2.5rem;
   min-width: 2.5rem;
+`;
+
+const QuestionGrip = styled.span`
+  align-items: center;
+  cursor: grab;
+  display: flex;
+  height: 100%;
+  padding-inline: 0.25rem;
+  justify-content: center;
+`;
+
+const OptionGrip = styled.span`
+  align-items: center;
+  aspect-ratio: 1 / 1;
+  cursor: grab;
+  display: flex;
+  height: 100%;
+  justify-content: center;
 `;
 
 function Categories() {
@@ -206,13 +242,15 @@ function Categories() {
                         {...dragProvided.draggableProps}
                       >
                         <CategoryHeader>
-                          <AccordionChevron
-                            as={Accordion.Trigger}
-                            value={category.name}
-                          >
-                            <ChevronDown size={28} />
-                          </AccordionChevron>
-                          <span style={{ flex: 1 }}>{category.name}</span>
+                          <CategoryHeaderContent>
+                            <AccordionChevron
+                              as={Accordion.Trigger}
+                              value={category.name}
+                            >
+                              <ChevronDown size={28} />
+                            </AccordionChevron>
+                            {category.name}
+                          </CategoryHeaderContent>
                           <CategoryGrip {...dragProvided.dragHandleProps}>
                             <GripVertical size={24} />
                           </CategoryGrip>
@@ -275,11 +313,16 @@ function Questions({
                     style={snapshot.isDragging ? { opacity: 0.5 } : {}}
                     {...dragProvided.draggableProps}
                   >
-                    <QuestionHeader {...dragProvided.dragHandleProps}>
-                      <AnimatePresence mode="wait">
-                        <AnimatedLabel key={idx}>{idx + 1}.</AnimatedLabel>
-                      </AnimatePresence>{" "}
-                      {question.question}
+                    <QuestionHeader>
+                      <QuestionHeaderContent>
+                        <AnimatePresence mode="wait">
+                          <AnimatedLabel key={idx}>{idx + 1}.</AnimatedLabel>
+                        </AnimatePresence>{" "}
+                        {question.question}
+                      </QuestionHeaderContent>
+                      <QuestionGrip {...dragProvided.dragHandleProps}>
+                        <GripVertical size={24} />
+                      </QuestionGrip>
                     </QuestionHeader>
                     <QuestionContent>
                       <Options
@@ -347,19 +390,23 @@ function Options({
                       $isDragging={snapshot.isDragging}
                       ref={dragProvided.innerRef}
                       {...dragProvided.draggableProps}
-                      {...dragProvided.dragHandleProps}
                     >
-                      <AnimatePresence mode="wait">
-                        <AnimatedLabel key={idx}>
-                          {letterIndex(idx)}
-                        </AnimatedLabel>
-                      </AnimatePresence>
-                      {options[optionIndex].option}
-                      {options[optionIndex].isCorrect && (
-                        <OptionIconWrapper>
-                          <SquareCheck size={16} />
-                        </OptionIconWrapper>
-                      )}
+                      <OptionItemContent>
+                        <AnimatePresence mode="wait">
+                          <AnimatedLabel key={idx}>
+                            {letterIndex(idx)}
+                          </AnimatedLabel>
+                        </AnimatePresence>
+                        {options[optionIndex].option}
+                        {options[optionIndex].isCorrect && (
+                          <OptionIconWrapper>
+                            <SquareCheck size={16} />
+                          </OptionIconWrapper>
+                        )}
+                      </OptionItemContent>
+                      <OptionGrip {...dragProvided.dragHandleProps}>
+                        <GripVertical size={20} />
+                      </OptionGrip>
                     </OptionItem>
                   )}
                 </Draggable>
