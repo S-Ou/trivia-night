@@ -7,10 +7,20 @@ import styled from "styled-components";
 import { Separator, Text } from "@radix-ui/themes";
 import { Question } from "@/types/Question";
 import { Option, QuestionType } from "@/generated/prisma";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { indexToPermutation } from "@/utils/permutations";
 import { useQuestionContext } from "@/contexts/QuestionContext";
 import { letterIndex } from "@/utils";
+
+const AnimatedLabel = styled(motion.span).attrs({
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.3 },
+})`
+  display: inline-block;
+  min-width: 2ch;
+`;
 
 const MotionContent = motion.div;
 
@@ -87,11 +97,12 @@ const OptionsWrapper = styled.div`
   padding: 0.5rem;
 `;
 
-const OptionItem = styled.div<{ $draggable?: boolean }>`
+const OptionItem = styled.div<{ $draggable?: boolean; $isDragging?: boolean }>`
   cursor: ${({ $draggable }) => ($draggable ? "grab" : "default")};
   margin-bottom: 0.25rem;
   user-select: none;
   width: 100%;
+  opacity: ${({ $isDragging }) => ($isDragging ? 0.5 : 1)};
 `;
 
 function Categories() {
@@ -202,7 +213,10 @@ function Questions({
                     {...dragProvided.draggableProps}
                   >
                     <QuestionHeader {...dragProvided.dragHandleProps}>
-                      {idx + 1}. {question.question}
+                      <AnimatePresence mode="wait">
+                        <AnimatedLabel key={idx}>{idx + 1}.</AnimatedLabel>
+                      </AnimatePresence>{" "}
+                      {question.question}
                     </QuestionHeader>
                     <QuestionContent>
                       <Options
@@ -267,12 +281,16 @@ function Options({
                   {(dragProvided, snapshot) => (
                     <OptionItem
                       $draggable
+                      $isDragging={snapshot.isDragging}
                       ref={dragProvided.innerRef}
-                      style={snapshot.isDragging ? { opacity: 0.5 } : {}}
                       {...dragProvided.draggableProps}
                       {...dragProvided.dragHandleProps}
                     >
-                      {letterIndex(idx) + ": "}
+                      <AnimatePresence mode="wait">
+                        <AnimatedLabel key={idx}>
+                          {letterIndex(idx) + ": "}
+                        </AnimatedLabel>
+                      </AnimatePresence>
                       {options[optionIndex].option}
                       {options[optionIndex].isCorrect ? " (Correct)" : ""}
                     </OptionItem>
