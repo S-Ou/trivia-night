@@ -225,7 +225,11 @@ function Categories() {
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="categories-droppable">
           {(provided) => (
-            <Accordion.Root type="multiple" asChild>
+            <Accordion.Root
+              type="multiple"
+              asChild
+              defaultValue={orderedCategories.map((cat) => cat.name)}
+            >
               <CategoryList
                 ref={provided.innerRef}
                 {...provided.droppableProps}
