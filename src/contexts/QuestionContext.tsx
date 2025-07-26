@@ -16,6 +16,8 @@ interface QuestionContextType {
   fetchQuestions: () => Promise<void>;
   getCategory: (index: number) => CategoryBundle;
   isLoading: boolean;
+  nextCategoryIndex: number | null;
+  setNextCategoryIndex: (index: number | null) => void;
 }
 
 export const QuestionContext = createContext<QuestionContextType>({
@@ -27,6 +29,10 @@ export const QuestionContext = createContext<QuestionContextType>({
     throw new Error("getCategory not implemented in default context");
   },
   isLoading: false,
+  nextCategoryIndex: null,
+  setNextCategoryIndex: () => {
+    throw new Error("setNextCategoryIndex not implemented in default context");
+  },
 });
 
 interface QuestionProviderProps {
@@ -37,6 +43,8 @@ export const QuestionProvider = ({ children }: QuestionProviderProps) => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const [nextCategoryIndex, setNextCategoryIndex] = useState<number | null>(0);
 
   const combinedQuestions = useMemo(
     () => ({
@@ -87,6 +95,8 @@ export const QuestionProvider = ({ children }: QuestionProviderProps) => {
         fetchQuestions,
         getCategory,
         isLoading,
+        nextCategoryIndex,
+        setNextCategoryIndex,
       }}
     >
       {children}

@@ -3,7 +3,9 @@
 import { useEventContext } from "@/contexts/EventContext";
 import { useQuestionContext } from "@/contexts/QuestionContext";
 import { ChevronRight, CircleCheckBig } from "lucide-react";
+import next from "next";
 import Link from "next/link";
+import { useEffect } from "react";
 import styled from "styled-components";
 
 const BaseWrapper = styled.div`
@@ -50,7 +52,7 @@ const CategoryLabel = styled.h3`
   font-weight: 600;
 `;
 
-const CategoryLink = styled(Link)`
+const CategoryLink = styled(Link)<{ $isNextLink: boolean }>`
   align-items: center;
   color: inherit;
   display: flex;
@@ -60,6 +62,15 @@ const CategoryLink = styled(Link)`
   justify-content: center;
   text-decoration: none;
   transition: transform 0.2s ease;
+
+  ${({ $isNextLink }) =>
+    $isNextLink &&
+    `
+    color: var(--accent-10);
+    svg {
+      transform: translateX(-0.5rem);
+    }
+  `}
 
   &:hover {
     text-decoration: underline;
@@ -81,7 +92,20 @@ const CategoryAnswersLink = styled(Link)`
 
 export default function Present() {
   const { event, isLoading: isEventLoading } = useEventContext();
-  const { categories, isLoading: isQuestionLoading } = useQuestionContext();
+  const {
+    categories,
+    isLoading: isQuestionLoading,
+    nextCategoryIndex,
+    setNextCategoryIndex,
+  } = useQuestionContext();
+
+  useEffect(() => {
+    if (isQuestionLoading) return;
+
+    if (nextCategoryIndex === categories.length) {
+      setNextCategoryIndex(null);
+    }
+  }, [isQuestionLoading]);
 
   if (isEventLoading) {
     return <p>Loading event...</p>;
@@ -93,19 +117,26 @@ export default function Present() {
       <Description>{event.description}</Description>
 
       <CategoryWrapper>
-        <CategoryLabel>Today's Categories</CategoryLabel>
+        <CategoryLabel>
+          Today's Categories {nextCategoryIndex ?? "null"}
+        </CategoryLabel>
         {isQuestionLoading ? (
           <p>Loading questions...</p>
         ) : (
           categories.map((category, index) => (
             <Category key={category.name || index}>
-              <CategoryLink href={`./category/${index}`}>
+              <CategoryLink
+                href={`./category/${index}`}
+                $isNextLink={nextCategoryIndex === index}
+              >
                 <ChevronRight size={32} />
                 {category.name}
               </CategoryLink>
-              <CategoryAnswersLink href={`./category/${index}?answers=true`}>
-                <CircleCheckBig size={16} /> Answers
-              </CategoryAnswersLink>
+              {(nextCategoryIndex === null || nextCategoryIndex > index) && (
+                <CategoryAnswersLink href={`./category/${index}?answers=true`}>
+                  <CircleCheckBig size={16} /> Answers
+                </CategoryAnswersLink>
+              )}
             </Category>
           ))
         )}

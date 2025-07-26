@@ -26,9 +26,17 @@ export default function CategoryPage() {
   const [pageState, setPageState] = useState<PageState>(PageState.Title);
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
 
-  const { getCategory, categories, isLoading } = useQuestionContext();
+  const { getCategory, categories, isLoading, setNextCategoryIndex } =
+    useQuestionContext();
 
   function goHome() {
+    if (!showAnswers) {
+      if (pageState === PageState.Summary) {
+        setNextCategoryIndex(parsedIndex + 1);
+      } else {
+        setNextCategoryIndex(parsedIndex);
+      }
+    }
     router.push("../../");
   }
 
