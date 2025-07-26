@@ -5,7 +5,12 @@ import { ImportButton, ExportButton } from "../../components/csvButtons";
 import { PageTemplate, Page } from "../pageTemplate";
 import styled from "styled-components";
 import { Button, Separator, Text } from "@radix-ui/themes";
-import { ChevronDown, GripVertical } from "lucide-react";
+import {
+  ChevronDown,
+  GripVertical,
+  PencilLine,
+  SquareCheck,
+} from "lucide-react";
 import { Accordion } from "radix-ui";
 import { Question } from "@/types/Question";
 import { Option, QuestionType } from "@/generated/prisma";
@@ -13,16 +18,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { indexToPermutation } from "@/utils/permutations";
 import { useQuestionContext } from "@/contexts/QuestionContext";
 import { letterIndex } from "@/utils";
-
-const AnimatedLabel = styled(motion.span).attrs({
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
-  transition: { duration: 0.3 },
-})`
-  display: inline-block;
-  min-width: 2ch;
-`;
 
 const MotionContent = motion.div;
 
@@ -74,6 +69,9 @@ const QuestionList = styled.div`
 const QuestionItem = styled.div`
   border-radius: max(var(--radius-3), var(--radius-full));
   border: 2px solid var(--accent-7);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
   margin-bottom: 1rem;
   padding: 0.5rem;
   width: 100%;
@@ -93,20 +91,41 @@ const QuestionHeader = styled.div`
 const QuestionContent = styled(MotionContent)``;
 
 const OptionsWrapper = styled.div`
-  background-color: var(--accent-4);
-  border-radius: max(var(--radius-3), var(--radius-full));
-  color: var(--foreground);
   display: block;
   font-size: 1rem;
-  padding: 0.5rem;
 `;
 
 const OptionItem = styled.div<{ $draggable?: boolean; $isDragging?: boolean }>`
+  background-color: var(--accent-4);
+  border-radius: max(var(--radius-3), var(--radius-full));
+  color: var(--foreground);
   cursor: ${({ $draggable }) => ($draggable ? "grab" : "default")};
-  margin-bottom: 0.25rem;
+  display: flex;
+  margin-bottom: 0.5rem;
   opacity: ${({ $isDragging }) => ($isDragging ? 0.5 : 1)};
+  padding-block: 0.25rem;
+  padding-inline: 0.5rem;
   user-select: none;
   width: 100%;
+  gap: 0.5rem;
+`;
+
+const AnimatedLabel = styled(motion.span).attrs({
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.3 },
+})`
+  display: inline-block;
+  min-width: 2ch;
+  font-weight: 500;
+`;
+
+const OptionIconWrapper = styled.span`
+  align-items: center;
+  display: inline-flex;
+  justify-content: start;
+  min-width: 2ch;
 `;
 
 const AccordionChevron = styled.span`
@@ -332,18 +351,24 @@ function Options({
                     >
                       <AnimatePresence mode="wait">
                         <AnimatedLabel key={idx}>
-                          {letterIndex(idx) + ": "}
+                          {letterIndex(idx)}
                         </AnimatedLabel>
                       </AnimatePresence>
                       {options[optionIndex].option}
-                      {options[optionIndex].isCorrect ? " (Correct)" : ""}
+                      {options[optionIndex].isCorrect && (
+                        <OptionIconWrapper>
+                          <SquareCheck size={16} />
+                        </OptionIconWrapper>
+                      )}
                     </OptionItem>
                   )}
                 </Draggable>
               ) : (
                 <OptionItem key={optionIndex} $draggable={false}>
+                  <OptionIconWrapper>
+                    <PencilLine size={16} />
+                  </OptionIconWrapper>
                   {options[optionIndex].option}
-                  {options[optionIndex].isCorrect ? " (Correct)" : ""}
                 </OptionItem>
               )
             )}
