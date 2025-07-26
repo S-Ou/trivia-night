@@ -3,7 +3,7 @@
 import { Results } from "@/generated/prisma";
 import { createContext, useContext, useEffect, useState } from "react";
 
-interface Result extends Results {
+export interface Result extends Results {
   place: number;
   tied: boolean;
 }

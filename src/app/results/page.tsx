@@ -2,13 +2,15 @@
 import React from "react";
 import styled from "styled-components";
 import { PageTemplate, Page } from "../pageTemplate";
-import { useResultsContext } from "@/contexts/ResultsContext";
+import { Result, useResultsContext } from "@/contexts/ResultsContext";
 import { intToOrdinal } from "@/utils";
+import { RefreshCcw } from "lucide-react";
+import { TextField } from "@radix-ui/themes";
 
 const StyledTable = styled.table`
   border-collapse: collapse;
-  margin-top: 1rem;
-  width: 80%;
+  width: 75%;
+  column-gap: 1rem;
 
   th,
   td {
@@ -21,15 +23,52 @@ const StyledTable = styled.table`
   }
 `;
 
-const BoldTD = styled.td`
+const PlaceTH = styled.th`
+  white-space: nowrap;
+`;
+
+const ScoreTH = styled.th`
+  white-space: nowrap;
+`;
+
+const PlayerTH = styled.th`
+  width: 100%;
+`;
+
+const PlaceTD = styled.td`
   font-weight: 600;
+  white-space: nowrap;
+`;
+
+const ScoreTD = styled.td`
+  font-weight: 500;
+  white-space: nowrap;
+`;
+
+const PlayerTD = styled.td`
+  font-weight: 400;
+  width: 100%;
 `;
 
 export default function ResultsPage() {
-  const { results, isLoading } = useResultsContext();
+  const { results, isLoading, updateResults } = useResultsContext();
 
   if (isLoading) {
     return <div>Loading results...</div>;
+  }
+
+  function onBlurHandler(updatedResult: Result) {
+    const updatedResults = results.map((result) =>
+      result.playerId != updatedResult.playerId
+        ? result
+        : {
+            ...result,
+            playerName: updatedResult.playerName,
+            score: updatedResult.score,
+          }
+    );
+
+    updateResults(updatedResults);
   }
 
   return (
@@ -37,20 +76,48 @@ export default function ResultsPage() {
       <StyledTable>
         <thead>
           <tr>
-            <th>Place</th>
-            <th>Player</th>
-            <th>Score</th>
+            <PlaceTH>
+              <RefreshCcw size={16} />
+            </PlaceTH>
+            <PlayerTH>Player</PlayerTH>
+            <ScoreTH>Score</ScoreTH>
           </tr>
         </thead>
         <tbody>
           {results.map((result) => (
             <tr key={result.playerId}>
-              <BoldTD>
+              <PlaceTD>
                 {intToOrdinal(result.place)}
                 {result.tied && " ="}
-              </BoldTD>
-              <BoldTD>{result.playerName}</BoldTD>
-              <BoldTD>{result.score}</BoldTD>
+              </PlaceTD>
+              <PlayerTD>
+                <TextField.Root
+                  defaultValue={result.playerName}
+                  onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+                    onBlurHandler({
+                      ...result,
+                      playerName: e.target.value.trim(),
+                    });
+                  }}
+                  size="2"
+                  variant="soft"
+                />
+              </PlayerTD>
+              <ScoreTD>
+                <TextField.Root
+                  defaultValue={result.score}
+                  type="number"
+                  onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+                    onBlurHandler({
+                      ...result,
+                      score: parseInt(e.target.value, 10),
+                    });
+                  }}
+                  size="2"
+                  variant="soft"
+                  inputMode="numeric"
+                />
+              </ScoreTD>
             </tr>
           ))}
         </tbody>
