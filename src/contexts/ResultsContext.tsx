@@ -34,7 +34,7 @@ interface ResultsProviderProps {
 
 export const ResultsProvider = ({ children }: ResultsProviderProps) => {
   const [results, setResults] = useState<Result[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   function calculatePlaces(rawResults: Results[]): Result[] {
     if (!rawResults || rawResults.length === 0) return [];

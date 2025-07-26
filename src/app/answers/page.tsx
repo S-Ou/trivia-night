@@ -53,10 +53,6 @@ const IconWrapper = styled.div`
 export default function AnswersPage() {
   const { combinedQuestions, categories, isLoading } = useQuestionContext();
 
-  if (isLoading) {
-    return <Text size="2">Loading...</Text>;
-  }
-
   return (
     <PageTemplate currentPage={Page.Answers}>
       <StyledTable>

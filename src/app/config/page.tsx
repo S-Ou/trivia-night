@@ -55,6 +55,7 @@ type ConfigField = {
   type: ConfigComponentType;
   value: string | boolean;
   required?: boolean;
+  disabled?: boolean;
   onChange: (value: string | boolean) => void;
   onBlur?: () => void;
 };
@@ -64,10 +65,11 @@ function ConfigComponent({
   type,
   value,
   required = false,
+  disabled = false,
   onChange,
   onBlur,
 }: ConfigField) {
-  const error = required && !value;
+  const error = required && !value && !disabled;
   return (
     <>
       <ConfigLabel>
@@ -83,6 +85,7 @@ function ConfigComponent({
               onChange(e.target.value)
             }
             onBlur={onBlur}
+            disabled={disabled}
             $error={error}
           />
         ) : type === ConfigComponentType.TextArea ? (
@@ -93,10 +96,15 @@ function ConfigComponent({
               onChange(e.target.value)
             }
             onBlur={onBlur}
+            disabled={disabled}
             $error={error}
           />
         ) : type === ConfigComponentType.Switch ? (
-          <Switch checked={value as boolean} onCheckedChange={onChange} />
+          <Switch
+            checked={value as boolean}
+            onCheckedChange={onChange}
+            disabled={disabled}
+          />
         ) : null}
       </ConfigInput>
     </>
@@ -168,6 +176,7 @@ export default function ConfigPage() {
       type: ConfigComponentType.TextField,
       value: title,
       required: true,
+      disabled: isLoading,
       onChange: (val) => setTitle(val as string),
       onBlur: () => {
         const trimmed = title.trim();
@@ -180,6 +189,7 @@ export default function ConfigPage() {
       label: "Description",
       type: ConfigComponentType.TextArea,
       value: description,
+      disabled: isLoading,
       onChange: (val) => setDescription(val as string),
       onBlur: () => {
         const trimmed = description.trim();
@@ -192,14 +202,13 @@ export default function ConfigPage() {
       label: "Enable animations",
       type: ConfigComponentType.Switch,
       value: enableAnimations,
+      disabled: isLoading,
       onChange: (val) => {
         setEnableAnimations(val as boolean);
         // handleUpdate("enableAnimations", val as boolean); // enable later
       },
     },
   ];
-
-  if (isLoading) return <div>Loading...</div>;
 
   return (
     <PageTemplate currentPage={Page.Config}>

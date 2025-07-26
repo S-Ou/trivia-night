@@ -26,7 +26,7 @@ interface EventProviderProps {
 
 export const EventProvider = ({ children }: EventProviderProps) => {
   const [event, setEvent] = useState<Event>({} as Event);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   async function fetchEvent() {
     setIsLoading(true);

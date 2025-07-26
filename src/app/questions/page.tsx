@@ -233,7 +233,7 @@ function Categories() {
     return <Text size="2">Loading...</Text>;
   }
 
-  if (localCategories.length === 0) {
+  if (categories.length === 0) {
     return (
       <Text size="2">
         No questions uploaded. Import them using the button above! You can
@@ -250,7 +250,7 @@ function Categories() {
             <Accordion.Root
               type="multiple"
               asChild
-              defaultValue={localCategories.map((cat) => cat.name)}
+              defaultValue={categories.map((cat) => cat.name)}
             >
               <CategoryList
                 ref={provided.innerRef}

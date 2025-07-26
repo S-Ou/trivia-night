@@ -85,10 +85,6 @@ export default function ResultsPage() {
     useResultsContext();
   const [hoveredId, setHoveredId] = React.useState<string | null>(null);
 
-  if (isLoading) {
-    return <div>Loading results...</div>;
-  }
-
   function onBlurHandler(updatedResult: Result) {
     const updatedResults = results.map((result) =>
       result.playerId != updatedResult.playerId
@@ -185,14 +181,16 @@ export default function ResultsPage() {
               </ScoreTD>
             </tr>
           ))}
-          <tr>
-            <AddNewTD colSpan={3}>
-              <AddNewButton variant="ghost" onClick={addNewPlayer}>
-                <Plus size={16} />
-                Add new player
-              </AddNewButton>
-            </AddNewTD>
-          </tr>
+          {!isLoading && (
+            <tr>
+              <AddNewTD colSpan={3}>
+                <AddNewButton variant="ghost" onClick={addNewPlayer}>
+                  <Plus size={16} />
+                  Add new player
+                </AddNewButton>
+              </AddNewTD>
+            </tr>
+          )}
         </tbody>
       </StyledTable>
     </PageTemplate>

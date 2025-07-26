@@ -49,7 +49,7 @@ interface QuestionProviderProps {
 export const QuestionProvider = ({ children }: QuestionProviderProps) => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [nextCategoryIndex, setNextCategoryIndex] = useState<number | null>(0);
 
