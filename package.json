@@ -12,6 +12,7 @@
     "prisma:migrate": "npx prisma migrate deploy"
   },
   "dependencies": {
+    "@hello-pangea/dnd": "^18.0.1",
     "@prisma/client": "^6.11.1",
     "@radix-ui/themes": "^3.2.1",
     "buffer": "^6.0.3",

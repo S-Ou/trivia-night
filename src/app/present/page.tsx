@@ -117,9 +117,7 @@ export default function Present() {
       <Description>{event.description}</Description>
 
       <CategoryWrapper>
-        <CategoryLabel>
-          Today's Categories {nextCategoryIndex ?? "null"}
-        </CategoryLabel>
+        <CategoryLabel>Today's Categories</CategoryLabel>
         {isQuestionLoading ? (
           <p>Loading questions...</p>
         ) : (

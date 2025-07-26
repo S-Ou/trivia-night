@@ -1,18 +1,18 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { ImportButton, ExportButton } from "../../components/csvButtons";
 import { PageTemplate, Page } from "../pageTemplate";
 import styled from "styled-components";
 import { Separator, Text } from "@radix-ui/themes";
 import { Question } from "@/types/Question";
 import { Option, QuestionType } from "@/generated/prisma";
-import { Accordion } from "radix-ui";
 import { motion } from "framer-motion";
 import { indexToPermutation } from "@/utils/permutations";
 import { useQuestionContext } from "@/contexts/QuestionContext";
 import { letterIndex } from "@/utils";
 
-const MotionContent = motion(Accordion.Content);
+const MotionContent = motion.div;
 
 const ButtonWrapper = styled.div`
   display: flex;
@@ -24,20 +24,19 @@ const QuestionSetWrapper = styled.div`
   width: 100%;
 `;
 
-const CategoryAccordionRoot = styled(Accordion.Root)`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+const CategoryList = styled.div`
+  display: block;
   width: 100%;
 `;
 
-const CategoryAccordionItem = styled(Accordion.Item)`
+const CategoryItem = styled.div`
   background-color: var(--accent-3);
   border-radius: max(var(--radius-3), var(--radius-full));
   width: 100%;
+  margin-bottom: 1rem;
 `;
 
-const CategoryAccordionTrigger = styled(Accordion.Trigger)`
+const CategoryHeader = styled.div`
   background-color: var(--accent-9);
   border-radius: max(var(--radius-3), var(--radius-full));
   border: none;
@@ -46,27 +45,27 @@ const CategoryAccordionTrigger = styled(Accordion.Trigger)`
   font-weight: 600;
   padding: 0.5rem;
   width: 100%;
+  cursor: grab;
 `;
 
-const CategoryAccordionContent = styled(MotionContent)`
+const CategoryContent = styled(MotionContent)`
   padding: 1rem;
 `;
 
-const QuestionAccordionRoot = styled(Accordion.Root)`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+const QuestionList = styled.div`
+  display: block;
   width: 100%;
 `;
 
-const QuestionAccordionItem = styled(Accordion.Item)`
+const QuestionItem = styled.div`
   border-radius: max(var(--radius-3), var(--radius-full));
   border: 2px solid var(--accent-7);
   padding: 0.5rem;
   width: 100%;
+  margin-bottom: 1rem;
 `;
 
-const QuestionAccordionTrigger = styled(Accordion.Trigger)`
+const QuestionHeader = styled.div`
   background-color: inherit;
   border: none;
   color: var(--foreground);
@@ -74,37 +73,48 @@ const QuestionAccordionTrigger = styled(Accordion.Trigger)`
   font-weight: 600;
   text-align: left;
   width: 100%;
+  cursor: grab;
 `;
 
-const QuestionAccordionContent = styled(MotionContent)``;
+const QuestionContent = styled(MotionContent)``;
 
 const OptionsWrapper = styled.div`
   background-color: var(--accent-4);
   border-radius: max(var(--radius-3), var(--radius-full));
   color: var(--foreground);
-  display: flex;
-  flex-direction: column;
+  display: block;
   font-size: 1rem;
-  gap: 0.25rem;
   padding: 0.5rem;
+`;
+
+const OptionItem = styled.div<{ $draggable?: boolean }>`
+  cursor: ${({ $draggable }) => ($draggable ? "grab" : "default")};
+  margin-bottom: 0.25rem;
+  user-select: none;
+  width: 100%;
 `;
 
 function Categories() {
   const { combinedQuestions, categories, isLoading } = useQuestionContext();
-
-  const [openCategories, setOpenCategories] = useState<string[]>(
-    categories.map((cat) => cat.name)
-  );
+  const [orderedCategories, setOrderedCategories] = useState(categories);
 
   useEffect(() => {
-    setOpenCategories(categories.map((cat) => cat.name));
+    setOrderedCategories(categories);
   }, [categories]);
+
+  const onDragEnd = (result: any) => {
+    if (!result.destination) return;
+    const newOrder = Array.from(orderedCategories);
+    const [removed] = newOrder.splice(result.source.index, 1);
+    newOrder.splice(result.destination.index, 0, removed);
+    setOrderedCategories(newOrder);
+  };
 
   if (isLoading) {
     return <Text size="2">Loading...</Text>;
   }
 
-  if (categories.length === 0) {
+  if (orderedCategories.length === 0) {
     return (
       <Text size="2">
         No questions uploaded. Import them using the button above! You can
@@ -115,54 +125,102 @@ function Categories() {
 
   return (
     <QuestionSetWrapper>
-      <CategoryAccordionRoot
-        type="multiple"
-        value={openCategories}
-        onValueChange={setOpenCategories}
-      >
-        {categories.map((category) => (
-          <CategoryAccordionItem key={category.name} value={category.name}>
-            <CategoryAccordionTrigger>{category.name}</CategoryAccordionTrigger>
-            <CategoryAccordionContent>
-              <Questions questions={combinedQuestions[category.name] || []} />
-            </CategoryAccordionContent>
-          </CategoryAccordionItem>
-        ))}
-      </CategoryAccordionRoot>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="categories-droppable">
+          {(provided) => (
+            <CategoryList ref={provided.innerRef} {...provided.droppableProps}>
+              {orderedCategories.map((category, idx) => (
+                <Draggable
+                  key={category.name}
+                  draggableId={category.name}
+                  index={idx}
+                >
+                  {(dragProvided, snapshot) => (
+                    <CategoryItem
+                      ref={dragProvided.innerRef}
+                      style={snapshot.isDragging ? { opacity: 0.5 } : {}}
+                      {...dragProvided.draggableProps}
+                    >
+                      <CategoryHeader {...dragProvided.dragHandleProps}>
+                        {category.name}
+                      </CategoryHeader>
+                      <CategoryContent>
+                        <Questions
+                          questions={combinedQuestions[category.name] || []}
+                          categoryName={category.name}
+                        />
+                      </CategoryContent>
+                    </CategoryItem>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </CategoryList>
+          )}
+        </Droppable>
+      </DragDropContext>
     </QuestionSetWrapper>
   );
 }
 
-function Questions({ questions }: { questions: Question[] }) {
-  const [openQuestions, setOpenQuestions] = useState<string[]>([]);
+function Questions({
+  questions,
+  categoryName,
+}: {
+  questions: Question[];
+  categoryName: string;
+}) {
+  const [orderedQuestions, setOrderedQuestions] = useState(questions);
 
   useEffect(() => {
-    setOpenQuestions(questions.map((q) => q.id));
+    setOrderedQuestions(questions);
   }, [questions]);
 
+  const onDragEnd = (result: any) => {
+    if (!result.destination) return;
+    const newOrder = Array.from(orderedQuestions);
+    const [removed] = newOrder.splice(result.source.index, 1);
+    newOrder.splice(result.destination.index, 0, removed);
+    setOrderedQuestions(newOrder);
+  };
+
   return (
-    <QuestionAccordionRoot
-      type="multiple"
-      value={openQuestions}
-      onValueChange={(value) => {
-        setOpenQuestions(value);
-      }}
-    >
-      {questions.map((question, index) => (
-        <QuestionAccordionItem key={question.id} value={question.id}>
-          <QuestionAccordionTrigger>
-            {index + 1}. {question.question}
-          </QuestionAccordionTrigger>
-          <QuestionAccordionContent>
-            <Options
-              options={question.options}
-              order={question.optionOrder}
-              type={question.questionType}
-            />
-          </QuestionAccordionContent>
-        </QuestionAccordionItem>
-      ))}
-    </QuestionAccordionRoot>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Droppable droppableId={`questions-droppable-${categoryName}`}>
+        {(provided) => (
+          <QuestionList ref={provided.innerRef} {...provided.droppableProps}>
+            {orderedQuestions.map((question, idx) => (
+              <Draggable
+                key={question.id}
+                draggableId={question.id}
+                index={idx}
+              >
+                {(dragProvided, snapshot) => (
+                  <QuestionItem
+                    ref={dragProvided.innerRef}
+                    style={snapshot.isDragging ? { opacity: 0.5 } : {}}
+                    {...dragProvided.draggableProps}
+                  >
+                    <QuestionHeader {...dragProvided.dragHandleProps}>
+                      {idx + 1}. {question.question}
+                    </QuestionHeader>
+                    <QuestionContent>
+                      <Options
+                        options={question.options}
+                        order={question.optionOrder}
+                        type={question.questionType}
+                        questionId={question.id}
+                      />
+                    </QuestionContent>
+                  </QuestionItem>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+          </QuestionList>
+        )}
+      </Droppable>
+    </DragDropContext>
   );
 }
 
@@ -170,24 +228,68 @@ function Options({
   options,
   order,
   type,
+  questionId,
 }: {
   options: Option[];
   order: number;
   type: QuestionType;
+  questionId: string;
 }) {
-  const permutations = indexToPermutation(order, options.length);
+  const [orderedOptions, setOrderedOptions] = useState(
+    indexToPermutation(order, options.length)
+  );
   const isMultiChoice = type === "multiChoice";
 
+  useEffect(() => {
+    setOrderedOptions(indexToPermutation(order, options.length));
+  }, [options, order]);
+
+  const onDragEnd = (result: any) => {
+    if (!result.destination) return;
+    const newOrder = Array.from(orderedOptions);
+    const [removed] = newOrder.splice(result.source.index, 1);
+    newOrder.splice(result.destination.index, 0, removed);
+    setOrderedOptions(newOrder);
+  };
+
   return (
-    <OptionsWrapper>
-      {permutations.map((optionIndex, index) => (
-        <p key={optionIndex}>
-          {isMultiChoice && letterIndex(index) + ": "}
-          {options[optionIndex].option}
-          {options[optionIndex].isCorrect && isMultiChoice ? " (Correct)" : ""}
-        </p>
-      ))}
-    </OptionsWrapper>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Droppable droppableId={`options-droppable-${questionId}`}>
+        {(provided) => (
+          <OptionsWrapper ref={provided.innerRef} {...provided.droppableProps}>
+            {orderedOptions.map((optionIndex, idx) =>
+              isMultiChoice ? (
+                <Draggable
+                  key={optionIndex}
+                  draggableId={optionIndex.toString()}
+                  index={idx}
+                >
+                  {(dragProvided, snapshot) => (
+                    <OptionItem
+                      $draggable
+                      ref={dragProvided.innerRef}
+                      style={snapshot.isDragging ? { opacity: 0.5 } : {}}
+                      {...dragProvided.draggableProps}
+                      {...dragProvided.dragHandleProps}
+                    >
+                      {letterIndex(idx) + ": "}
+                      {options[optionIndex].option}
+                      {options[optionIndex].isCorrect ? " (Correct)" : ""}
+                    </OptionItem>
+                  )}
+                </Draggable>
+              ) : (
+                <OptionItem key={optionIndex} $draggable={false}>
+                  {options[optionIndex].option}
+                  {options[optionIndex].isCorrect ? " (Correct)" : ""}
+                </OptionItem>
+              )
+            )}
+            {provided.placeholder}
+          </OptionsWrapper>
+        )}
+      </Droppable>
+    </DragDropContext>
   );
 }
 
@@ -202,8 +304,9 @@ export default function QuestionsPage() {
         Click &quot;Export&quot; to obtain the CSV file format
       </Text>
       <Separator size="4" />
-      <Text size="5" weight="bold" style={{ textAlign: "center" }}>
-        Reorder questions and categories by dragging and dropping them below.
+      <Text size="4" weight="bold" style={{ textAlign: "center" }}>
+        Reorder categories, questions, and options by dragging and dropping them
+        below.
       </Text>
       <Categories />
     </PageTemplate>
