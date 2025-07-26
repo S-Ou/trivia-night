@@ -1,6 +1,8 @@
 "use client";
 
+import React, { useState } from "react";
 import BaseSlide from "@/components/slides/baseSlide";
+import { useEventContext } from "@/contexts/EventContext";
 import { useResultsContext } from "@/contexts/ResultsContext";
 import { intToOrdinal } from "@/utils";
 import styled from "styled-components";
@@ -36,27 +38,72 @@ const ScoreTD = styled(StyledTD)`
   font-size: 2.5rem;
 `;
 
+const HiddenSpan = styled.span<{ isHidden?: boolean }>`
+  opacity: ${(props) => (props.isHidden ? 0 : 1)};
+  transition: opacity 0.3s;
+`;
+
+const RevealOverlay = styled.span`
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  font-size: 2.5rem;
+  font-variation-settings: "slnt" -10;
+  font-weight: 300;
+  height: 100%;
+  justify-content: start;
+  left: 3rem;
+  position: absolute;
+  top: 0;
+  width: 100%;
+`;
+
 export default function PresentResultsPage() {
-  const { results, isLoading } = useResultsContext();
+  const { results, isLoading: isResultsLoading } = useResultsContext();
+  const { event, isLoading: isEventLoading } = useEventContext();
+  const [revealedRows, setRevealedRows] = useState<Set<string>>(new Set());
+
+  const handleReveal = (playerId: string) => {
+    setRevealedRows((prev) => new Set(prev).add(playerId));
+  };
 
   return (
     <BaseSlide>
       <Title>Results</Title>
-      {isLoading ? (
+      {isResultsLoading ? (
         <p>Loading results...</p>
       ) : (
         <ResultsTable>
           <tbody>
-            {results.map((result) => (
-              <tr key={result.playerId}>
-                <PlaceTD>
-                  {intToOrdinal(result.place)}
-                  {result.tied && " ="}
-                </PlaceTD>
-                <PlayerTD>{result.playerName}</PlayerTD>
-                <ScoreTD>{result.score}</ScoreTD>
-              </tr>
-            ))}
+            {results.map((result) => {
+              const isHidden =
+                event.hideResults && !revealedRows.has(result.playerId);
+              return (
+                <tr key={result.playerId}>
+                  <PlaceTD>
+                    {intToOrdinal(result.place)}
+                    {result.tied && " ="}
+                  </PlaceTD>
+                  <PlayerTD style={{ position: "relative" }}>
+                    <HiddenSpan isHidden={isEventLoading || isHidden}>
+                      {result.playerName}
+                    </HiddenSpan>
+                    {isHidden && (
+                      <RevealOverlay
+                        onClick={() => handleReveal(result.playerId)}
+                      >
+                        click to reveal
+                      </RevealOverlay>
+                    )}
+                  </PlayerTD>
+                  <ScoreTD style={{ position: "relative" }}>
+                    <HiddenSpan isHidden={isEventLoading || isHidden}>
+                      {result.score}
+                    </HiddenSpan>
+                  </ScoreTD>
+                </tr>
+              );
+            })}
           </tbody>
         </ResultsTable>
       )}
