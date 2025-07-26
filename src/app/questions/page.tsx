@@ -47,19 +47,19 @@ const CategoryHeader = styled(Accordion.Trigger)`
   border-radius: max(var(--radius-3), var(--radius-full));
   border: none;
   display: flex;
-  width: 100%;
   padding: 0.5rem;
+  width: 100%;
 `;
 
 const CategoryHeaderContent = styled.div`
-  display: flex;
   align-items: center;
+  color: var(--background);
+  display: flex;
   flex: 1;
-  gap: 0.5rem;
   font-size: 2rem;
   font-stretch: expanded;
   font-weight: 600;
-  color: var(--foreground);
+  gap: 0.5rem;
 `;
 
 const CategoryContent = styled(Accordion.Content)`
@@ -98,6 +98,8 @@ const QuestionHeaderContent = styled.div`
   font-size: 1.5rem;
   font-weight: 600;
   gap: 0.5rem;
+  padding-inline: 0.5rem;
+  text-wrap: balance;
 `;
 
 const QuestionContent = styled.div``;
@@ -412,10 +414,12 @@ function Options({
                 </Draggable>
               ) : (
                 <OptionItem key={optionIndex} $draggable={false}>
-                  <OptionIconWrapper>
-                    <PencilLine size={16} />
-                  </OptionIconWrapper>
-                  {options[optionIndex].option}
+                  <OptionItemContent>
+                    <OptionIconWrapper>
+                      <PencilLine size={16} />
+                    </OptionIconWrapper>
+                    {options[optionIndex].option}
+                  </OptionItemContent>
                 </OptionItem>
               )
             )}
@@ -438,7 +442,7 @@ export default function QuestionsPage() {
         Click &quot;Export&quot; to obtain the CSV file format
       </Text>
       <Separator size="4" />
-      <Text size="4" weight="bold" style={{ textAlign: "center" }}>
+      <Text size="4" style={{ textAlign: "center" }}>
         Reorder categories, questions, and options by dragging and dropping them
         below.
       </Text>
