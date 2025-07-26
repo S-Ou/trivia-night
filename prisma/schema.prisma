@@ -21,6 +21,7 @@ model Event {
   @@unique([id])
   Question Question[]
   Category Category[]
+  Results Results[]
 }
 
 enum QuestionType {
@@ -62,4 +63,17 @@ model Category {
 
   Event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
   Question Question[]
+}
+
+model Results {
+  eventId   Int
+  playerId    String @id @default(cuid())
+  playerName  String
+  score     Int
+
+  Event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  @@unique([eventId, playerId])
+  @@unique([eventId, playerName])
+  @@index([eventId, playerId], name: "idx_event_player")
 }

@@ -3,7 +3,9 @@ import { PrismaClient } from "@/generated/prisma";
 const prisma = new PrismaClient();
 
 async function seedConfig() {
-  const defaults = [{ id: 1, title: "Trivia Night" }];
+  const defaults = [
+    { id: 1, title: "Trivia Night", description: "It's trivia!" },
+  ];
 
   for (const event of defaults) {
     await prisma.event.upsert({
