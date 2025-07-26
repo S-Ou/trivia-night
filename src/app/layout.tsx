@@ -4,6 +4,7 @@ import StyledComponentsRegistry from "../lib/registry";
 import "@radix-ui/themes/styles.css";
 import "./globals.css";
 import { ContextProviders } from "@/contexts/contextProviders";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Trivia Night",
@@ -22,6 +23,7 @@ export default function RootLayout({
           <ContextProviders>
             <Theme>
               {children}
+              <Toaster richColors position="top-right" closeButton />
               {/* <ThemePanel /> */}
             </Theme>
           </ContextProviders>

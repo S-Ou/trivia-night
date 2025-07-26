@@ -1,6 +1,7 @@
-import { useQuestionContext } from "@/contexts/QuestionContext";
-import { exportCsv, parseCsvFile, RowData } from "@/utils/csvHandler";
 import { Button } from "@radix-ui/themes";
+import { exportCsv, parseCsvFile, RowData } from "@/utils/csvHandler";
+import { toast } from "sonner";
+import { useQuestionContext } from "@/contexts/QuestionContext";
 import { useRef } from "react";
 import styled from "styled-components";
 
@@ -16,7 +17,9 @@ export function ImportButton() {
 
   function onError(error: Error) {
     console.error("Error parsing CSV:", error);
-    alert(`Failed to parse CSV file. ${error.message}`);
+    toast.error(`Failed to parse CSV file. ${error.message}`, {
+      duration: Infinity,
+    });
   }
 
   async function handleQuestionImport(questions: RowData[]) {
@@ -32,6 +35,7 @@ export function ImportButton() {
       onError(new Error(errorMessage));
       throw new Error(errorMessage);
     }
+    toast.success("Questions imported successfully!");
     fetchQuestions();
   }
 
@@ -61,14 +65,22 @@ export function ImportButton() {
 export function ExportButton() {
   async function fetchQuestions() {
     const response = await fetch("/api/export-questions");
-    if (!response.ok) throw new Error("Failed to fetch questions");
+    if (!response.ok) {
+      toast.error("Failed to fetch questions");
+      throw new Error("Failed to fetch questions");
+    }
     return response.json();
   }
 
   async function handleExport() {
-    await fetchQuestions().then((questions) => {
-      exportCsv(questions);
-    });
+    await fetchQuestions()
+      .then((questions) => {
+        exportCsv(questions);
+        toast.success("Questions exported to CSV!");
+      })
+      .catch((error) => {
+        toast.error(`Export failed: ${error.message}`);
+      });
   }
 
   return <StyledButton onClick={handleExport}>Export to CSV</StyledButton>;

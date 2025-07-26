@@ -1,6 +1,6 @@
 "use client";
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 import { PageTemplate, Page } from "../pageTemplate";
 import styled from "styled-components";
 import { Switch, TextArea, TextField } from "@radix-ui/themes";
@@ -185,7 +185,6 @@ export default function ConfigPage() {
 
   return (
     <PageTemplate currentPage={Page.Config}>
-      <Toaster richColors position="top-right" />
       <ConfigWrapper>
         {configFields.map((field) => {
           const { key, ...rest } = field;
