@@ -3,6 +3,7 @@
 import { Event } from "@/generated/prisma";
 import { UpdateEventDTO } from "@/services/eventService";
 import { createContext, useContext, useEffect, useState } from "react";
+import { useEventId } from "./EventIdContext";
 
 interface EventContextType {
   event: Event;
@@ -25,13 +26,14 @@ interface EventProviderProps {
 }
 
 export const EventProvider = ({ children }: EventProviderProps) => {
+  const { eventId } = useEventId();
   const [event, setEvent] = useState<Event>({} as Event);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   async function fetchEvent() {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/event");
+      const response = await fetch(`/api/${eventId}/event`);
       const data = await response.json();
       setEvent(data);
     } catch (error) {
@@ -43,7 +45,7 @@ export const EventProvider = ({ children }: EventProviderProps) => {
 
   async function updateEvent(data: UpdateEventDTO) {
     try {
-      const response = await fetch("/api/event", {
+      const response = await fetch(`/api/${eventId}/event`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

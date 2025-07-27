@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useQuestionContext } from "@/contexts/QuestionContext";
 import { useRef } from "react";
 import styled from "styled-components";
+import { useEventId } from "@/contexts/EventIdContext";
 
 const StyledButton = styled(Button).attrs({
   size: "3",
@@ -12,6 +13,7 @@ const StyledButton = styled(Button).attrs({
 
 export function ImportButton() {
   const { fetchQuestions } = useQuestionContext();
+  const { eventId } = useEventId();
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -23,7 +25,7 @@ export function ImportButton() {
   }
 
   async function handleQuestionImport(questions: RowData[]) {
-    const response = await fetch("/api/import-questions", {
+    const response = await fetch(`/api/${eventId}/import-questions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ questions: questions }),
@@ -63,8 +65,10 @@ export function ImportButton() {
 }
 
 export function ExportButton() {
+  const { eventId } = useEventId();
+
   async function fetchQuestions() {
-    const response = await fetch("/api/export-questions");
+    const response = await fetch(`/api/${eventId}/export-questions`);
     if (!response.ok) {
       toast.error("Failed to fetch questions");
       throw new Error("Failed to fetch questions");

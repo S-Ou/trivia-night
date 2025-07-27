@@ -2,6 +2,7 @@
 
 import { Results } from "@/generated/prisma";
 import { createContext, useContext, useEffect, useState } from "react";
+import { useEventId } from "./EventIdContext";
 
 export interface Result extends Results {
   place: number;
@@ -33,6 +34,7 @@ interface ResultsProviderProps {
 }
 
 export const ResultsProvider = ({ children }: ResultsProviderProps) => {
+  const { eventId } = useEventId();
   const [results, setResults] = useState<Result[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -70,7 +72,7 @@ export const ResultsProvider = ({ children }: ResultsProviderProps) => {
   async function fetchResults() {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/results`);
+      const response = await fetch(`/api/${eventId}/results`);
       const data = await response.json();
       setResults(calculatePlaces(data));
     } catch (error) {
@@ -82,7 +84,7 @@ export const ResultsProvider = ({ children }: ResultsProviderProps) => {
 
   async function updateResults(results: Results[]) {
     try {
-      const response = await fetch("/api/results", {
+      const response = await fetch(`/api/${eventId}/results`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -98,7 +100,7 @@ export const ResultsProvider = ({ children }: ResultsProviderProps) => {
 
   async function deleteResult(playerId: string) {
     try {
-      const response = await fetch("/api/results", {
+      const response = await fetch(`/api/${eventId}/results`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

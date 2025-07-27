@@ -3,6 +3,7 @@
 import { Category } from "@/generated/prisma";
 import { Question } from "@/types/Question";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useEventId } from "./EventIdContext";
 
 interface CategoryBundle {
   category: Category;
@@ -47,6 +48,7 @@ interface QuestionProviderProps {
 }
 
 export const QuestionProvider = ({ children }: QuestionProviderProps) => {
+  const { eventId } = useEventId();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -69,7 +71,7 @@ export const QuestionProvider = ({ children }: QuestionProviderProps) => {
   async function fetchQuestions() {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/questions");
+      const response = await fetch(`/api/${eventId}/questions`);
       const data = await response.json();
       setQuestions(data.questions);
       setCategories(data.categories);
@@ -86,7 +88,7 @@ export const QuestionProvider = ({ children }: QuestionProviderProps) => {
   ) {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/questions", {
+      const response = await fetch(`/api/${eventId}/questions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

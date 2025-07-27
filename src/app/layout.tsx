@@ -20,13 +20,11 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <StyledComponentsRegistry>
-          <ContextProviders>
             <Theme>
               {children}
               <Toaster richColors position="top-right" closeButton />
               {/* <ThemePanel /> */}
             </Theme>
-          </ContextProviders>
         </StyledComponentsRegistry>
       </body>
     </html>
