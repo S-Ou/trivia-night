@@ -1,13 +1,13 @@
 "use client";
 
-import { PageTemplate, Page } from "../pageTemplate";
-import { Text } from "@radix-ui/themes";
 import { useQuestionContext } from "@/contexts/QuestionContext";
 import React, { Fragment } from "react";
 import styled from "styled-components";
 import { letterIndex } from "@/utils";
 import { indexToPermutation } from "@/utils/permutations";
 import { Hash, PencilLine, SquareCheck } from "lucide-react";
+import { PageTemplate } from "@/app/pageTemplate";
+import { EventPageTemplate, Page } from "../pageTemplate";
 
 const StyledTable = styled.table`
   border-collapse: collapse;
@@ -51,10 +51,10 @@ const IconWrapper = styled.div`
 `;
 
 export default function AnswersPage() {
-  const { combinedQuestions, categories, isLoading } = useQuestionContext();
+  const { combinedQuestions, categories } = useQuestionContext();
 
   return (
-    <PageTemplate currentPage={Page.Answers}>
+    <EventPageTemplate currentPage={Page.Answers}>
       <StyledTable>
         <thead>
           <LegendHeader>
@@ -109,6 +109,6 @@ export default function AnswersPage() {
           ))}
         </tbody>
       </StyledTable>
-    </PageTemplate>
+    </EventPageTemplate>
   );
 }

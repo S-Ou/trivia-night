@@ -1,7 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { PageTemplate, Page } from "../pageTemplate";
 import { useEventContext } from "@/contexts/EventContext";
 import {
   ConfigForm,
@@ -9,6 +7,7 @@ import {
   ConfigField,
 } from "@/components/ConfigForm";
 import { handleConfigUpdate } from "@/components/handleConfigUpdate";
+import { EventPageTemplate, Page } from "../pageTemplate";
 
 export default function ConfigPage() {
   const { event, isLoading, updateEvent } = useEventContext();
@@ -84,8 +83,8 @@ export default function ConfigPage() {
   ];
 
   return (
-    <PageTemplate currentPage={Page.Config}>
+    <EventPageTemplate currentPage={Page.Config}>
       <ConfigForm fields={configFields} />
-    </PageTemplate>
+    </EventPageTemplate>
   );
 }

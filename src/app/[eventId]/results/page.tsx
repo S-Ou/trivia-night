@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { PageTemplate, Page } from "../pageTemplate";
 import { Result, useResultsContext } from "@/contexts/ResultsContext";
 import { intToOrdinal } from "@/utils";
 import { Plus, Trash, Trophy } from "lucide-react";
@@ -15,6 +14,7 @@ import {
   ConfigForm,
 } from "@/components/ConfigForm";
 import { toast } from "sonner";
+import { EventPageTemplate, Page } from "../pageTemplate";
 
 const StyledTable = styled.table`
   border-collapse: collapse;
@@ -176,7 +176,7 @@ export default function ResultsPage() {
   ];
 
   return (
-    <PageTemplate currentPage={Page.Results}>
+    <EventPageTemplate currentPage={Page.Results}>
       <StyledTable>
         <thead>
           <tr>
@@ -256,6 +256,6 @@ export default function ResultsPage() {
         </tbody>
       </StyledTable>
       <ConfigForm fields={configFields} />
-    </PageTemplate>
+    </EventPageTemplate>
   );
 }

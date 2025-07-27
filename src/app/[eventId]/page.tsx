@@ -1,11 +1,11 @@
 "use client";
 
 import { Button, Separator, TextField } from "@radix-ui/themes";
-import { PageTemplate, Page } from "./pageTemplate";
 import { Clipboard, Presentation } from "lucide-react";
 import { useEventId } from "@/contexts/EventIdContext";
 import { toast } from "sonner";
 import styled from "styled-components";
+import { EventPageTemplate, Page } from "./pageTemplate";
 
 const CallToActionWrapper = styled.div`
   align-items: center;
@@ -87,7 +87,7 @@ function CopyIdButton() {
 
 export default function Home() {
   return (
-    <PageTemplate currentPage={Page.Home}>
+    <EventPageTemplate currentPage={Page.Home}>
       <CallToActionWrapper>
         <CallToActionText>
           It's dangerous to go alone! Take this: <CopyIdButton />. Don't lose
@@ -104,6 +104,6 @@ export default function Home() {
           Present
         </Button>
       </a>
-    </PageTemplate>
+    </EventPageTemplate>
   );
 }
