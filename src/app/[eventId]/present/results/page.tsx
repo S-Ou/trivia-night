@@ -61,7 +61,11 @@ const RevealOverlay = styled.span`
 
 export default function PresentResultsPage() {
   const router = useRouter();
-  const { results, isLoading: isResultsLoading } = useResultsContext();
+  const {
+    results,
+    isLoading: isResultsLoading,
+    fetchResults,
+  } = useResultsContext();
   const { event, isLoading: isEventLoading, fetchEvent } = useEventContext();
   const [revealedRows, setRevealedRows] = useState<Set<string>>(new Set());
   const [isCompletelyLoading, setIsCompletelyLoading] = useState(true);
@@ -85,7 +89,7 @@ export default function PresentResultsPage() {
 
   useEffect(() => {
     if (isEventLoading) setIsCompletelyLoading(false);
-    fetchEvent().then(() => {
+    Promise.all([fetchEvent(), fetchResults()]).then(() => {
       setIsCompletelyLoading(false);
     });
   }, []);
