@@ -14,6 +14,7 @@ import {
   ConfigField,
   ConfigForm,
 } from "@/components/ConfigForm";
+import { toast } from "sonner";
 
 const StyledTable = styled.table`
   border-collapse: collapse;
@@ -114,7 +115,18 @@ export default function ResultsPage() {
             score: updatedResult.score,
           }
     );
-    updateResults(updatedResults);
+    const isChanged = results.some((result) => {
+      return (
+        result.playerId === updatedResult.playerId &&
+        (result.playerName !== updatedResult.playerName ||
+          result.score !== updatedResult.score)
+      );
+    });
+
+    if (isChanged) {
+      updateResults(updatedResults);
+      toast.success("Result updated successfully");
+    }
   }
 
   function addNewPlayer() {
