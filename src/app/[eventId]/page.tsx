@@ -8,11 +8,11 @@ import { toast } from "sonner";
 import styled from "styled-components";
 
 const CallToActionWrapper = styled.div`
-  max-width: 20rem;
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 0.5rem;
+  max-width: 30rem;
 `;
 
 const IdButton = styled.a`

@@ -33,7 +33,20 @@ export const EventProvider = ({ children }: EventProviderProps) => {
   async function fetchEvent() {
     setIsLoading(true);
     try {
+      if (!eventId) {
+        setEvent({} as Event);
+        setIsLoading(false);
+        return;
+      }
+
       const response = await fetch(`/api/${eventId}/event`);
+
+      if (response.status === 404) {
+        setEvent({} as Event);
+        setIsLoading(false);
+        return;
+      }
+
       const data = await response.json();
       setEvent(data);
     } catch (error) {
