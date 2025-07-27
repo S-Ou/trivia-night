@@ -39,20 +39,24 @@ export default function HomePage() {
     }
   }, [eventNotFoundValue, router]);
 
-  const handleNavigation = () => {
+  function handleNavigation(eventId: number) {
+    router.push(`./${eventId}`);
+  }
+
+  function handleInputEnter() {
     const trimmedValue = inputValue.trim();
     if (trimmedValue && !isNaN(Number(trimmedValue))) {
-      router.push(`./${trimmedValue}`);
+      handleNavigation(Number(trimmedValue));
     } else {
       toast.error("Please enter a valid event ID.");
     }
-  };
+  }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Enter") {
-      handleNavigation();
+      handleInputEnter();
     }
-  };
+  }
 
   return (
     <PageTemplate
@@ -70,13 +74,15 @@ export default function HomePage() {
         onKeyDown={handleKeyDown}
       >
         <TextFieldSlot side="right">
-          <StyledTextFieldButton onClick={handleNavigation}>
+          <StyledTextFieldButton onClick={handleInputEnter}>
             <SendHorizontal size={20} />
           </StyledTextFieldButton>
         </TextFieldSlot>
       </TextFieldRoot>
       or
-      <Button size={"3"}>Create new event</Button>
+      <Button size={"3"} onClick={() => router.push("./create")}>
+        Create new event
+      </Button>
     </PageTemplate>
   );
 }
