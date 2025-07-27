@@ -2,12 +2,12 @@
 
 import { useQuestionContext } from "@/contexts/QuestionContext";
 import { useEffect, useState } from "react";
-import { QuestionSlide } from "../../../../components/slides/questionSlide";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { SummarySlide } from "@/components/slides/summarySlide";
 import { TitleSlide } from "@/components/slides/titleSlide";
 import { useSearchParams } from "next/navigation";
+import { QuestionSlide } from "@/components/slides/questionSlide";
 
 enum PageState {
   Title,
