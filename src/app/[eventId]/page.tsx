@@ -6,6 +6,8 @@ import { useEventId } from "@/contexts/EventIdContext";
 import { toast } from "sonner";
 import styled from "styled-components";
 import { EventPageTemplate, Page } from "./pageTemplate";
+import { useRouter, useSearchParams } from "next/navigation";
+import { use, useEffect } from "react";
 
 const CallToActionWrapper = styled.div`
   align-items: center;
@@ -47,7 +49,7 @@ const StyledButton = styled(Button)`
 `;
 
 function CopyUrlButton() {
-  const url = window.location.href;
+  const url = window.location.origin + window.location.pathname;
   const handleCopy = () => {
     navigator.clipboard.writeText(url).then(() => {
       toast.success("URL copied to clipboard!");
@@ -86,6 +88,19 @@ function CopyIdButton() {
 }
 
 export default function Home() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const newFlag = searchParams.get("new");
+
+  useEffect(() => {
+    if (newFlag != null) {
+      toast.success("New event created successfully!");
+      const newSearchParams = new URLSearchParams(window.location.search);
+      newSearchParams.delete("new");
+      router.replace(`?${newSearchParams.toString()}`, { scroll: false });
+    }
+  }, [newFlag, router, searchParams]);
+
   return (
     <EventPageTemplate currentPage={Page.Home}>
       <CallToActionWrapper>

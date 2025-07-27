@@ -1,7 +1,7 @@
 import { createEvent } from "@/services/eventService";
 import { NextResponse } from "next/server";
 
-export async function CREATE() {
+export async function POST() {
   try {
     const newEvent = await createEvent();
 

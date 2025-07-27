@@ -30,6 +30,7 @@ export default function HomePage() {
   const eventNotFoundValue = searchParams?.get("eventNotFound");
 
   const [inputValue, setInputValue] = useState(eventNotFoundValue ?? "");
+
   useEffect(() => {
     if (eventNotFoundValue) {
       toast.error(`Event ${eventNotFoundValue} not found.`);
@@ -39,8 +40,8 @@ export default function HomePage() {
     }
   }, [eventNotFoundValue, router]);
 
-  function handleNavigation(eventId: number) {
-    router.push(`./${eventId}`);
+  function handleNavigation(eventId: number, isNewEvent = false) {
+    router.push(`./${eventId}${isNewEvent ? "?new" : ""}`);
   }
 
   function handleInputEnter() {
@@ -55,6 +56,25 @@ export default function HomePage() {
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Enter") {
       handleInputEnter();
+    }
+  }
+
+  async function handleCreateNewEvent() {
+    try {
+      const response = await fetch("/api/event", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to create event");
+      }
+      const newEvent = await response.json();
+      handleNavigation(newEvent.id, true);
+    } catch (error) {
+      console.error("Error creating event:", error);
+      toast.error("Failed to create new event.");
     }
   }
 
@@ -80,7 +100,7 @@ export default function HomePage() {
         </TextFieldSlot>
       </TextFieldRoot>
       or
-      <Button size={"3"} onClick={() => router.push("./create")}>
+      <Button size={"3"} onClick={handleCreateNewEvent}>
         Create new event
       </Button>
     </PageTemplate>
