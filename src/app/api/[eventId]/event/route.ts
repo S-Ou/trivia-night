@@ -1,4 +1,4 @@
-import { fetchEvent, updateEvent } from "@/services/eventService";
+import { deleteEvent, fetchEvent, updateEvent } from "@/services/eventService";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -53,6 +53,34 @@ export async function POST(
     console.error("Error updating event:", err);
     return NextResponse.json(
       { error: "Failed to update event" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  _: Request,
+  { params }: { params: { eventId: string } }
+) {
+  try {
+    const eventId = parseInt((await params).eventId, 10);
+
+    if (!eventId) {
+      return NextResponse.json({ error: "Invalid event ID" }, { status: 400 });
+    }
+
+    await deleteEvent(eventId);
+
+    return NextResponse.json(
+      { message: "Event deleted successfully" },
+      {
+        status: 200,
+      }
+    );
+  } catch (err) {
+    console.error("Error deleting event:", err);
+    return NextResponse.json(
+      { error: "Failed to delete event" },
       { status: 500 }
     );
   }
