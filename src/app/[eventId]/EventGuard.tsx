@@ -17,7 +17,8 @@ export function EventGuard({ children }: EventGuardProps) {
 
   useEffect(() => {
     if (!isLoading && (!event || Object.keys(event).length === 0)) {
-      router.push(`/?eventNotFound=${eventId}`);
+      toast.error(`Event ${eventId} not found.`);
+      router.push("/");
     }
   }, [isLoading, event, router]);
 

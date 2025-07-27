@@ -26,22 +26,10 @@ const StyledTextFieldButton = styled(Button)`
 
 export default function HomePage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const eventNotFoundValue = searchParams?.get("eventNotFound");
+  const [inputValue, setInputValue] = useState("");
 
-  const [inputValue, setInputValue] = useState(eventNotFoundValue ?? "");
-
-  useEffect(() => {
-    if (eventNotFoundValue) {
-      toast.error(`Event ${eventNotFoundValue} not found.`);
-      const newSearchParams = new URLSearchParams(window.location.search);
-      newSearchParams.delete("eventNotFound");
-      router.replace(`?${newSearchParams.toString()}`, { scroll: false });
-    }
-  }, [eventNotFoundValue, router]);
-
-  function handleNavigation(eventId: number, isNewEvent = false) {
-    router.push(`./${eventId}${isNewEvent ? "?new" : ""}`);
+  function handleNavigation(eventId: number) {
+    router.push(`./${eventId}`);
   }
 
   function handleInputEnter() {
@@ -71,7 +59,8 @@ export default function HomePage() {
         throw new Error("Failed to create event");
       }
       const newEvent = await response.json();
-      handleNavigation(newEvent.id, true);
+      toast.success("New event created successfully!");
+      handleNavigation(newEvent.id);
     } catch (error) {
       console.error("Error creating event:", error);
       toast.error("Failed to create new event.");
