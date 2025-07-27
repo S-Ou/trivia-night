@@ -53,7 +53,11 @@ export function PageTemplate({
   children: React.ReactNode;
 }) {
   const getHref = (targetPage: Page) =>
-    currentPage === targetPage ? "#" : `../${pageRoutes[targetPage]}`;
+    currentPage === targetPage
+      ? "#"
+      : currentPage != Page.Home
+      ? `../${pageRoutes[targetPage]}`
+      : `./${pageRoutes[targetPage]}`;
 
   return (
     <BodyWrapper>

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { ImportButton, ExportButton } from "../../components/csvButtons";
+import { ImportButton, ExportButton } from "../../../components/csvButtons";
 import { PageTemplate, Page } from "../pageTemplate";
 import styled from "styled-components";
 import { Separator, Text } from "@radix-ui/themes";
