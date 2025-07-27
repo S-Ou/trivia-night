@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import BaseSlide from "@/components/slides/baseSlide";
 import { useEventContext } from "@/contexts/EventContext";
 import { useResultsContext } from "@/contexts/ResultsContext";
 import { intToOrdinal } from "@/utils";
 import styled from "styled-components";
+import { useRouter } from "next/navigation";
 
 const Title = styled.h1`
   font-size: 8rem;
@@ -59,13 +60,35 @@ const RevealOverlay = styled.span`
 `;
 
 export default function PresentResultsPage() {
+  const router = useRouter();
   const { results, isLoading: isResultsLoading } = useResultsContext();
-  const { event, isLoading: isEventLoading } = useEventContext();
+  const { event, isLoading: isEventLoading, fetchEvent } = useEventContext();
   const [revealedRows, setRevealedRows] = useState<Set<string>>(new Set());
+  const [isCompletelyLoading, setIsCompletelyLoading] = useState(true);
 
   const handleReveal = (playerId: string) => {
     setRevealedRows((prev) => new Set(prev).add(playerId));
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight" || e.key === "ArrowLeft" || e.key === " ") {
+        router.push("../");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isEventLoading) setIsCompletelyLoading(false);
+    fetchEvent().then(() => {
+      setIsCompletelyLoading(false);
+    });
+  }, []);
 
   return (
     <BaseSlide>
@@ -77,7 +100,8 @@ export default function PresentResultsPage() {
           <tbody>
             {results.map((result) => {
               const isHidden =
-                event.hideResults && !revealedRows.has(result.playerId);
+                isCompletelyLoading ||
+                (event.hideResults && !revealedRows.has(result.playerId));
               return (
                 <tr key={result.playerId}>
                   <PlaceTD>

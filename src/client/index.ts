@@ -1,3 +1,8 @@
 import { PrismaClient } from "@/generated/prisma";
+import { addEventUpdatedAtMiddleware } from "./middleware";
 
-export const prisma = new PrismaClient();
+const prismaClient = new PrismaClient();
+
+addEventUpdatedAtMiddleware(prismaClient);
+
+export const prisma = prismaClient;
