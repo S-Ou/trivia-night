@@ -31,11 +31,12 @@ export async function updateQuestionOrders(
     optionOrder: number;
     eventId: number;
   }[],
-  categories: { name: string; index: number; eventId: number }[]
+  categories: { name: string; index: number; eventId: number }[],
+  eventId: number
 ) {
   const questionUpdatePromises = questions.map((question) =>
     prisma.question.update({
-      where: { eventId: question.eventId, id: question.id },
+      where: { eventId: eventId, id: question.id },
       data: {
         indexWithinCategory: question.indexWithinCategory,
         optionOrder: question.optionOrder,
@@ -45,7 +46,7 @@ export async function updateQuestionOrders(
 
   const categoryUpdatePromises = categories.map((category) =>
     prisma.category.update({
-      where: { name: category.name, eventId: category.eventId },
+      where: { name: category.name, eventId: eventId },
       data: { index: category.index },
     })
   );

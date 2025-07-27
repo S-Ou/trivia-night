@@ -10,8 +10,12 @@ interface Response {
   categories: Category[];
 }
 
-export async function GET() {
-  const questions = await fetchQuestions();
+export async function GET(
+  _: Request,
+  { params }: { params: { eventId: string } }
+) {
+  const eventId = parseInt((await params).eventId, 10);
+  const questions = await fetchQuestions(eventId);
 
   const categories = questions.reduce((acc, question) => {
     if (!acc.some((cat) => cat.name === question.categoryName)) {
@@ -37,15 +41,19 @@ export async function GET() {
   );
 }
 
-export async function POST(request: Request) {
+export async function POST(
+  request: Request,
+  { params }: { params: { eventId: string } }
+) {
   const { questions, categories } = await request.json();
+  const eventId = parseInt((await params).eventId, 10);
 
   if (!Array.isArray(questions) || !Array.isArray(categories)) {
     return new Response("Invalid input", { status: 400 });
   }
 
   try {
-    await updateQuestionOrders(questions, categories);
+    await updateQuestionOrders(questions, categories, eventId);
 
     return new Response("Questions updated successfully", { status: 200 });
   } catch (error) {

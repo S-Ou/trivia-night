@@ -25,6 +25,7 @@ model Event {
   Question Question[]
   Category Category[]
   Results Results[]
+  Option Option[]
 }
 
 enum QuestionType {
@@ -33,7 +34,7 @@ enum QuestionType {
 }
 
 model Question {
-  eventId   Int   @default(1)
+  eventId   Int
   id        String   @id @default(cuid())
   question  String
   questionType QuestionType
@@ -53,14 +54,16 @@ model Option {
   questionId String
   option    String
   isCorrect Boolean
+  eventId   Int
 
   question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  Event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@unique([questionId, id])
 }
 
 model Category {
-  eventId Int  @default(1)
+  eventId Int
   name      String   @id @default(cuid())
   index Int
 

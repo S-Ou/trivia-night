@@ -3,7 +3,6 @@
 import { useEventContext } from "@/contexts/EventContext";
 import { useQuestionContext } from "@/contexts/QuestionContext";
 import { ChevronRight, CircleCheckBig, Trophy } from "lucide-react";
-import next from "next";
 import Link from "next/link";
 import { useEffect } from "react";
 import styled from "styled-components";

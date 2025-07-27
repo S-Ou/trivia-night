@@ -10,8 +10,8 @@ interface ExportQuestion {
   [key: string]: string | number | undefined;
 }
 
-async function processQuestions(): Promise<ExportQuestion[]> {
-  const questions = await fetchQuestions();
+async function processQuestions(eventId: number): Promise<ExportQuestion[]> {
+  const questions = await fetchQuestions(eventId);
 
   const maxOptions = Math.max(...questions.map((q) => q.Option.length));
 
@@ -39,9 +39,14 @@ async function processQuestions(): Promise<ExportQuestion[]> {
   return csvRows;
 }
 
-export async function GET() {
+export async function GET(
+  _: Request,
+  { params }: { params: { eventId: string } }
+) {
   try {
-    let questions = await processQuestions();
+    const eventId = parseInt((await params).eventId, 10);
+
+    let questions = await processQuestions(eventId);
 
     if (questions.length === 0) {
       questions = [csvTemplate];

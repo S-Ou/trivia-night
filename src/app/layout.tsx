@@ -3,7 +3,6 @@ import { Theme } from "@radix-ui/themes";
 import StyledComponentsRegistry from "../lib/registry";
 import "@radix-ui/themes/styles.css";
 import "./globals.css";
-import { ContextProviders } from "@/contexts/contextProviders";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
@@ -20,11 +19,11 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <StyledComponentsRegistry>
-            <Theme>
-              {children}
-              <Toaster richColors position="top-right" closeButton />
-              {/* <ThemePanel /> */}
-            </Theme>
+          <Theme>
+            {children}
+            <Toaster richColors position="top-right" closeButton />
+            {/* <ThemePanel /> */}
+          </Theme>
         </StyledComponentsRegistry>
       </body>
     </html>

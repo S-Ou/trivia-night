@@ -4,24 +4,34 @@ import { convertToQuestionData } from "@/utils/csvHandler";
 import { randomPermutationIndex } from "@/utils/permutations";
 import { NextRequest, NextResponse } from "next/server";
 
-async function clearExistingData() {
-  await prisma.category.deleteMany({});
-  await prisma.question.deleteMany({});
-  await prisma.option.deleteMany({});
+async function clearExistingData(eventId: number) {
+  await prisma.category.deleteMany({
+    where: { eventId },
+  });
+  await prisma.question.deleteMany({
+    where: { eventId },
+  });
+  await prisma.option.deleteMany({
+    where: { eventId },
+  });
 }
 
-async function createCategories(categories: Question["categoryName"][]) {
+async function createCategories(
+  categories: Question["categoryName"][],
+  eventId: number
+) {
   const uniqueCategories = Array.from(new Set(categories));
 
   await prisma.category.createMany({
     data: uniqueCategories.map((c, i) => ({
       name: c,
       index: i,
+      eventId,
     })),
   });
 }
 
-async function createQuestions(questions: Question[]) {
+async function createQuestions(questions: Question[], eventId: number) {
   const indexMap = new Map<string, number>();
 
   const questionData = await prisma.question.createManyAndReturn({
@@ -37,6 +47,7 @@ async function createQuestions(questions: Question[]) {
         q.optionOrder != -1
           ? q.optionOrder
           : randomPermutationIndex(q.options.length),
+      eventId,
     })),
   });
 
@@ -50,25 +61,33 @@ async function createQuestions(questions: Question[]) {
         questionId: q.id,
         option: o.option,
         isCorrect: o.isCorrect,
+        eventId,
       }))
     ),
   });
 }
 
-async function uploadQuestions(questions: Question[]) {
-  await clearExistingData();
-  await createCategories(questions.map((q) => q.categoryName));
-  await createQuestions(questions);
+async function uploadQuestions(questions: Question[], eventId: number) {
+  await clearExistingData(eventId);
+  await createCategories(
+    questions.map((q) => q.categoryName),
+    eventId
+  );
+  await createQuestions(questions, eventId);
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { eventId: string } }
+) {
   try {
     const body = await req.json();
     const questions = body.questions;
+    const eventId = parseInt((await params).eventId, 10);
 
     const parsedQuestions = questions.map(convertToQuestionData);
 
-    await uploadQuestions(parsedQuestions);
+    await uploadQuestions(parsedQuestions, eventId);
 
     return NextResponse.json({ success: true });
   } catch (err) {

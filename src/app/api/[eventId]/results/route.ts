@@ -1,8 +1,16 @@
-import { deleteResult, fetchResults, updateResults } from "@/services/resultsService";
+import {
+  deleteResult,
+  fetchResults,
+  updateResults,
+} from "@/services/resultsService";
 
-export async function GET() {
+export async function GET(
+  _: Request,
+  { params }: { params: { eventId: string } }
+) {
   try {
-    const results = await fetchResults(1);
+    const eventId = parseInt((await params).eventId, 10);
+    const results = await fetchResults(eventId);
 
     return new Response(JSON.stringify(results), {
       headers: { "Content-Type": "application/json" },
@@ -13,15 +21,19 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(
+  request: Request,
+  { params }: { params: { eventId: string } }
+) {
   const { results } = await request.json();
+  const eventId = parseInt((await params).eventId, 10);
 
   if (!Array.isArray(results)) {
     return new Response("Invalid input", { status: 400 });
   }
 
   try {
-    const updatedResults = await updateResults(1, results);
+    const updatedResults = await updateResults(eventId, results);
 
     return new Response(JSON.stringify(updatedResults), { status: 200 });
   } catch (error) {
@@ -30,8 +42,12 @@ export async function POST(request: Request) {
   }
 }
 
-export async function DELETE(request: Request) {
-  const { eventId, playerId } = await request.json();
+export async function DELETE(
+  request: Request,
+  { params }: { params: { eventId: string } }
+) {
+  const { playerId } = await request.json();
+  const eventId = parseInt((await params).eventId, 10);
 
   if (!eventId || !playerId) {
     return new Response("Invalid input", { status: 400 });

@@ -50,7 +50,7 @@ export const EventProvider = ({ children }: EventProviderProps) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ eventId: event.id, data }),
+        body: JSON.stringify({ data }),
       });
       const updatedEvent = await response.json();
       setEvent(updatedEvent);

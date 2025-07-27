@@ -1,9 +1,13 @@
 import { fetchEvent, updateEvent } from "@/services/eventService";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(
+  _: Request,
+  { params }: { params: { eventId: string } }
+) {
   try {
-    const event = await fetchEvent(1);
+    const eventId = parseInt((await params).eventId, 10);
+    const event = await fetchEvent(eventId);
 
     if (!event) {
       return NextResponse.json({ error: "Event not found" }, { status: 404 });
@@ -23,9 +27,13 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(
+  request: Request,
+  { params }: { params: { eventId: string } }
+) {
   try {
-    const { eventId, data } = await request.json();
+    const eventId = parseInt((await params).eventId, 10);
+    const { data } = await request.json();
 
     if (!eventId || !data || typeof data.title !== "string") {
       return NextResponse.json(

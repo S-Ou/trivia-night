@@ -1,16 +1,15 @@
-"use client";
-
 import { ContextProviders } from "@/contexts/contextProviders";
 import { EventIdProvider } from "@/contexts/EventIdContext";
 
-export default function EventLayout({
+export default async function EventLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
   params: { eventId: string };
 }) {
-  const eventId = parseInt(params.eventId, 10);
+  const { eventId: eventIdString } = await params;
+  const eventId = parseInt(eventIdString, 10);
 
   return (
     <EventIdProvider eventId={eventId}>
