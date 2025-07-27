@@ -16,7 +16,6 @@ export function EventGuard({ children }: EventGuardProps) {
   const router = useRouter();
 
   useEffect(() => {
-    console.log("EventGuard: Checking event state", { isLoading, event });
     if (!isLoading && (!event || Object.keys(event).length === 0)) {
       router.push(`/?eventNotFound=${eventId}`);
     }

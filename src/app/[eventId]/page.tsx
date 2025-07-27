@@ -12,7 +12,7 @@ const CallToActionWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  max-width: 30rem;
+  width: 30rem;
 `;
 
 const IdButton = styled.a`
@@ -90,8 +90,8 @@ export default function Home() {
     <PageTemplate currentPage={Page.Home}>
       <CallToActionWrapper>
         <CallToActionText>
-          Save this ID – <CopyIdButton /> – or the URL below to return to this
-          event later or share with others.
+          It's dangerous to go alone! Take this: <CopyIdButton />. Don't lose
+          it!
         </CallToActionText>
         <CopyUrlButton />
       </CallToActionWrapper>
