@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Theme } from "@radix-ui/themes";
+import { Theme, ThemePanel } from "@radix-ui/themes";
 import StyledComponentsRegistry from "../lib/registry";
 import "@radix-ui/themes/styles.css";
 import "./globals.css";
@@ -22,7 +22,7 @@ export default function RootLayout({
           <Theme>
             {children}
             <Toaster richColors position="top-right" closeButton />
-            {/* <ThemePanel /> */}
+            <ThemePanel />
           </Theme>
         </StyledComponentsRegistry>
       </body>

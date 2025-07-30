@@ -54,7 +54,7 @@ const CategoryHeader = styled.div`
 
 const CategoryHeaderContent = styled.div`
   align-items: center;
-  color: var(--background);
+  color: var(--accent-contrast);
   display: flex;
   flex: 1;
   font-size: 2rem;
@@ -93,7 +93,7 @@ const QuestionHeader = styled.div`
 
 const QuestionHeaderContent = styled.div`
   align-items: center;
-  color: var(--foreground);
+  color: var(--accent-contrast);
   display: flex;
   flex: 1;
   font-size: 1.5rem;
@@ -114,7 +114,7 @@ const OptionItem = styled.div<{ $draggable?: boolean; $isDragging?: boolean }>`
   align-items: center;
   background-color: var(--accent-4);
   border-radius: max(var(--radius-3), var(--radius-full));
-  color: var(--foreground);
+  color: var(--accent-contrast);
   display: flex;
   margin-bottom: 0.5rem;
   opacity: ${({ $isDragging }) => ($isDragging ? 0.5 : 1)};
@@ -153,6 +153,7 @@ const AccordionChevron = styled.span`
   align-items: center;
   background-color: transparent;
   border: none;
+  color: var(--accent-contrast);
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -172,7 +173,7 @@ const CategoryGrip = styled.span`
   justify-content: center;
   max-width: 2.5rem;
   min-width: 2.5rem;
-  color: var(--background);
+  color: var(--accent-contrast);
   opacity: 0.9;
 `;
 
