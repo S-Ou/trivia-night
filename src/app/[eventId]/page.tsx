@@ -16,7 +16,7 @@ const CallToActionWrapper = styled.div`
 `;
 
 const IdButton = styled.a`
-  color: #2563eb;
+  color: var(--accent-11);
   cursor: pointer;
   font-weight: 800;
   font-stretch: expanded;
