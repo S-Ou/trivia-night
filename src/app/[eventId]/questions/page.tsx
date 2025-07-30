@@ -93,7 +93,7 @@ const QuestionHeader = styled.div`
 
 const QuestionHeaderContent = styled.div`
   align-items: center;
-  color: var(--accent-contrast);
+  color: var(--foreground);
   display: flex;
   flex: 1;
   font-size: 1.5rem;
@@ -114,7 +114,7 @@ const OptionItem = styled.div<{ $draggable?: boolean; $isDragging?: boolean }>`
   align-items: center;
   background-color: var(--accent-4);
   border-radius: max(var(--radius-3), var(--radius-full));
-  color: var(--accent-contrast);
+  color: var(--foreground);
   display: flex;
   margin-bottom: 0.5rem;
   opacity: ${({ $isDragging }) => ($isDragging ? 0.5 : 1)};
