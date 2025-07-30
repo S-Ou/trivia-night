@@ -49,15 +49,27 @@ export async function POST(
   const eventId = parseInt((await params).eventId, 10);
 
   if (!Array.isArray(questions) || !Array.isArray(categories)) {
-    return new Response("Invalid input", { status: 400 });
+    return new Response(JSON.stringify({ error: "Invalid input" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   try {
     await updateQuestionOrders(questions, categories, eventId);
 
-    return new Response("Questions updated successfully", { status: 200 });
+    return new Response(
+      JSON.stringify({ message: "Questions updated successfully" }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     console.error("Error saving questions:", error);
-    return new Response("Internal Server Error", { status: 500 });
+    return new Response(JSON.stringify({ error: "Internal Server Error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }
