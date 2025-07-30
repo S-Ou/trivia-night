@@ -20,7 +20,12 @@ export default function Present() {
     if (nextCategoryIndex === categories.length) {
       setNextCategoryIndex(null);
     }
-  }, [isQuestionLoading]);
+  }, [
+    isQuestionLoading,
+    categories.length,
+    nextCategoryIndex,
+    setNextCategoryIndex,
+  ]);
 
   if (!event) {
     return null;

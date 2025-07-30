@@ -1,11 +1,13 @@
 import { toast } from "sonner";
+import { Event } from "@/generated/prisma";
+import { UpdateEventDTO } from "@/services/eventService";
 
 export type HandleConfigUpdateParams = {
   key: string;
   value: string | boolean;
   required?: boolean;
-  event: any;
-  updateEvent: (data: any) => Promise<void>;
+  event: Event | undefined;
+  updateEvent: (data: UpdateEventDTO) => Promise<void>;
   title: string;
   description: string | null;
   hideResults: boolean;
@@ -24,6 +26,11 @@ export function handleConfigUpdate({
   description,
   hideResults,
 }: HandleConfigUpdateParams) {
+  if (!event) {
+    toast.error("Event not found");
+    return;
+  }
+
   if (required && !value) {
     toast.error("Info failed to save, field is required");
     return;
@@ -42,7 +49,7 @@ export function handleConfigUpdate({
     case "title": {
       updatePromise = updateEvent({
         title: (value as string).trim(),
-        description: description?.trim() || null,
+        description: description?.trim() || undefined,
         hideResults,
       });
       break;
@@ -50,7 +57,7 @@ export function handleConfigUpdate({
     case "description": {
       updatePromise = updateEvent({
         title: title.trim(),
-        description: (value as string).trim() || null,
+        description: (value as string).trim() || undefined,
         hideResults,
       });
       break;
@@ -58,7 +65,7 @@ export function handleConfigUpdate({
     case "hideResults": {
       updatePromise = updateEvent({
         title: title.trim(),
-        description: description?.trim() || null,
+        description: description?.trim() || undefined,
         hideResults: value as boolean,
       });
       break;

@@ -103,7 +103,7 @@ export default function ResultsPage() {
     if (event && !isEventLoading) {
       setHideResults(event.hideResults || false);
     }
-  }, [event?.id, isEventLoading]);
+  }, [event, isEventLoading]);
 
   function onBlurHandler(updatedResult: Result) {
     const updatedResults = results.map((result) =>

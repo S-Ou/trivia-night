@@ -6,7 +6,6 @@ import styled from "styled-components";
 import { letterIndex } from "@/utils";
 import { indexToPermutation } from "@/utils/permutations";
 import { Hash, PencilLine, SquareCheck } from "lucide-react";
-import { PageTemplate } from "@/app/pageTemplate";
 import { EventPageTemplate, Page } from "../pageTemplate";
 
 const StyledTable = styled.table`

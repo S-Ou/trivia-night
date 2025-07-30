@@ -111,7 +111,7 @@ export default function HomeSlide({
       </Description>
 
       <CategoryWrapper>
-        <CategoryLabel>Today's Categories</CategoryLabel>
+        <CategoryLabel>Today&apos;s Categories</CategoryLabel>
         {isQuestionLoading ? (
           <p>Loading categories...</p>
         ) : (

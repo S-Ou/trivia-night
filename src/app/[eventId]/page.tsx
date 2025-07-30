@@ -90,8 +90,8 @@ export default function Home() {
     <EventPageTemplate currentPage={Page.Home}>
       <CallToActionWrapper>
         <CallToActionText>
-          It's dangerous to go alone! Take this: <CopyIdButton />. Don't lose
-          it!
+          It&apos;s dangerous to go alone! Take this: <CopyIdButton />.
+          Don&apos;t lose it!
         </CallToActionText>
         <CopyUrlButton />
       </CallToActionWrapper>

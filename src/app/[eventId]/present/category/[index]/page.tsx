@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuestionContext } from "@/contexts/QuestionContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { SummarySlide } from "@/components/slides/basic/summarySlide";
@@ -29,7 +29,13 @@ export default function CategoryPage() {
   const { getCategory, categories, isLoading, setNextCategoryIndex } =
     useQuestionContext();
 
-  function goHome() {
+  const categoryData =
+    !isLoading && categories.length > parsedIndex
+      ? getCategory(parsedIndex)
+      : { category: null, questions: [] };
+  const { category, questions } = categoryData;
+
+  const goHome = useCallback(() => {
     if (!showAnswers) {
       if (pageState === PageState.Summary) {
         setNextCategoryIndex(parsedIndex + 1);
@@ -38,9 +44,9 @@ export default function CategoryPage() {
       }
     }
     router.push("../../");
-  }
+  }, [showAnswers, pageState, setNextCategoryIndex, parsedIndex, router]);
 
-  function incrementState() {
+  const incrementState = useCallback(() => {
     switch (pageState) {
       case PageState.Title:
         setPageState(PageState.Question);
@@ -64,9 +70,9 @@ export default function CategoryPage() {
         goHome();
         break;
     }
-  }
+  }, [pageState, currentQuestion, questions.length, showAnswers, goHome]);
 
-  function decrementState() {
+  const decrementState = useCallback(() => {
     switch (pageState) {
       case PageState.Question:
         if (currentQuestion > 0) {
@@ -85,7 +91,7 @@ export default function CategoryPage() {
         goHome();
         break;
     }
-  }
+  }, [pageState, currentQuestion, questions.length, goHome]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -98,13 +104,19 @@ export default function CategoryPage() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isLoading, categories, parsedIndex, currentQuestion, pageState]);
+  }, [
+    isLoading,
+    categories,
+    parsedIndex,
+    currentQuestion,
+    pageState,
+    decrementState,
+    incrementState,
+  ]);
 
-  if (isLoading || categories.length <= parsedIndex) {
+  if (isLoading || categories.length <= parsedIndex || !category) {
     return <p>Loading category...</p>;
   }
-
-  const { category, questions } = getCategory(parsedIndex);
 
   return (
     <div>

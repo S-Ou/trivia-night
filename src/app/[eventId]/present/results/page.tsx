@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import BaseSlide from "@/components/slides/basic/baseSlide";
 import { useEventContext } from "@/contexts/EventContext";
 import { useResultsContext } from "@/contexts/ResultsContext";
@@ -85,14 +85,14 @@ export default function PresentResultsPage() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (isEventLoading) setIsCompletelyLoading(false);
     Promise.all([fetchEvent(), fetchResults()]).then(() => {
       setIsCompletelyLoading(false);
     });
-  }, []);
+  }, [fetchEvent, fetchResults, isEventLoading]);
 
   return (
     <BaseSlide>

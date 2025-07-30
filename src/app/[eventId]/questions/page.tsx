@@ -13,6 +13,7 @@ import {
 import { Accordion } from "radix-ui";
 import { Question } from "@/types/Question";
 import { Option, QuestionType } from "@/generated/prisma";
+import { permutationToIndex } from "@/utils/permutations";
 import { motion, AnimatePresence } from "framer-motion";
 import { indexToPermutation } from "@/utils/permutations";
 import { useQuestionContext } from "@/contexts/QuestionContext";
@@ -208,7 +209,10 @@ function Categories() {
     setLocalCombinedQuestions(combinedQuestions);
   }, [categories, combinedQuestions]);
 
-  const onDragEnd = async (result: any) => {
+  const onDragEnd = async (result: {
+    source: { index: number };
+    destination?: { index: number } | null;
+  }) => {
     if (isSaving) return;
     if (!result.destination) return;
     setIsSaving(true);
@@ -321,7 +325,10 @@ function Questions({
   }, [questions]);
 
   const { updateQuestionOrders } = useQuestionContext();
-  const onDragEnd = async (result: any) => {
+  const onDragEnd = async (result: {
+    source: { index: number };
+    destination?: { index: number } | null;
+  }) => {
     if (isSaving) return;
     if (!result.destination) return;
     setIsSaving(true);
@@ -420,8 +427,10 @@ function Options({
   }, [options, order]);
 
   const { updateQuestionOrders } = useQuestionContext();
-  const { permutationToIndex } = require("@/utils/permutations");
-  const onDragEnd = async (result: any) => {
+  const onDragEnd = async (result: {
+    source: { index: number };
+    destination?: { index: number } | null;
+  }) => {
     if (isSaving) return;
     if (!result.destination) return;
     setIsSaving(true);

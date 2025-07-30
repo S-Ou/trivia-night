@@ -27,7 +27,7 @@ export default function ConfigPage() {
       setDescription(event.description || "");
       setHideResults(event.hideResults || false);
     }
-  }, [event?.id, isLoading]);
+  }, [event, isLoading]);
 
   const handleUpdate = (
     key: string,

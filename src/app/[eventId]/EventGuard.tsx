@@ -20,7 +20,7 @@ export function EventGuard({ children }: EventGuardProps) {
       toast.error(`Event ${eventId} not found.`);
       router.push("/");
     }
-  }, [isLoading, event, router]);
+  }, [isLoading, event, router, eventId]);
 
   if (isLoading || !event) {
     return null;
