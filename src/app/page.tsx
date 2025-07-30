@@ -5,9 +5,8 @@ import { PageTemplate } from "./pageTemplate";
 import { SendHorizontal } from "lucide-react";
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
-import { useSearchParams } from "next/navigation";
 
 const TextFieldRoot = styled(TextField.Root)`
   background-image: none;
