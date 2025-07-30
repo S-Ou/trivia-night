@@ -1,11 +1,10 @@
-import { Category } from "@/generated/prisma";
 import BaseSlide from "./baseSlide";
 import styled from "styled-components";
 import { Separator } from "@radix-ui/themes";
 import { indexToPermutation } from "@/utils/permutations";
-import { Question } from "@/types/Question";
-import { letterIndex } from "@/utils";
 import { PencilLine } from "lucide-react";
+import { QuestionSlideProps } from "../slideProps";
+import { letterIndex } from "@/utils";
 
 const CategoryTitle = styled.h1`
   font-size: 3rem;
@@ -130,11 +129,7 @@ export function QuestionSlide({
   category,
   question,
   showAnswers = false,
-}: {
-  category: Category;
-  question: Question;
-  showAnswers?: boolean;
-}) {
+}: QuestionSlideProps) {
   const order = question.options
     ? indexToPermutation(question.optionOrder, question.options.length)
     : [];

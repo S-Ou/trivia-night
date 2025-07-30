@@ -1,7 +1,7 @@
 import Link from "next/link";
 import styled from "styled-components";
-import { Event, Category } from "@/generated/prisma";
 import { ChevronRight, CircleCheckBig, Trophy } from "lucide-react";
+import { HomeSlideProps } from "../slideProps";
 
 const BaseWrapper = styled.div`
   align-items: start;
@@ -102,13 +102,7 @@ export default function HomeSlide({
   isEventLoading,
   isQuestionLoading,
   nextCategoryIndex,
-}: {
-  event: Event;
-  categories: Category[];
-  isEventLoading: boolean;
-  isQuestionLoading: boolean;
-  nextCategoryIndex: number | null;
-}) {
+}: HomeSlideProps) {
   return (
     <BaseWrapper>
       <Title>{!isEventLoading ? event.title : "Loading..."}</Title>

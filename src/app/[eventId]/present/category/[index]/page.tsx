@@ -4,10 +4,10 @@ import { useQuestionContext } from "@/contexts/QuestionContext";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { SummarySlide } from "@/components/slides/summarySlide";
-import { TitleSlide } from "@/components/slides/titleSlide";
+import { SummarySlide } from "@/components/slides/basic/summarySlide";
+import { TitleSlide } from "@/components/slides/basic/titleSlide";
 import { useSearchParams } from "next/navigation";
-import { QuestionSlide } from "@/components/slides/questionSlide";
+import { QuestionSlide } from "@/components/slides/basic/questionSlide";
 
 enum PageState {
   Title,

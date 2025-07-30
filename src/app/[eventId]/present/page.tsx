@@ -1,6 +1,6 @@
 "use client";
 
-import HomeSlide from "@/components/slides/homeSlide";
+import HomeSlide from "@/components/slides/basic/homeSlide";
 import { useEventContext } from "@/contexts/EventContext";
 import { useQuestionContext } from "@/contexts/QuestionContext";
 import { useEffect } from "react";

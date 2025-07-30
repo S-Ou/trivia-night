@@ -1,8 +1,7 @@
-import { Category } from "@/generated/prisma";
 import BaseSlide from "./baseSlide";
-import { Question } from "@/types/Question";
 import styled from "styled-components";
 import { Separator } from "@radix-ui/themes";
+import { SummarySlideProps } from "../slideProps";
 
 const CategoryTitle = styled.h1`
   font-size: 3rem;
@@ -32,13 +31,7 @@ const SummaryLabel = styled.td`
   font-weight: 700;
 `;
 
-export function SummarySlide({
-  category,
-  questions,
-}: {
-  category: Category;
-  questions: Question[];
-}) {
+export function SummarySlide({ category, questions }: SummarySlideProps) {
   return (
     <BaseSlide>
       <CategoryTitle>{category.name}</CategoryTitle>

@@ -1,8 +1,7 @@
-import { Category } from "@/generated/prisma";
 import styled from "styled-components";
 import BaseSlide from "./baseSlide";
 import { Separator } from "@radix-ui/themes";
-import { Question } from "@/types/Question";
+import { TitleSlideProps } from "../slideProps";
 
 const Title = styled.h1`
   font-size: 10rem;
@@ -20,11 +19,7 @@ export function TitleSlide({
   category,
   questions,
   showAnswers = false,
-}: {
-  category: Category;
-  questions: Question[];
-  showAnswers?: boolean;
-}) {
+}: TitleSlideProps) {
   return (
     <BaseSlide>
       <Title>{category.name}</Title>
