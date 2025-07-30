@@ -2,24 +2,67 @@
 
 import { Event } from "@/generated/prisma";
 import { UpdateEventDTO } from "@/services/eventService";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEventId } from "./EventIdContext";
 
 interface EventContextType {
-  event: Event;
+  event: Event | undefined;
   isLoading: boolean;
-  fetchEvent: () => Promise<void>;
+  error: Error | null;
+  fetchEvent: () => void;
   updateEvent: (data: UpdateEventDTO) => Promise<void>;
+  isUpdating: boolean;
 }
 
 export const EventContext = createContext<EventContextType>({
-  event: {} as Event,
+  event: undefined,
   isLoading: false,
-  fetchEvent: async () => {},
+  error: null,
+  fetchEvent: () => {},
   updateEvent: async () => {
     throw new Error("updateEvent not implemented in default context");
   },
+  isUpdating: false,
 });
+
+// API functions
+const fetchEventData = async (
+  eventId: number | null
+): Promise<Event | null> => {
+  if (!eventId) return null;
+
+  const response = await fetch(`/api/${eventId}/event`);
+
+  if (response.status === 404) {
+    return null;
+  }
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch event");
+  }
+
+  return response.json();
+};
+
+const updateEventData = async (
+  eventId: number,
+  data: UpdateEventDTO
+): Promise<Event> => {
+  const response = await fetch(`/api/${eventId}/event`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ data }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update event");
+  }
+
+  return response.json();
+};
 
 interface EventProviderProps {
   children: React.ReactNode;
@@ -27,58 +70,55 @@ interface EventProviderProps {
 
 export const EventProvider = ({ children }: EventProviderProps) => {
   const { eventId } = useEventId();
-  const [event, setEvent] = useState<Event>({} as Event);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const queryClient = useQueryClient();
 
-  async function fetchEvent() {
-    setIsLoading(true);
-    try {
-      if (!eventId) {
-        setEvent({} as Event);
-        setIsLoading(false);
-        return;
-      }
+  // Query for fetching event with caching
+  const {
+    data: event,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["event", eventId],
+    queryFn: () => fetchEventData(eventId),
+    enabled: !!eventId,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
+  });
 
-      const response = await fetch(`/api/${eventId}/event`);
-
-      if (response.status === 404) {
-        setEvent({} as Event);
-        setIsLoading(false);
-        return;
-      }
-
-      const data = await response.json();
-      setEvent(data);
-    } catch (error) {
-      console.error("Error fetching event:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  async function updateEvent(data: UpdateEventDTO) {
-    try {
-      const response = await fetch(`/api/${eventId}/event`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ data }),
-      });
-      const updatedEvent = await response.json();
-      setEvent(updatedEvent);
-    } catch (error) {
+  // Mutation for updating event
+  const updateEventMutation = useMutation({
+    mutationFn: (data: UpdateEventDTO) => {
+      if (!eventId) throw new Error("No event ID available");
+      return updateEventData(eventId, data);
+    },
+    onSuccess: (updatedEvent) => {
+      // Update the cache with the new event data
+      queryClient.setQueryData(["event", eventId], updatedEvent);
+    },
+    onError: (error) => {
       console.error("Error updating event:", error);
-    }
-  }
+    },
+  });
 
-  useEffect(() => {
-    fetchEvent();
-  }, []);
+  const updateEvent = async (data: UpdateEventDTO) => {
+    await updateEventMutation.mutateAsync(data);
+  };
+
+  const fetchEvent = () => {
+    refetch();
+  };
 
   return (
     <EventContext.Provider
-      value={{ event, isLoading, fetchEvent, updateEvent }}
+      value={{
+        event: event || undefined,
+        isLoading,
+        error: error as Error | null,
+        fetchEvent,
+        updateEvent,
+        isUpdating: updateEventMutation.isPending,
+      }}
     >
       {children}
     </EventContext.Provider>
@@ -86,3 +126,20 @@ export const EventProvider = ({ children }: EventProviderProps) => {
 };
 
 export const useEventContext = () => useContext(EventContext);
+
+// Additional hook for pages that need fresh data every time
+export const useEventContextWithFreshData = () => {
+  const context = useEventContext();
+  const queryClient = useQueryClient();
+  const { eventId } = useEventId();
+
+  const refetchFreshData = async () => {
+    // Invalidate cache and refetch
+    await queryClient.invalidateQueries({ queryKey: ["event", eventId] });
+  };
+
+  return {
+    ...context,
+    refetchFreshData,
+  };
+};

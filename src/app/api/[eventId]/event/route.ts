@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   _: Request,
-  { params }: { params: { eventId: string } }
+  { params }: { params: Promise<{ eventId: string }> }
 ) {
   try {
     const eventId = parseInt((await params).eventId, 10);
@@ -29,7 +29,7 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { eventId: string } }
+  { params }: { params: Promise<{ eventId: string }> }
 ) {
   try {
     const eventId = parseInt((await params).eventId, 10);
@@ -60,7 +60,7 @@ export async function POST(
 
 export async function DELETE(
   _: Request,
-  { params }: { params: { eventId: string } }
+  { params }: { params: Promise<{ eventId: string }> }
 ) {
   try {
     const eventId = parseInt((await params).eventId, 10);

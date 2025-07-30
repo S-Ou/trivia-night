@@ -12,7 +12,7 @@ interface Response {
 
 export async function GET(
   _: Request,
-  { params }: { params: { eventId: string } }
+  { params }: { params: Promise<{ eventId: string }> }
 ) {
   const eventId = parseInt((await params).eventId, 10);
   const questions = await fetchQuestions(eventId);
@@ -43,7 +43,7 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { eventId: string } }
+  { params }: { params: Promise<{ eventId: string }> }
 ) {
   const { questions, categories } = await request.json();
   const eventId = parseInt((await params).eventId, 10);

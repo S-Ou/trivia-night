@@ -80,6 +80,7 @@ export function convertToQuestionData(row: RowData): Question {
       indexWithinCategory: index,
       id: "",
       questionId: "",
+      eventId: 0, // Default
     })),
     id: "",
     indexWithinCategory: -1,

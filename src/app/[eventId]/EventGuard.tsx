@@ -16,13 +16,13 @@ export function EventGuard({ children }: EventGuardProps) {
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && (!event || Object.keys(event).length === 0)) {
+    if (!isLoading && !event) {
       toast.error(`Event ${eventId} not found.`);
       router.push("/");
     }
   }, [isLoading, event, router]);
 
-  if (isLoading || !event || Object.keys(event).length === 0) {
+  if (isLoading || !event) {
     return null;
   }
 

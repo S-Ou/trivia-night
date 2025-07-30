@@ -19,7 +19,7 @@ export default function ConfigPage() {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [hideResults, setHideResults] = useState(event.hideResults || false);
+  const [hideResults, setHideResults] = useState(event?.hideResults || false);
 
   useEffect(() => {
     if (event && !isLoading) {
@@ -88,7 +88,7 @@ export default function ConfigPage() {
   ];
 
   function handleDeleteEvent() {
-    if (event.id) {
+    if (event?.id) {
       fetch(`/api/${event.id}/event`, {
         method: "DELETE",
       })

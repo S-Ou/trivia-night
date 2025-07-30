@@ -105,7 +105,7 @@ export default function PresentResultsPage() {
             {results.map((result) => {
               const isHidden =
                 isCompletelyLoading ||
-                (event.hideResults && !revealedRows.has(result.playerId));
+                (event?.hideResults && !revealedRows.has(result.playerId));
               return (
                 <tr key={result.playerId}>
                   <PlaceTD>

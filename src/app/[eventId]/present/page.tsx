@@ -22,6 +22,10 @@ export default function Present() {
     }
   }, [isQuestionLoading]);
 
+  if (!event) {
+    return null;
+  }
+
   return (
     <HomeSlide
       event={event}

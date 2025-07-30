@@ -97,7 +97,7 @@ export default function ResultsPage() {
   } = useResultsContext();
   const { event, isLoading: isEventLoading, updateEvent } = useEventContext();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [hideResults, setHideResults] = useState(event.hideResults || false);
+  const [hideResults, setHideResults] = useState(event?.hideResults || false);
 
   useEffect(() => {
     if (event && !isEventLoading) {
@@ -155,8 +155,8 @@ export default function ResultsPage() {
       required,
       event,
       updateEvent,
-      title: event.title,
-      description: event.description,
+      title: event?.title || "",
+      description: event?.description || "",
       hideResults,
     });
   };

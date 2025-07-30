@@ -78,7 +78,7 @@ async function uploadQuestions(questions: Question[], eventId: number) {
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { eventId: string } }
+  { params }: { params: Promise<{ eventId: string }> }
 ) {
   try {
     const body = await req.json();

@@ -41,7 +41,7 @@ async function processQuestions(eventId: number): Promise<ExportQuestion[]> {
 
 export async function GET(
   _: Request,
-  { params }: { params: { eventId: string } }
+  { params }: { params: Promise<{ eventId: string }> }
 ) {
   try {
     const eventId = parseInt((await params).eventId, 10);
