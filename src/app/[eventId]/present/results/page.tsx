@@ -4,14 +4,16 @@ import React, { useEffect, useState } from "react";
 import { useEventContext } from "@/contexts/EventContext";
 import { useResultsContext } from "@/contexts/ResultsContext";
 import { useRouter } from "next/navigation";
-import { ResultSlide } from "@/components/slides/basic/resultSlide";
 import { GetSlideProps } from "@/components/slides/slideProps";
+import { useSlideComponents } from "@/contexts/ThemeContext";
 
 export default function PresentResultsPage() {
   const router = useRouter();
   const { fetchResults } = useResultsContext();
   const { fetchEvent } = useEventContext();
   const [revealedRows, setRevealedRows] = useState<Set<string>>(new Set());
+
+  const { ResultSlide } = useSlideComponents();
 
   const handleReveal = (playerId: string) => {
     setRevealedRows((prev) => new Set(prev).add(playerId));

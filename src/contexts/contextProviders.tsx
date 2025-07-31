@@ -5,6 +5,7 @@ import { useState } from "react";
 import { EventProvider } from "./EventContext";
 import { QuestionProvider } from "./QuestionContext";
 import { ResultsProvider } from "./ResultsContext";
+import { SlideThemeProvider } from "./ThemeContext";
 
 export function ContextProviders({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -20,12 +21,14 @@ export function ContextProviders({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <QuestionProvider>
-        <EventProvider>
-          <ResultsProvider>{children}</ResultsProvider>
-        </EventProvider>
-      </QuestionProvider>
-    </QueryClientProvider>
+    <SlideThemeProvider defaultTheme="base">
+      <QueryClientProvider client={queryClient}>
+        <QuestionProvider>
+          <EventProvider>
+            <ResultsProvider>{children}</ResultsProvider>
+          </EventProvider>
+        </QuestionProvider>
+      </QueryClientProvider>
+    </SlideThemeProvider>
   );
 }

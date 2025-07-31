@@ -4,11 +4,9 @@ import { useQuestionContext } from "@/contexts/QuestionContext";
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { SummarySlide } from "@/components/slides/basic/summarySlide";
-import { TitleSlide } from "@/components/slides/basic/titleSlide";
 import { useSearchParams } from "next/navigation";
-import { QuestionSlide } from "@/components/slides/basic/questionSlide";
 import { GetSlideProps } from "@/components/slides/slideProps";
+import { useSlideComponents } from "@/contexts/ThemeContext";
 
 enum PageState {
   Title,
@@ -23,6 +21,8 @@ export default function CategoryPage() {
 
   const searchParams = useSearchParams();
   const showAnswers = searchParams?.get("answers") === "true";
+
+  const { TitleSlide, QuestionSlide, SummarySlide } = useSlideComponents();
 
   const [pageState, setPageState] = useState<PageState>(PageState.Title);
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
