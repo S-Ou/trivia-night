@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Separator } from "@radix-ui/themes";
 import { indexToPermutation } from "@/utils/permutations";
 import { PencilLine } from "lucide-react";
-import { SlideProps } from "../slideProps";
+import { CategorySlideProps } from "../slideProps";
 import { letterIndex } from "@/utils";
 
 const CategoryTitle = styled.h1`
@@ -129,7 +129,7 @@ export function QuestionSlide({
   category: { currentCategory },
   question: { currentQuestions, currentQuestionIndex },
   showAnswers = false,
-}: SlideProps & { showAnswers: boolean }) {
+}: CategorySlideProps) {
   const category = currentCategory!;
   const question = currentQuestions![currentQuestionIndex ?? 0];
 

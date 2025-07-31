@@ -119,20 +119,19 @@ export default function CategoryPage() {
     return <p>Loading category...</p>;
   }
 
-  const slideProps = GetSlideProps({
-    currentCategoryIndex: parsedIndex,
-    currentQuestionIndex: currentQuestion,
-  });
+  const slideProps = {
+    ...GetSlideProps({
+      currentCategoryIndex: parsedIndex,
+      currentQuestionIndex: currentQuestion,
+    }),
+    showAnswers,
+  };
 
   return (
-    <div>
-      {pageState === PageState.Title && (
-        <TitleSlide {...slideProps} showAnswers={showAnswers} />
-      )}
-      {pageState === PageState.Question && (
-        <QuestionSlide {...slideProps} showAnswers={showAnswers} />
-      )}
+    <>
+      {pageState === PageState.Title && <TitleSlide {...slideProps} />}
+      {pageState === PageState.Question && <QuestionSlide {...slideProps} />}
       {pageState === PageState.Summary && <SummarySlide {...slideProps} />}
-    </div>
+    </>
   );
 }

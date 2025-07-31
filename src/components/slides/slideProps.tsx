@@ -29,6 +29,13 @@ export interface SlideProps {
   };
 }
 
+export type ResultSlideProps = SlideProps & {
+  revealedRows: Set<string>;
+  handleReveal: (playerId: string) => void;
+};
+
+export type CategorySlideProps = SlideProps & { showAnswers: boolean };
+
 export function GetSlideProps({
   currentCategoryIndex,
   currentQuestionIndex,

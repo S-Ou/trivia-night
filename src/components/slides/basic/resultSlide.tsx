@@ -1,5 +1,5 @@
 import { intToOrdinal } from "@/utils";
-import { SlideProps } from "../slideProps";
+import { ResultSlideProps } from "../slideProps";
 import BaseSlide from "./baseSlide";
 import styled from "styled-components";
 
@@ -59,10 +59,7 @@ export function ResultSlide({
   result: { results, isLoading: isResultsLoading },
   revealedRows,
   handleReveal,
-}: SlideProps & {
-  revealedRows: Set<string>;
-  handleReveal: (playerId: string) => void;
-}) {
+}: ResultSlideProps) {
   return (
     <BaseSlide>
       <Title>Results</Title>

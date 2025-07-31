@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import BaseSlide from "./baseSlide";
 import { Separator } from "@radix-ui/themes";
-import { SlideProps } from "../slideProps";
+import { CategorySlideProps } from "../slideProps";
 
 const Title = styled.h1`
   font-size: 10rem;
@@ -19,7 +19,7 @@ export function TitleSlide({
   category: { categories, currentCategoryIndex },
   question: { questions },
   showAnswers,
-}: SlideProps & { showAnswers: boolean }) {
+}: CategorySlideProps) {
   const category = categories[currentCategoryIndex ?? 0];
 
   return (

@@ -1,7 +1,7 @@
 import BaseSlide from "./baseSlide";
 import styled from "styled-components";
 import { Separator } from "@radix-ui/themes";
-import { SlideProps } from "../slideProps";
+import { CategorySlideProps, SlideProps } from "../slideProps";
 
 const CategoryTitle = styled.h1`
   font-size: 3rem;
@@ -34,7 +34,7 @@ const SummaryLabel = styled.td`
 export function SummarySlide({
   category: { currentCategory },
   question: { currentQuestions },
-}: SlideProps) {
+}: CategorySlideProps) {
   return (
     <BaseSlide>
       <CategoryTitle>{currentCategory!.name}</CategoryTitle>
