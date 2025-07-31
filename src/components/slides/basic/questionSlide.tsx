@@ -17,8 +17,8 @@ const QuestionWrapper = styled.div<{ $hasImage?: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-top: ${(props) => (props.$hasImage ? "0rem" : "8rem")};
   margin-bottom: ${(props) => (props.$hasImage ? "0rem" : "3rem")};
+  margin-top: ${(props) => (props.$hasImage ? "0rem" : "8rem")};
   min-height: 20vh;
   padding-inline: 10rem;
 `;

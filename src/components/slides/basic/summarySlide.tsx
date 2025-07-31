@@ -15,9 +15,9 @@ const SummaryTitle = styled.h2`
 `;
 
 const SummaryList = styled.table`
-  padding: 0;
-  margin-top: 10vh;
   border-spacing: 2rem 0.2rem;
+  margin-top: 10vh;
+  padding: 0;
   width: 50vw;
 `;
 

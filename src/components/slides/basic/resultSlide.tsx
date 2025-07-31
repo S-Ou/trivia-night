@@ -20,18 +20,18 @@ const StyledTD = styled.td`
 `;
 
 const PlaceTD = styled(StyledTD)`
-  font-weight: 1000;
   font-size: 2.5rem;
+  font-weight: 1000;
 `;
 
 const PlayerTD = styled(StyledTD)`
-  font-weight: 500;
   font-size: 3rem;
+  font-weight: 500;
 `;
 
 const ScoreTD = styled(StyledTD)`
-  font-weight: 400;
   font-size: 2.5rem;
+  font-weight: 400;
 `;
 
 const HiddenSpan = styled.span<{ $isHidden?: boolean }>`
