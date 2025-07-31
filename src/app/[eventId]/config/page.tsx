@@ -90,7 +90,7 @@ export default function ConfigPage() {
     },
     {
       key: "theme",
-      label: "Slide Theme",
+      label: "Slide theme",
       type: ConfigComponentType.Select,
       value: currentTheme.id,
       options: availableThemes.reduce((acc, theme) => {

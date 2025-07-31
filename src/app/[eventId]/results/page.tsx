@@ -16,6 +16,13 @@ import {
 import { toast } from "sonner";
 import { EventPageTemplate, Page } from "../pageTemplate";
 
+const InfoText = styled.p`
+  font-size: 0.9rem;
+  text-align: center;
+  text-wrap: balance;
+  width: 75%;
+`;
+
 const StyledTable = styled.table`
   border-collapse: collapse;
   column-gap: 1rem;
@@ -179,6 +186,10 @@ export default function ResultsPage() {
 
   return (
     <EventPageTemplate currentPage={Page.Results}>
+      <InfoText>
+        Input live results below. These can be updated at any time and the live
+        results can be viewed when presenting.
+      </InfoText>
       <StyledTable>
         <thead>
           <tr>

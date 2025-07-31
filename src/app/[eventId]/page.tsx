@@ -91,8 +91,8 @@ export default function Home() {
     <EventPageTemplate currentPage={Page.Home}>
       <CallToActionWrapper>
         <CallToActionText>
-          It&apos;s dangerous to go alone! Take this: <CopyIdButton />.
-          Don&apos;t lose it!
+          This is the event&apos;s unique ID: <CopyIdButton />. Save it
+          somewhere safe to return to this event later or to share with others.
         </CallToActionText>
         <CopyUrlButton />
       </CallToActionWrapper>
