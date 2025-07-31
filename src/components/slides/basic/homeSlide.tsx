@@ -102,6 +102,7 @@ export default function HomeSlide({
   isEventLoading,
   isQuestionLoading,
   nextCategoryIndex,
+  results,
 }: HomeSlideProps) {
   return (
     <BaseWrapper>
@@ -134,10 +135,12 @@ export default function HomeSlide({
         )}
       </CategoryWrapper>
 
-      <ResultsLink href="./results">
-        <Trophy size={32} />
-        Current Results
-      </ResultsLink>
+      {results && results.length > 0 && (
+        <ResultsLink href="./results">
+          <Trophy size={32} />
+          Current Results
+        </ResultsLink>
+      )}
     </BaseWrapper>
   );
 }

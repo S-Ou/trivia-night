@@ -1,3 +1,4 @@
+import { Result } from "@/contexts/ResultsContext";
 import { Event, Category } from "@/generated/prisma";
 import { Question } from "@/types/Question";
 
@@ -7,6 +8,7 @@ export interface HomeSlideProps {
   isEventLoading: boolean;
   isQuestionLoading: boolean;
   nextCategoryIndex: number | null;
+  results: Result[];
 }
 
 export interface TitleSlideProps {

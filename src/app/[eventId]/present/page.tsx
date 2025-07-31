@@ -3,6 +3,7 @@
 import HomeSlide from "@/components/slides/basic/homeSlide";
 import { useEventContext } from "@/contexts/EventContext";
 import { useQuestionContext } from "@/contexts/QuestionContext";
+import { useResultsContext } from "@/contexts/ResultsContext";
 import { useEffect } from "react";
 
 export default function Present() {
@@ -13,6 +14,7 @@ export default function Present() {
     nextCategoryIndex,
     setNextCategoryIndex,
   } = useQuestionContext();
+  const { results } = useResultsContext();
 
   useEffect(() => {
     if (isQuestionLoading) return;
@@ -38,6 +40,7 @@ export default function Present() {
       isQuestionLoading={isQuestionLoading}
       categories={categories}
       nextCategoryIndex={nextCategoryIndex}
+      results={results}
     />
   );
 }
