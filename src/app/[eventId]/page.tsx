@@ -6,6 +6,7 @@ import { useEventId } from "@/contexts/EventIdContext";
 import { toast } from "sonner";
 import styled from "styled-components";
 import { EventPageTemplate, Page } from "./pageTemplate";
+import Link from "next/link";
 
 const CallToActionWrapper = styled.div`
   align-items: center;
@@ -95,6 +96,10 @@ export default function Home() {
         </CallToActionText>
         <CopyUrlButton />
       </CallToActionWrapper>
+
+      <Link href="/">
+        <Button variant={"outline"}>Exit to homepage</Button>
+      </Link>
 
       <Separator size="3" />
 
