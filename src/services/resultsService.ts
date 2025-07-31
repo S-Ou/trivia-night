@@ -19,7 +19,6 @@ export async function updateResults(eventId: number, results: Results[]) {
       update: { score: result.score, playerName: result.playerName },
       create: {
         eventId,
-        playerId: result.playerId,
         playerName: result.playerName,
         score: result.score,
       },
