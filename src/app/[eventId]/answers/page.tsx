@@ -77,7 +77,7 @@ export default function AnswersPage() {
               <CategoryHeader key={category.name}>
                 <th colSpan={4}>{category.name}</th>
               </CategoryHeader>
-              {combinedQuestions[category.name].map((question, index) => {
+              {combinedQuestions[category.id].map((question, index) => {
                 const correctAnswer = question.options.find(
                   (option) => option.isCorrect
                 )!;
