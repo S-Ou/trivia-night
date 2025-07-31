@@ -38,13 +38,13 @@ model Question {
   id        String   @id @default(cuid())
   question  String
   questionType QuestionType
-  categoryName String
+  categoryId Int
   imageUrl  String?
   indexWithinCategory Int
   optionOrder Int
 
   Event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  Category   Category @relation(fields: [categoryName], references: [name], onDelete: Cascade)
+  Category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   Option Option[]
 }
@@ -63,8 +63,9 @@ model Option {
 }
 
 model Category {
+  id      Int      @id @default(autoincrement())
   eventId Int
-  name      String   @id @default(cuid())
+  name      String
   index Int
 
   Event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)

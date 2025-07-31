@@ -197,12 +197,22 @@ const OptionGrip = styled.span`
 `;
 
 function Categories() {
-  const { combinedQuestions, categories, isLoading, updateQuestionOrders } =
-    useQuestionContext();
+  const {
+    questions,
+    combinedQuestions,
+    categories,
+    isLoading,
+    updateQuestionOrders,
+    fetchQuestions,
+  } = useQuestionContext();
   const [localCategories, setLocalCategories] = useState(categories);
   const [localCombinedQuestions, setLocalCombinedQuestions] =
     useState(combinedQuestions);
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    fetchQuestions();
+  }, [fetchQuestions]);
 
   useEffect(() => {
     setLocalCategories(categories);
@@ -291,7 +301,7 @@ function Categories() {
                         <CategoryContent>
                           <Questions
                             questions={
-                              localCombinedQuestions[category.name] || []
+                              localCombinedQuestions[category.id] || []
                             }
                             categoryName={category.name}
                           />

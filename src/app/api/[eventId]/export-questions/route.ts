@@ -26,7 +26,7 @@ async function processQuestions(eventId: number): Promise<ExportQuestion[]> {
     }
 
     return {
-      Category: q.categoryName,
+      Category: q.Category.name,
       Question: q.question,
       "Correct Option": correctOption,
       ...Object.fromEntries(

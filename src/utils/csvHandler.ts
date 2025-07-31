@@ -73,7 +73,13 @@ export function convertToQuestionData(row: RowData): Question {
     question: question,
     questionType: options.length > 0 ? "multiChoice" : "shortAnswer",
     imageUrl: row["Image URL"] || "",
-    categoryName: category,
+    categoryId: 0, // Default
+    category: {
+      id: 0, // Default
+      name: category,
+      index: 0, // Default
+      eventId: 0, // Default
+    },
     options: allOptions.map((opt, index) => ({
       option: opt,
       isCorrect: opt === correctOption,

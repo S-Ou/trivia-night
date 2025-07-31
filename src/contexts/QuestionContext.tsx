@@ -14,7 +14,7 @@ interface CategoryBundle {
 interface QuestionContextType {
   questions: Question[];
   categories: Category[];
-  combinedQuestions: Record<string, Question[]>;
+  combinedQuestions: Record<number, Question[]>;
   fetchQuestions: () => void;
   getCategory: (index: number) => CategoryBundle;
   isLoading: boolean;
@@ -54,7 +54,7 @@ async function fetchQuestionsData(eventId: string) {
   if (!response.ok) {
     throw new Error(`Failed to fetch questions: ${response.statusText}`);
   }
-  return response.json();
+  return await response.json();
 }
 
 async function updateQuestionsData(
@@ -141,12 +141,12 @@ export const QuestionProvider = ({ children }: QuestionProviderProps) => {
   const combinedQuestions = useMemo(
     () => ({
       ...questions.reduce((acc, question) => {
-        if (!acc[question.categoryName]) {
-          acc[question.categoryName] = [];
+        if (!acc[question.categoryId]) {
+          acc[question.categoryId] = [];
         }
-        acc[question.categoryName].push(question);
+        acc[question.categoryId].push(question);
         return acc;
-      }, {} as Record<string, Question[]>),
+      }, {} as Record<number, Question[]>),
     }),
     [questions]
   );
@@ -166,7 +166,7 @@ export const QuestionProvider = ({ children }: QuestionProviderProps) => {
       throw new Error("Category index out of bounds");
     }
     const category = categories[index];
-    const questionsForCategory = combinedQuestions[category.name] || [];
+    const questionsForCategory = combinedQuestions[category.id] || [];
     return { category, questions: questionsForCategory };
   }
 

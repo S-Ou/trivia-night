@@ -22,7 +22,7 @@ export default function RootLayout({
           <Theme>
             {children}
             <Toaster richColors position="top-right" closeButton />
-            <ThemePanel />
+            {/* <ThemePanel /> */}
           </Theme>
         </StyledComponentsRegistry>
       </body>

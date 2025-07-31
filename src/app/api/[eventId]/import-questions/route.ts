@@ -1,4 +1,5 @@
 import { prisma } from "@/client";
+import { Category } from "@/generated/prisma";
 import { Question } from "@/types/Question";
 import { convertToQuestionData } from "@/utils/csvHandler";
 import { randomPermutationIndex } from "@/utils/permutations";
@@ -17,12 +18,12 @@ async function clearExistingData(eventId: number) {
 }
 
 async function createCategories(
-  categories: Question["categoryName"][],
+  categories: string[],
   eventId: number
-) {
+): Promise<Category[]> {
   const uniqueCategories = Array.from(new Set(categories));
 
-  await prisma.category.createMany({
+  return await prisma.category.createManyAndReturn({
     data: uniqueCategories.map((c, i) => ({
       name: c,
       index: i,
@@ -31,18 +32,22 @@ async function createCategories(
   });
 }
 
-async function createQuestions(questions: Question[], eventId: number) {
-  const indexMap = new Map<string, number>();
+async function createQuestions(
+  questions: Question[],
+  eventId: number,
+  categories: Category[]
+) {
+  const indexMap = new Map<number, number>();
 
   const questionData = await prisma.question.createManyAndReturn({
     data: questions.map((q) => ({
       question: q.question,
       questionType: q.questionType,
-      categoryName: q.categoryName,
+      categoryId: categories.find((c) => c.name === q.category.name)?.id ?? 0,
       imageUrl: q.imageUrl,
       indexWithinCategory: indexMap
-        .set(q.categoryName, (indexMap.get(q.categoryName) ?? -1) + 1)
-        .get(q.categoryName)!,
+        .set(q.categoryId, (indexMap.get(q.categoryId) ?? -1) + 1)
+        .get(q.categoryId)!,
       optionOrder:
         q.optionOrder != -1
           ? q.optionOrder
@@ -69,11 +74,11 @@ async function createQuestions(questions: Question[], eventId: number) {
 
 async function uploadQuestions(questions: Question[], eventId: number) {
   await clearExistingData(eventId);
-  await createCategories(
-    questions.map((q) => q.categoryName),
+  const categories = await createCategories(
+    questions.map((q) => q.category.name),
     eventId
   );
-  await createQuestions(questions, eventId);
+  await createQuestions(questions, eventId, categories);
 }
 
 export async function POST(

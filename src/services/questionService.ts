@@ -1,4 +1,5 @@
 import { prisma } from "@/client";
+import { Category, Question } from "@/generated/prisma";
 
 export async function fetchQuestions(eventId?: number) {
   const questions = await prisma.question.findMany({
@@ -25,13 +26,8 @@ export async function fetchQuestions(eventId?: number) {
 }
 
 export async function updateQuestionOrders(
-  questions: {
-    id: string;
-    indexWithinCategory: number;
-    optionOrder: number;
-    eventId: number;
-  }[],
-  categories: { name: string; index: number; eventId: number }[],
+  questions: Question[],
+  categories: Category[],
   eventId: number
 ) {
   const questionUpdatePromises = questions.map((question) =>
@@ -46,7 +42,7 @@ export async function updateQuestionOrders(
 
   const categoryUpdatePromises = categories.map((category) =>
     prisma.category.update({
-      where: { name: category.name, eventId: eventId },
+      where: { id: category.id, eventId: eventId },
       data: { index: category.index },
     })
   );

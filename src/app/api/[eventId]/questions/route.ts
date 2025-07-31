@@ -18,7 +18,7 @@ export async function GET(
   const questions = await fetchQuestions(eventId);
 
   const categories = questions.reduce((acc, question) => {
-    if (!acc.some((cat) => cat.name === question.categoryName)) {
+    if (!acc.some((cat) => cat.id === question.Category.id)) {
       acc.push(question.Category);
     }
     return acc;
@@ -30,7 +30,7 @@ export async function GET(
       ...o,
       isCorrect: o.isCorrect || false,
     })),
-    categoryName: q.Category.name,
+    category: q.Category,
   }));
 
   return new Response(
