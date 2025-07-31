@@ -29,11 +29,11 @@ export abstract class SlideThemeBase implements BaseSlideTheme {
   static id: string;
 
   get title(): string {
-    return (this.constructor as any).title;
+    return (this.constructor as typeof BaseSlideTheme).title;
   }
 
   get id(): string {
-    return (this.constructor as any).id;
+    return (this.constructor as typeof BaseSlideTheme).id;
   }
 
   abstract HomeSlide: ComponentType<HomeSlideProps>;

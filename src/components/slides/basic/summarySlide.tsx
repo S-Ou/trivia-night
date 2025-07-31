@@ -1,7 +1,7 @@
 import BaseSlide from "./baseSlide";
 import styled from "styled-components";
 import { Separator } from "@radix-ui/themes";
-import { CategorySlideProps, SlideProps } from "../slideProps";
+import { CategorySlideProps } from "../slideProps";
 
 const CategoryTitle = styled.h1`
   font-size: 3rem;

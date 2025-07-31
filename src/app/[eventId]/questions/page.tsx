@@ -198,7 +198,6 @@ const OptionGrip = styled.span`
 
 function Categories() {
   const {
-    questions,
     combinedQuestions,
     categories,
     isLoading,
