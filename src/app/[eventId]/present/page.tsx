@@ -34,7 +34,19 @@ export default function Present() {
     return null;
   }
 
+  const getCategoryLink = (index: number, isAnswers?: boolean) => {
+    return isAnswers
+      ? `./category/${index}?answers=true`
+      : `./category/${index}`;
+  };
+
   const slideProps = GetSlideProps();
 
-  return <HomeSlide {...slideProps} />;
+  return (
+    <HomeSlide
+      {...slideProps}
+      getCategoryLink={getCategoryLink}
+      resultsLink="../results"
+    />
+  );
 }

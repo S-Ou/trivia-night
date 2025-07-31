@@ -1,7 +1,7 @@
 import Link from "next/link";
 import styled from "styled-components";
 import { ChevronRight, CircleCheckBig, Trophy } from "lucide-react";
-import { SlideProps } from "../slideProps";
+import { HomeSlideProps } from "../slideProps";
 
 const BaseWrapper = styled.div`
   align-items: start;
@@ -101,7 +101,9 @@ export default function HomeSlide({
   category: { categories, nextCategoryIndex },
   question: { isLoading: isQuestionLoading },
   result: { results },
-}: SlideProps) {
+  getCategoryLink,
+  resultsLink,
+}: HomeSlideProps) {
   return (
     <BaseWrapper>
       <Title>{!isEventLoading ? event.title : "Loading..."}</Title>
@@ -117,14 +119,14 @@ export default function HomeSlide({
           categories.map((category, index) => (
             <StyledCategory key={category.name || index}>
               <CategoryLink
-                href={`./category/${index}`}
+                href={getCategoryLink(index)}
                 $isNextLink={nextCategoryIndex === index}
               >
                 <ChevronRight size={32} />
                 {category.name}
               </CategoryLink>
               {(nextCategoryIndex === null || nextCategoryIndex > index) && (
-                <CategoryAnswersLink href={`./category/${index}?answers=true`}>
+                <CategoryAnswersLink href={getCategoryLink(index, true)}>
                   <CircleCheckBig size={16} /> Answers
                 </CategoryAnswersLink>
               )}
@@ -134,7 +136,7 @@ export default function HomeSlide({
       </CategoryWrapper>
 
       {results && results.length > 0 && (
-        <ResultsLink href="./results">
+        <ResultsLink href={resultsLink}>
           <Trophy size={32} />
           Current Results
         </ResultsLink>

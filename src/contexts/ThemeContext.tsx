@@ -1,9 +1,9 @@
 import { BaseTheme } from "@/components/slides/basic/baseTheme";
-import { ISlideTheme } from "@/components/slides/slideTheme";
+import { BaseSlideTheme } from "@/components/slides/slideTheme";
 import { createContext, ReactNode, useState, useContext } from "react";
 
 interface SlideThemeContextType {
-  currentTheme: ISlideTheme;
+  currentTheme: BaseSlideTheme;
   currentThemeName: string;
   availableThemes: string[];
   setTheme: (themeName: string) => void;
@@ -20,7 +20,7 @@ export function SlideThemeProvider({
   children,
   defaultTheme = "base",
 }: SlideThemeProviderProps) {
-  const [themes] = useState<Map<string, ISlideTheme>>(() => {
+  const [themes] = useState<Map<string, BaseSlideTheme>>(() => {
     const themeMap = new Map();
 
     themeMap.set("base", new BaseTheme());

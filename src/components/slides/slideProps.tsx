@@ -29,6 +29,11 @@ export interface SlideProps {
   };
 }
 
+export type HomeSlideProps = SlideProps & {
+  getCategoryLink: (index: number, isAnswers?: boolean) => string;
+  resultsLink: string;
+};
+
 export type ResultSlideProps = SlideProps & {
   revealedRows: Set<string>;
   handleReveal: (playerId: string) => void;

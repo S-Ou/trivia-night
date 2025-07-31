@@ -5,7 +5,7 @@ import { TitleSlide } from "./titleSlide";
 import { SummarySlide } from "./summarySlide";
 import { ResultSlide } from "./resultSlide";
 
-export class BaseTheme extends BaseSlideTheme {
+export class BaseTheme implements BaseSlideTheme {
   HomeSlide = HomeSlide;
   TitleSlide = TitleSlide;
   QuestionSlide = QuestionSlide;
