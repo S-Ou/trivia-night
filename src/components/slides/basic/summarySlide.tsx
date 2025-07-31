@@ -41,12 +41,14 @@ export function SummarySlide({
       <Separator size="3" />
       <SummaryTitle>Summary</SummaryTitle>
       <SummaryList>
-        {currentQuestions!.map((question, index) => (
-          <SummaryItem key={index}>
-            <SummaryLabel>{index + 1}.</SummaryLabel>
-            <td>{question.question}</td>
-          </SummaryItem>
-        ))}
+        <tbody>
+          {currentQuestions!.map((question, index) => (
+            <SummaryItem key={index}>
+              <SummaryLabel>{index + 1}.</SummaryLabel>
+              <td>{question.question}</td>
+            </SummaryItem>
+          ))}
+        </tbody>
       </SummaryList>
     </BaseSlide>
   );
