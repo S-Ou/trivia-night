@@ -4,6 +4,7 @@ export interface UpdateEventDTO {
   title: string;
   description?: string;
   hideResults?: boolean;
+  themeId?: string;
 }
 
 export async function fetchEvent(eventId: number) {

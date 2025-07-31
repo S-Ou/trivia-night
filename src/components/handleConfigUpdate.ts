@@ -11,6 +11,7 @@ export type HandleConfigUpdateParams = {
   title: string;
   description: string | null;
   hideResults: boolean;
+  themeId?: string;
   setTitle?: (val: string) => void;
   setDescription?: (val: string) => void;
   setHideResults?: (val: boolean) => void;
@@ -25,6 +26,7 @@ export function handleConfigUpdate({
   title,
   description,
   hideResults,
+  themeId,
 }: HandleConfigUpdateParams) {
   if (!event) {
     toast.error("Event not found");
@@ -39,7 +41,8 @@ export function handleConfigUpdate({
   if (
     (key === "title" && value === event.title) ||
     (key === "description" && value === event.description) ||
-    (key === "hideResults" && value === event.hideResults)
+    (key === "hideResults" && value === event.hideResults) ||
+    (key === "themeId" && value === event.themeId)
   ) {
     return;
   }
@@ -51,6 +54,7 @@ export function handleConfigUpdate({
         title: (value as string).trim(),
         description: description?.trim() || undefined,
         hideResults,
+        themeId,
       });
       break;
     }
@@ -59,6 +63,7 @@ export function handleConfigUpdate({
         title: title.trim(),
         description: (value as string).trim() || undefined,
         hideResults,
+        themeId,
       });
       break;
     }
@@ -67,6 +72,16 @@ export function handleConfigUpdate({
         title: title.trim(),
         description: description?.trim() || undefined,
         hideResults: value as boolean,
+        themeId,
+      });
+      break;
+    }
+    case "themeId": {
+      updatePromise = updateEvent({
+        title: title.trim(),
+        description: description?.trim() || undefined,
+        hideResults,
+        themeId: value as string,
       });
       break;
     }

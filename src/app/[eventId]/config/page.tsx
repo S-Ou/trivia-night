@@ -13,7 +13,6 @@ import { Skull, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useSlideTheme } from "@/contexts/ThemeContext";
-import { BaseSlideTheme } from "@/components/slides/baseSlideTheme";
 
 export default function ConfigPage() {
   const router = useRouter();
@@ -46,6 +45,7 @@ export default function ConfigPage() {
       title,
       description,
       hideResults,
+      themeId: currentTheme.id,
     });
   };
 
@@ -99,6 +99,7 @@ export default function ConfigPage() {
       }, {} as Record<string, string>),
       onChange: (val) => {
         setTheme(val as string);
+        handleUpdate("themeId", val as string);
       },
     },
   ];
