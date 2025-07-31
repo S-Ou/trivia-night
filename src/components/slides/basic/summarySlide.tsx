@@ -1,7 +1,7 @@
 import BaseSlide from "./baseSlide";
 import styled from "styled-components";
 import { Separator } from "@radix-ui/themes";
-import { SummarySlideProps } from "../slideProps";
+import { SlideProps } from "../slideProps";
 
 const CategoryTitle = styled.h1`
   font-size: 3rem;
@@ -31,14 +31,17 @@ const SummaryLabel = styled.td`
   font-weight: 700;
 `;
 
-export function SummarySlide({ category, questions }: SummarySlideProps) {
+export function SummarySlide({
+  category: { currentCategory },
+  question: { currentQuestions },
+}: SlideProps) {
   return (
     <BaseSlide>
-      <CategoryTitle>{category.name}</CategoryTitle>
+      <CategoryTitle>{currentCategory!.name}</CategoryTitle>
       <Separator size="3" />
       <SummaryTitle>Summary</SummaryTitle>
       <SummaryList>
-        {questions.map((question, index) => (
+        {currentQuestions!.map((question, index) => (
           <SummaryItem key={index}>
             <SummaryLabel>{index + 1}.</SummaryLabel>
             <td>{question.question}</td>

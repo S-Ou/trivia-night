@@ -1,6 +1,7 @@
 "use client";
 
 import HomeSlide from "@/components/slides/basic/homeSlide";
+import { GetSlideProps } from "@/components/slides/slideProps";
 import { useEventContext } from "@/contexts/EventContext";
 import { useQuestionContext } from "@/contexts/QuestionContext";
 import { useResultsContext } from "@/contexts/ResultsContext";
@@ -33,14 +34,7 @@ export default function Present() {
     return null;
   }
 
-  return (
-    <HomeSlide
-      event={event}
-      isEventLoading={isEventLoading}
-      isQuestionLoading={isQuestionLoading}
-      categories={categories}
-      nextCategoryIndex={nextCategoryIndex}
-      results={results}
-    />
-  );
+  const slideProps = GetSlideProps();
+
+  return <HomeSlide {...slideProps} />;
 }

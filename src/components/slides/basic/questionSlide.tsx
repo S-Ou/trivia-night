@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Separator } from "@radix-ui/themes";
 import { indexToPermutation } from "@/utils/permutations";
 import { PencilLine } from "lucide-react";
-import { QuestionSlideProps } from "../slideProps";
+import { SlideProps } from "../slideProps";
 import { letterIndex } from "@/utils";
 
 const CategoryTitle = styled.h1`
@@ -126,10 +126,13 @@ function Option({
 }
 
 export function QuestionSlide({
-  category,
-  question,
+  category: { currentCategory },
+  question: { currentQuestions, currentQuestionIndex },
   showAnswers = false,
-}: QuestionSlideProps) {
+}: SlideProps & { showAnswers: boolean }) {
+  const category = currentCategory!;
+  const question = currentQuestions![currentQuestionIndex ?? 0];
+
   const order = question.options
     ? indexToPermutation(question.optionOrder, question.options.length)
     : [];

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import styled from "styled-components";
 import { ChevronRight, CircleCheckBig, Trophy } from "lucide-react";
-import { HomeSlideProps } from "../slideProps";
+import { SlideProps } from "../slideProps";
 
 const BaseWrapper = styled.div`
   align-items: start;
@@ -97,13 +97,11 @@ const ResultsLink = styled(Link)`
 `;
 
 export default function HomeSlide({
-  event,
-  categories,
-  isEventLoading,
-  isQuestionLoading,
-  nextCategoryIndex,
-  results,
-}: HomeSlideProps) {
+  event: { event, isLoading: isEventLoading },
+  category: { categories, nextCategoryIndex },
+  question: { isLoading: isQuestionLoading },
+  result: { results },
+}: SlideProps) {
   return (
     <BaseWrapper>
       <Title>{!isEventLoading ? event.title : "Loading..."}</Title>

@@ -8,6 +8,7 @@ import { SummarySlide } from "@/components/slides/basic/summarySlide";
 import { TitleSlide } from "@/components/slides/basic/titleSlide";
 import { useSearchParams } from "next/navigation";
 import { QuestionSlide } from "@/components/slides/basic/questionSlide";
+import { GetSlideProps } from "@/components/slides/slideProps";
 
 enum PageState {
   Title,
@@ -118,25 +119,20 @@ export default function CategoryPage() {
     return <p>Loading category...</p>;
   }
 
+  const slideProps = GetSlideProps({
+    currentCategoryIndex: parsedIndex,
+    currentQuestionIndex: currentQuestion,
+  });
+
   return (
     <div>
       {pageState === PageState.Title && (
-        <TitleSlide
-          category={category}
-          questions={questions}
-          showAnswers={showAnswers}
-        />
+        <TitleSlide {...slideProps} showAnswers={showAnswers} />
       )}
       {pageState === PageState.Question && (
-        <QuestionSlide
-          category={category}
-          question={questions[currentQuestion]}
-          showAnswers={showAnswers}
-        />
+        <QuestionSlide {...slideProps} showAnswers={showAnswers} />
       )}
-      {pageState === PageState.Summary && (
-        <SummarySlide category={category} questions={questions} />
-      )}
+      {pageState === PageState.Summary && <SummarySlide {...slideProps} />}
     </div>
   );
 }
