@@ -12,10 +12,13 @@ import { AlertDialog, Button, Flex, Separator } from "@radix-ui/themes";
 import { Skull, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useSlideTheme } from "@/contexts/ThemeContext";
+import { BaseSlideTheme } from "@/components/slides/baseSlideTheme";
 
 export default function ConfigPage() {
   const router = useRouter();
   const { event, isLoading, updateEvent } = useEventContext();
+  const { currentTheme, availableThemes, setTheme } = useSlideTheme();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -83,6 +86,19 @@ export default function ConfigPage() {
       onChange: (val) => {
         setHideResults(val as boolean);
         handleUpdate("hideResults", val as boolean);
+      },
+    },
+    {
+      key: "theme",
+      label: "Slide Theme",
+      type: ConfigComponentType.Select,
+      value: currentTheme.id,
+      options: availableThemes.reduce((acc, theme) => {
+        acc[theme.id] = theme.title;
+        return acc;
+      }, {} as Record<string, string>),
+      onChange: (val) => {
+        setTheme(val as string);
       },
     },
   ];

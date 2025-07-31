@@ -1,11 +1,25 @@
-import { BaseSlideTheme } from "../slideTheme";
-import HomeSlide from "./homeSlide";
+import { SlideThemeBase } from "../baseSlideTheme";
 import { QuestionSlide } from "./questionSlide";
-import { TitleSlide } from "./titleSlide";
-import { SummarySlide } from "./summarySlide";
 import { ResultSlide } from "./resultSlide";
+import { SummarySlide } from "./summarySlide";
+import { TitleSlide } from "./titleSlide";
+import HomeSlide from "./homeSlide";
 
-export class BaseTheme implements BaseSlideTheme {
+export class BaseTheme extends SlideThemeBase {
+  static title = "Base";
+  static id = "base";
+
+  HomeSlide = HomeSlide;
+  TitleSlide = TitleSlide;
+  QuestionSlide = QuestionSlide;
+  SummarySlide = SummarySlide;
+  ResultSlide = ResultSlide;
+}
+
+export class DuplicateBaseTheme extends SlideThemeBase {
+  static title = "Base dupe";
+  static id = "base-dupe";
+
   HomeSlide = HomeSlide;
   TitleSlide = TitleSlide;
   QuestionSlide = QuestionSlide;

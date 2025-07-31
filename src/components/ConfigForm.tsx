@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from "react";
 import styled from "styled-components";
-import { Switch, TextArea, TextField } from "@radix-ui/themes";
+import { Select, Switch, TextArea, TextField } from "@radix-ui/themes";
 
 const ConfigWrapper = styled.div`
   align-items: center;
@@ -44,7 +44,10 @@ const StyledTextArea = styled(TextArea)<{ $error?: boolean }>`
 
 const StyledSwitch = styled(Switch)``;
 
+const StyledSelect = styled(Select.Root)``;
+
 export enum ConfigComponentType {
+  Select,
   Switch,
   TextArea,
   TextField,
@@ -57,6 +60,7 @@ export type ConfigField = {
   value: string | boolean;
   required?: boolean;
   disabled?: boolean;
+  options?: Record<string, string>;
   onChange: (value: string | boolean) => void;
   onBlur?: () => void;
 };
@@ -67,6 +71,7 @@ export function ConfigComponent({
   value,
   required = false,
   disabled = false,
+  options = {},
   onChange,
   onBlur,
 }: ConfigField) {
@@ -106,6 +111,21 @@ export function ConfigComponent({
             onCheckedChange={onChange}
             disabled={disabled}
           />
+        ) : type === ConfigComponentType.Select ? (
+          <StyledSelect
+            value={value as string}
+            disabled={disabled}
+            onValueChange={onChange}
+          >
+            <Select.Trigger />
+            <Select.Content>
+              {Object.entries(options).map(([value, label]) => (
+                <Select.Item key={value} value={value}>
+                  {label}
+                </Select.Item>
+              ))}
+            </Select.Content>
+          </StyledSelect>
         ) : null}
       </ConfigInput>
     </>
