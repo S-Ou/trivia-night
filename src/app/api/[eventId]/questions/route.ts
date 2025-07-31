@@ -41,12 +41,8 @@ export async function GET(
   );
 }
 
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ eventId: string }> }
-) {
+export async function POST(request: Request) {
   const { questions, categories } = await request.json();
-  const eventId = parseInt((await params).eventId, 10);
 
   if (!Array.isArray(questions) || !Array.isArray(categories)) {
     return new Response(JSON.stringify({ error: "Invalid input" }), {
@@ -56,7 +52,7 @@ export async function POST(
   }
 
   try {
-    await updateQuestionOrders(questions, categories, eventId);
+    await updateQuestionOrders(questions, categories);
 
     return new Response(
       JSON.stringify({ message: "Questions updated successfully" }),

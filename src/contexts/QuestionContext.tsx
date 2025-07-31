@@ -75,6 +75,7 @@ async function updateQuestionsData(
         eventId: q.eventId,
       })),
       categories: categories.map((c) => ({
+        id: c.id,
         name: c.name,
         index: c.index,
         eventId: c.eventId,

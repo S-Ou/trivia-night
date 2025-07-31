@@ -27,12 +27,12 @@ export async function fetchQuestions(eventId?: number) {
 
 export async function updateQuestionOrders(
   questions: Question[],
-  categories: Category[],
-  eventId: number
+  categories: Category[]
 ) {
+  console.log("Updating question orders", { questions, categories });
   const questionUpdatePromises = questions.map((question) =>
     prisma.question.update({
-      where: { eventId: eventId, id: question.id },
+      where: { id: question.id },
       data: {
         indexWithinCategory: question.indexWithinCategory,
         optionOrder: question.optionOrder,
@@ -42,7 +42,7 @@ export async function updateQuestionOrders(
 
   const categoryUpdatePromises = categories.map((category) =>
     prisma.category.update({
-      where: { id: category.id, eventId: eventId },
+      where: { id: category.id },
       data: { index: category.index },
     })
   );
