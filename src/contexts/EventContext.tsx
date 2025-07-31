@@ -5,6 +5,7 @@ import { UpdateEventDTO } from "@/services/eventService";
 import { createContext, useContext } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEventId } from "./EventIdContext";
+import { SlideThemeProvider } from "./ThemeContext";
 
 interface EventContextType {
   event: Event | undefined;
@@ -120,7 +121,9 @@ export const EventProvider = ({ children }: EventProviderProps) => {
         isUpdating: updateEventMutation.isPending,
       }}
     >
-      {children}
+      <SlideThemeProvider defaultTheme="base" eventThemeId={event?.themeId}>
+        {children}
+      </SlideThemeProvider>
     </EventContext.Provider>
   );
 };

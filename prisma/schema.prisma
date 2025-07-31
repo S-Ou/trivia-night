@@ -15,6 +15,7 @@ model Event {
   id        Int   @id @default(autoincrement())
   title      String
   description String?
+  themeId    String?
 
   hideResults Boolean @default(false)
 

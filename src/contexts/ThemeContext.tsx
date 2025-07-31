@@ -1,62 +1,67 @@
-import { BaseTheme, DuplicateBaseTheme } from "@/components/slides/basic/baseTheme";
-import { BaseSlideTheme } from "@/components/slides/baseSlideTheme";
-import { createContext, ReactNode, useState, useContext } from "react";
+"use client";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { SlideThemeBase } from "@/components/slides/baseSlideTheme";
+import {
+  BaseTheme,
+  DuplicateBaseTheme,
+} from "@/components/slides/basic/baseTheme";
 
-interface SlideThemeContextType {
-  currentTheme: BaseSlideTheme;
-  currentThemeId: string;
-  availableThemes: BaseSlideTheme[];
+const themes = [BaseTheme, DuplicateBaseTheme];
+
+type SlideThemeContextType = {
+  currentTheme: SlideThemeBase;
+  availableThemes: (typeof SlideThemeBase)[];
   setTheme: (themeId: string) => void;
-}
+};
+
 const SlideThemeContext = createContext<SlideThemeContextType | undefined>(
   undefined
 );
+
 interface SlideThemeProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
   defaultTheme?: string;
+  eventThemeId?: string | null;
 }
 
 export function SlideThemeProvider({
   children,
   defaultTheme = "base",
+  eventThemeId,
 }: SlideThemeProviderProps) {
-  const [themes] = useState<Map<string, BaseSlideTheme>>(() => {
-    const themeMap = new Map();
-
-    themeMap.set(BaseTheme.id, new BaseTheme());
-    themeMap.set(DuplicateBaseTheme.id, new DuplicateBaseTheme());
-
-    return themeMap;
+  const [currentTheme, setCurrentTheme] = useState<SlideThemeBase>(() => {
+    const themeToLoad = eventThemeId || defaultTheme;
+    const ThemeClass =
+      themes.find((theme) => theme.id === themeToLoad) ||
+      themes.find((theme) => theme.id === defaultTheme) ||
+      themes[0];
+    return new ThemeClass();
   });
 
-  const [currentThemeId, setCurrentThemeId] = useState(defaultTheme);
+  useEffect(() => {
+    if (eventThemeId) {
+      const ThemeClass = themes.find((theme) => theme.id === eventThemeId);
+      if (ThemeClass) {
+        setCurrentTheme(new ThemeClass());
+      }
+    }
+  }, [eventThemeId]);
 
   const setTheme = (themeId: string) => {
-    if (!themes.has(themeId)) {
-      throw new Error(
-        `Theme '${themeId}' not found. Available themes: ${Array.from(
-          themes.keys()
-        ).join(", ")}`
-      );
+    const ThemeClass = themes.find((theme) => theme.id === themeId);
+    if (ThemeClass) {
+      setCurrentTheme(new ThemeClass());
     }
-    console.log(`Setting theme to: ${themeId}`);
-    setCurrentThemeId(themeId);
-  };
-
-  const currentTheme = themes.get(currentThemeId);
-  if (!currentTheme) {
-    throw new Error(`Current theme '${currentThemeId}' not found`);
-  }
-
-  const value: SlideThemeContextType = {
-    currentTheme,
-    currentThemeId: currentThemeId,
-    availableThemes: Array.from(themes.values()),
-    setTheme,
   };
 
   return (
-    <SlideThemeContext.Provider value={value}>
+    <SlideThemeContext.Provider
+      value={{
+        currentTheme,
+        availableThemes: themes,
+        setTheme,
+      }}
+    >
       {children}
     </SlideThemeContext.Provider>
   );
@@ -64,7 +69,7 @@ export function SlideThemeProvider({
 
 export function useSlideTheme() {
   const context = useContext(SlideThemeContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useSlideTheme must be used within a SlideThemeProvider");
   }
   return context;
