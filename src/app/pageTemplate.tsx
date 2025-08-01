@@ -8,6 +8,8 @@ const BodyWrapper = styled.div`
   max-width: 800px;
   padding-block: 2rem;
   padding-inline: 1rem;
+
+  
 `;
 
 const PageTitle = styled.h1`

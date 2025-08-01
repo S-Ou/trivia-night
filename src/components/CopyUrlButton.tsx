@@ -10,7 +10,7 @@ const CallToActionWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  width: 30rem;
+  max-width: 30rem;
 `;
 
 const TextFieldRoot = styled(TextField.Root)`
