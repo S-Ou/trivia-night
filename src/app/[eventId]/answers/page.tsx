@@ -7,6 +7,7 @@ import { letterIndex } from "@/utils";
 import { indexToPermutation } from "@/utils/permutations";
 import { Hash, PencilLine, SquareCheck } from "lucide-react";
 import { EventPageTemplate, Page } from "../pageTemplate";
+import { CallToActionCopyUrl } from "@/components/CopyUrlButton";
 
 const StyledTable = styled.table`
   border-collapse: collapse;
@@ -54,6 +55,11 @@ export default function AnswersPage() {
 
   return (
     <EventPageTemplate currentPage={Page.Answers}>
+      <CallToActionCopyUrl>
+        Share this Answer Sheet page with your question markers. Don't share it
+        with the contestants!
+      </CallToActionCopyUrl>
+
       <StyledTable>
         <thead>
           <LegendHeader>

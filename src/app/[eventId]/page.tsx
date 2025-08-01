@@ -1,21 +1,14 @@
 "use client";
 
-import { Button, Separator, TextField } from "@radix-ui/themes";
-import { Clipboard, Presentation } from "lucide-react";
+import { Button, Separator } from "@radix-ui/themes";
+import { Presentation } from "lucide-react";
 import { useEventId } from "@/contexts/EventIdContext";
 import { toast } from "sonner";
 import styled from "styled-components";
 import { EventPageTemplate, Page } from "./pageTemplate";
 import Link from "next/link";
 import { useQuestionContext } from "@/contexts/QuestionContext";
-
-const CallToActionWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  width: 30rem;
-`;
+import { CallToActionCopyUrl } from "@/components/CopyUrlButton";
 
 const IdButton = styled.a`
   color: var(--accent-11);
@@ -27,44 +20,6 @@ const IdButton = styled.a`
     text-decoration: underline;
   }
 `;
-
-const CallToActionText = styled.span`
-  text-align: center;
-  text-wrap: balance;
-`;
-
-const TextFieldRoot = styled(TextField.Root)`
-  background-image: none;
-  height: auto;
-  padding: 0.5rem;
-  width: 100%;
-`;
-
-const TextFieldSlot = styled(TextField.Slot)`
-  padding-right: 0;
-`;
-
-const StyledButton = styled(Button)`
-  padding-inline: 0.5rem;
-`;
-
-function CopyUrlButton() {
-  const url = window.location.origin + window.location.pathname;
-  const handleCopy = () => {
-    navigator.clipboard.writeText(url).then(() => {
-      toast.success("URL copied to clipboard!");
-    });
-  };
-  return (
-    <TextFieldRoot disabled value={url} size="3" name="copy-url">
-      <TextFieldSlot side="right">
-        <StyledButton onClick={handleCopy}>
-          <Clipboard size={20} />
-        </StyledButton>
-      </TextFieldSlot>
-    </TextFieldRoot>
-  );
-}
 
 function CopyIdButton() {
   const { eventId } = useEventId();
@@ -92,13 +47,10 @@ export default function Home() {
 
   return (
     <EventPageTemplate currentPage={Page.Home}>
-      <CallToActionWrapper>
-        <CallToActionText>
-          This is the event&apos;s unique ID: <CopyIdButton />. Save it
-          somewhere safe to return to this event later or to share with others.
-        </CallToActionText>
-        <CopyUrlButton />
-      </CallToActionWrapper>
+      <CallToActionCopyUrl>
+        This is the event&apos;s unique ID: <CopyIdButton />. Save it somewhere
+        safe to return to this event later or to share with others.
+      </CallToActionCopyUrl>
 
       <Link href="/">
         <Button variant={"outline"}>Exit to homepage</Button>
