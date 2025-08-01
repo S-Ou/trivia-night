@@ -42,6 +42,10 @@ button {
   font-family: inherit;
 }
 
+.rt-Button {
+  cursor: pointer;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
