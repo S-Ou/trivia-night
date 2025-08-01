@@ -2,11 +2,11 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { SlideThemeBase } from "@/components/slides/baseSlideTheme";
 import {
-  BaseTheme,
-  DuplicateBaseTheme,
-} from "@/components/slides/basic/baseTheme";
+  DefaultTheme,
+  DuplicateDefaultTheme,
+} from "@/components/slides/default/defaultTheme";
 
-const themes = [BaseTheme, DuplicateBaseTheme];
+const themes = [DefaultTheme, DuplicateDefaultTheme];
 
 type SlideThemeContextType = {
   currentTheme: SlideThemeBase;
@@ -26,7 +26,7 @@ interface SlideThemeProviderProps {
 
 export function SlideThemeProvider({
   children,
-  defaultTheme = "base",
+  defaultTheme = DefaultTheme.id,
   eventThemeId,
 }: SlideThemeProviderProps) {
   const [currentTheme, setCurrentTheme] = useState<SlideThemeBase>(() => {

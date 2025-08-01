@@ -5,9 +5,9 @@ import { SummarySlide } from "./summarySlide";
 import { TitleSlide } from "./titleSlide";
 import HomeSlide from "./homeSlide";
 
-export class BaseTheme extends SlideThemeBase {
-  static title = "Base";
-  static id = "base";
+export class DefaultTheme extends SlideThemeBase {
+  static title = "Default";
+  static id = "default";
 
   HomeSlide = HomeSlide;
   TitleSlide = TitleSlide;
@@ -16,9 +16,9 @@ export class BaseTheme extends SlideThemeBase {
   ResultSlide = ResultSlide;
 }
 
-export class DuplicateBaseTheme extends SlideThemeBase {
-  static title = "Base dupe";
-  static id = "base-dupe";
+export class DuplicateDefaultTheme extends SlideThemeBase {
+  static title = "Default dupe";
+  static id = "default-dupe";
 
   HomeSlide = HomeSlide;
   TitleSlide = TitleSlide;
