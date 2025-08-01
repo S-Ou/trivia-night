@@ -4,6 +4,7 @@ import { TabNav } from "@radix-ui/themes";
 import Link from "next/link";
 import { useQuestionContext } from "@/contexts/QuestionContext";
 import styled, { keyframes } from "styled-components";
+import { useRouter } from "next/navigation";
 
 export enum Page {
   Home = "Home",
@@ -63,6 +64,7 @@ export function EventPageTemplate({
   currentPage: Page;
   children: ReactNode;
 }) {
+  const router = useRouter();
   const { questions } = useQuestionContext();
   const shouldHighlightQuestions =
     questions.length === 0 && currentPage !== Page.Questions;
@@ -77,6 +79,24 @@ export function EventPageTemplate({
   const QuestionsTabComponent = shouldHighlightQuestions
     ? HighlightedTab
     : TabNav.Link;
+
+  const mobileSelectOptions = [
+    { value: Page.Home, label: Page.Home, href: getHref(Page.Home) },
+    { value: Page.Config, label: Page.Config, href: getHref(Page.Config) },
+    {
+      value: Page.Questions,
+      label: Page.Questions,
+      href: getHref(Page.Questions),
+    },
+    { value: Page.Answers, label: Page.Answers, href: getHref(Page.Answers) },
+    { value: Page.Results, label: Page.Results, href: getHref(Page.Results) },
+  ];
+
+  const handleMobileNavigation = (href: string) => {
+    if (href !== "#") {
+      router.push(href);
+    }
+  };
 
   return (
     <PageTemplate
@@ -102,6 +122,9 @@ export function EventPageTemplate({
           </TabNav.Link>
         </>
       }
+      mobileSelectOptions={mobileSelectOptions}
+      currentValue={currentPage}
+      onValueChange={handleMobileNavigation}
     >
       {children}
     </PageTemplate>
