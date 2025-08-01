@@ -89,3 +89,42 @@ export function ExportButton() {
 
   return <StyledButton onClick={handleExport}>Export to CSV</StyledButton>;
 }
+
+export function ExampleQuestionsButton() {
+  const { fetchQuestions } = useQuestionContext();
+  const { eventId } = useEventId();
+
+  async function handleExampleImport() {
+    const response = await fetch("/questions-example.csv");
+    if (!response.ok) {
+      toast.error("Failed to fetch example questions");
+      throw new Error("Failed to fetch example questions");
+    }
+    const csvText = await response.text();
+    const file = new File([csvText], "questions-example.csv", {
+      type: "text/csv",
+    });
+    parseCsvFile(file, async (questions) => {
+      const importResponse = await fetch(`/api/${eventId}/import-questions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ questions }),
+      });
+
+      if (!importResponse.ok) {
+        const errorBody = await importResponse.json();
+        const errorMessage = errorBody.error || importResponse.statusText;
+        toast.error(`Failed to import example questions: ${errorMessage}`);
+        throw new Error(errorMessage);
+      }
+      toast.success("Example questions imported successfully!");
+      fetchQuestions();
+    });
+  }
+
+  return (
+    <Button variant="surface" onClick={handleExampleImport}>
+      Load Example Questions
+    </Button>
+  );
+}

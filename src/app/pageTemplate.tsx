@@ -20,6 +20,7 @@ const PageTitle = styled.h1`
 
 const TabNavRoot = styled(TabNav.Root)`
   margin-bottom: 2rem;
+  overflow: visible;
 `;
 
 const ChildrenWrapper = styled.div`

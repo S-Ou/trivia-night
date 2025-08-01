@@ -1,7 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { ImportButton, ExportButton } from "../../../components/csvButtons";
+import {
+  ImportButton,
+  ExportButton,
+  ExampleQuestionsButton,
+} from "../../../components/csvButtons";
 import styled from "styled-components";
 import { Separator, Text } from "@radix-ui/themes";
 import {
@@ -522,6 +526,8 @@ function Options({
 }
 
 export default function QuestionsPage() {
+  const { questions } = useQuestionContext();
+
   return (
     <EventPageTemplate currentPage={Page.Questions}>
       <ButtonWrapper>
@@ -531,6 +537,7 @@ export default function QuestionsPage() {
       <Text size={"2"}>
         Click &quot;Export&quot; to obtain the CSV file format
       </Text>
+      {!questions.length && <ExampleQuestionsButton />}
       <Separator size="4" />
       <Text size="4" style={{ textAlign: "center" }}>
         Reorder categories, questions, and options by dragging and dropping them
