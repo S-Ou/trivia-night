@@ -1,6 +1,9 @@
+import { Results } from "@/generated/prisma/wasm";
 import {
+  createResult,
   deleteResult,
   fetchResults,
+  updateResult,
   updateResults,
 } from "@/services/resultsService";
 
@@ -25,32 +28,58 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ eventId: string }> }
 ) {
-  console.time("total-request");
-  console.time("parse-request");
   const { results } = await request.json();
   const eventId = parseInt((await params).eventId, 10);
-  console.timeEnd("parse-request");
 
   if (!Array.isArray(results)) {
     return new Response("Invalid input", { status: 400 });
   }
 
   try {
-    console.log(`Updating ${results.length} results for event ${eventId}`);
-    console.time("updateResults");
-    const updatedResults = await updateResults(eventId, results);
-    console.timeEnd("updateResults");
+    var updatedResults: Results[];
+    if (results.length === 0) {
+      return new Response("No results to update", { status: 400 });
+    } else if (results.length === 1) {
+      updatedResults = [await updateResult(eventId, results[0])];
+    } else {
+      updatedResults = await updateResults(eventId, results);
+    }
 
-    console.time("serialize-response");
     const response = new Response(JSON.stringify(updatedResults), {
       status: 200,
     });
-    console.timeEnd("serialize-response");
-    console.timeEnd("total-request");
 
     return response;
   } catch (error) {
     console.error("Error saving results:", error);
+    return new Response("Internal Server Error", { status: 500 });
+  }
+}
+
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ eventId: string }> }
+) {
+  console.log("Creating result...");
+  const eventId = parseInt((await params).eventId, 10);
+  const { playerName } = await request.json();
+
+  console.log(
+    "Creating result for eventId:",
+    eventId,
+    "with playerName:",
+    playerName
+  );
+
+  if (!eventId || !playerName) {
+    return new Response("Invalid input", { status: 400 });
+  }
+
+  try {
+    const newResult = await createResult(eventId, playerName);
+    return new Response(JSON.stringify(newResult), { status: 201 });
+  } catch (error) {
+    console.error("Error creating result:", error);
     return new Response("Internal Server Error", { status: 500 });
   }
 }

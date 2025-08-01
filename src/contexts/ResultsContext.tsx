@@ -16,8 +16,11 @@ interface ResultsContextType {
   error: Error | null;
   fetchResults: () => void;
   updateResults: (results: Results[]) => Promise<void>;
+  updateResult: (result: Results) => Promise<void>;
+  createResult: (playerName: string) => Promise<void>;
   deleteResult: (playerId: string) => Promise<void>;
   isUpdating: boolean;
+  isCreating: boolean;
   isDeleting: boolean;
 }
 
@@ -29,10 +32,17 @@ export const ResultsContext = createContext<ResultsContextType>({
   updateResults: async () => {
     throw new Error("updateResults not implemented in default context");
   },
+  updateResult: async () => {
+    throw new Error("updateResult not implemented in default context");
+  },
+  createResult: async () => {
+    throw new Error("createResult not implemented in default context");
+  },
   deleteResult: async () => {
     throw new Error("deleteResult not implemented in default context");
   },
   isUpdating: false,
+  isCreating: false,
   isDeleting: false,
 });
 
@@ -122,6 +132,26 @@ const deleteResultData = async (
   return calculatePlaces(updatedResults);
 };
 
+const createResultData = async (
+  eventId: number,
+  playerName: string
+): Promise<Results> => {
+  const response = await fetch(`/api/${eventId}/results`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ playerName }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create result");
+  }
+
+  const newResult = await response.json();
+  return newResult;
+};
+
 interface ResultsProviderProps {
   children: React.ReactNode;
 }
@@ -185,8 +215,31 @@ export const ResultsProvider = ({ children }: ResultsProviderProps) => {
     },
   });
 
+  // Mutation for creating a result
+  const createResultMutation = useMutation({
+    mutationFn: (playerName: string) => {
+      if (!eventId) throw new Error("No event ID available");
+      return createResultData(eventId, playerName);
+    },
+    onSuccess: () => {
+      // Refetch results to get the updated list with the new result
+      queryClient.invalidateQueries({ queryKey: ["results", eventId] });
+    },
+    onError: (error) => {
+      console.error("Error creating result:", error);
+    },
+  });
+
   const updateResults = async (results: Results[]) => {
     await updateResultsMutation.mutateAsync(results);
+  };
+
+  const updateResult = async (result: Results) => {
+    await updateResultsMutation.mutateAsync([result]);
+  };
+
+  const createResult = async (playerName: string) => {
+    await createResultMutation.mutateAsync(playerName);
   };
 
   const deleteResult = async (playerId: string) => {
@@ -205,8 +258,11 @@ export const ResultsProvider = ({ children }: ResultsProviderProps) => {
         error: error as Error | null,
         fetchResults,
         updateResults,
+        updateResult,
+        createResult,
         deleteResult,
         isUpdating: updateResultsMutation.isPending,
+        isCreating: createResultMutation.isPending,
         isDeleting: deleteResultMutation.isPending,
       }}
     >

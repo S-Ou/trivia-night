@@ -97,7 +97,8 @@ export default function ResultsPage() {
   const {
     results,
     isLoading: isResultsLoading,
-    updateResults,
+    updateResult,
+    createResult,
     deleteResult,
   } = useResultsContext();
   const { event, isLoading: isEventLoading, updateEvent } = useEventContext();
@@ -111,15 +112,6 @@ export default function ResultsPage() {
   }, [event, isEventLoading]);
 
   function onBlurHandler(updatedResult: Result) {
-    const updatedResults = results.map((result) =>
-      result.playerId != updatedResult.playerId
-        ? result
-        : {
-            ...result,
-            playerName: updatedResult.playerName,
-            score: updatedResult.score,
-          }
-    );
     const isChanged = results.some((result) => {
       return (
         result.playerId === updatedResult.playerId &&
@@ -129,7 +121,12 @@ export default function ResultsPage() {
     });
 
     if (isChanged) {
-      updateResults(updatedResults)
+      updateResult({
+        playerId: updatedResult.playerId,
+        eventId: updatedResult.eventId,
+        playerName: updatedResult.playerName,
+        score: updatedResult.score,
+      })
         .then(() => {
           toast.success("Result updated successfully");
         })
@@ -140,14 +137,8 @@ export default function ResultsPage() {
   }
 
   function addNewPlayer() {
-    const newPlayer: Results = {
-      playerId: "",
-      eventId: 1,
-      playerName: `Player ${results.length + 1}`,
-      score: 0,
-    };
-    const updatedResults = [...results, newPlayer];
-    updateResults(updatedResults)
+    const playerName = `Player ${results.length + 1}`;
+    createResult(playerName)
       .then(() => {
         toast.success("Player added successfully");
       })
