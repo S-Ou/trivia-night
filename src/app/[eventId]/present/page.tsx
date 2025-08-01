@@ -52,7 +52,7 @@ export default function Present() {
     <HomeSlide
       {...slideProps}
       getCategoryLink={getCategoryLink}
-      resultsLink="../results"
+      resultsLink="./results"
     />
   );
 }
