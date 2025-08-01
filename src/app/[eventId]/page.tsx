@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import styled from "styled-components";
 import { EventPageTemplate, Page } from "./pageTemplate";
 import Link from "next/link";
+import { useQuestionContext } from "@/contexts/QuestionContext";
 
 const CallToActionWrapper = styled.div`
   align-items: center;
@@ -87,6 +88,8 @@ function CopyIdButton() {
 }
 
 export default function Home() {
+  const { questions } = useQuestionContext();
+
   return (
     <EventPageTemplate currentPage={Page.Home}>
       <CallToActionWrapper>
@@ -104,9 +107,9 @@ export default function Home() {
       <Separator size="3" />
 
       <a href="./present" target="_blank" rel="noopener noreferrer">
-        <Button variant="solid" size={"4"}>
+        <Button variant="solid" size={"4"} disabled={questions.length === 0}>
           <Presentation />
-          Present
+          {questions.length > 0 ? "Present" : "Add questions to present"}
         </Button>
       </a>
     </EventPageTemplate>
