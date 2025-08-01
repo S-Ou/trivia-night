@@ -5,7 +5,6 @@ import { Result, useResultsContext } from "@/contexts/ResultsContext";
 import { intToOrdinal } from "@/utils";
 import { Plus, Trash, Trophy } from "lucide-react";
 import { Button, TextField } from "@radix-ui/themes";
-import { Results } from "@/generated/prisma";
 import { useEventContext } from "@/contexts/EventContext";
 import { handleConfigUpdate } from "@/components/handleConfigUpdate";
 import {

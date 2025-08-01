@@ -36,7 +36,7 @@ export async function POST(
   }
 
   try {
-    var updatedResults: Results[];
+    let updatedResults: Results[];
     if (results.length === 0) {
       return new Response("No results to update", { status: 400 });
     } else if (results.length === 1) {
