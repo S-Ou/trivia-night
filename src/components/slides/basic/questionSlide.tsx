@@ -68,16 +68,20 @@ const OptionDenominator = styled.strong<{ $isCorrect?: boolean }>`
       : ""}
 `;
 
-const OptionContent = styled.span<{ $isCorrect?: boolean }>`
+const OptionContent = styled.span<{
+  $isCorrect?: boolean;
+  $isShortAnswer?: boolean;
+}>`
   font-size: 2.5rem;
+  font-weight: 300;
+  letter-spacing: 0.005em;
   line-height: 1.2;
   max-width: 100%;
   overflow-wrap: break-word;
-  text-align: left;
+  text-align: ${({ $isShortAnswer }) => ($isShortAnswer ? "center" : "left")};
+  text-wrap: balance;
   white-space: pre-wrap;
   word-break: break-word;
-  letter-spacing: 0.005em;
-  font-weight: 300;
 
   ${({ $isCorrect }) =>
     $isCorrect === true
@@ -120,7 +124,9 @@ function Option({
           {denominator}
         </OptionDenominator>
       )}
-      <OptionContent $isCorrect={isCorrect}>{content}</OptionContent>
+      <OptionContent $isCorrect={isCorrect} $isShortAnswer={!denominator}>
+        {content}
+      </OptionContent>
     </OptionWrapper>
   );
 }
