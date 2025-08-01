@@ -9,6 +9,13 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { CallToActionText } from "@/components/atomic";
 
+const InputWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
 const TextFieldRoot = styled(TextField.Root)`
   background-image: none;
   height: auto;
@@ -80,23 +87,25 @@ export default function HomePage() {
         presentation slides and focus on creating a fun event by letting this
         web app do the heavy lifting for you.
       </CallToActionText>
-      <TextFieldRoot
-        placeholder="Enter existing event ID"
-        inputMode="numeric"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        onKeyDown={handleKeyDown}
-      >
-        <TextFieldSlot side="right">
-          <StyledTextFieldButton onClick={handleInputEnter}>
-            <SendHorizontal size={20} />
-          </StyledTextFieldButton>
-        </TextFieldSlot>
-      </TextFieldRoot>
-      or
-      <Button size={"3"} onClick={handleCreateNewEvent}>
-        Create new event
-      </Button>
+      <InputWrapper>
+        <TextFieldRoot
+          placeholder="Enter existing event ID"
+          inputMode="numeric"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+        >
+          <TextFieldSlot side="right">
+            <StyledTextFieldButton onClick={handleInputEnter}>
+              <SendHorizontal size={20} />
+            </StyledTextFieldButton>
+          </TextFieldSlot>
+        </TextFieldRoot>
+        or
+        <Button size={"3"} onClick={handleCreateNewEvent}>
+          Create new event
+        </Button>
+      </InputWrapper>
     </PageTemplate>
   );
 }
