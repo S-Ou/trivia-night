@@ -1,7 +1,10 @@
 [build]
-  command = "next build"
+  command = "npx prisma generate && next build"
   publish = ".next"
   functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
