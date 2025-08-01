@@ -23,22 +23,30 @@ export async function updateEvent(eventId: number, data: UpdateEventDTO) {
 }
 
 export async function createEvent() {
-  let uniqueId: number;
   while (true) {
-    uniqueId = Math.floor(10000 + Math.random() * 90000); // 5-digit number
-    const existing = await prisma.event.findUnique({ where: { id: uniqueId } });
-    if (!existing) break;
-  }
+    const uniqueId = Math.floor(10000 + Math.random() * 90000); // 5-digit number
 
-  const newEvent = await prisma.event.create({
-    data: {
-      id: uniqueId,
-      title: "Trivia Night",
-      description: "",
-      hideResults: false,
-    },
-  });
-  return newEvent;
+    try {
+      const newEvent = await prisma.event.create({
+        data: {
+          id: uniqueId,
+          title: "Trivia Night",
+          description: "",
+          hideResults: false,
+        },
+      });
+      return newEvent;
+    } catch (error) {
+      // If it's a unique constraint violation, try again with a new ID
+      if (
+        error instanceof Error &&
+        error.message.includes("Unique constraint")
+      ) {
+        continue;
+      }
+      throw error;
+    }
+  }
 }
 
 export async function deleteEvent(eventId: number) {
