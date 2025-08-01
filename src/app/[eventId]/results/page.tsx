@@ -182,8 +182,6 @@ export default function ResultsPage() {
     },
   ];
 
-  console.log("Results:", results);
-
   return (
     <EventPageTemplate currentPage={Page.Results}>
       <InfoText>

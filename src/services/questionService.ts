@@ -29,7 +29,6 @@ export async function updateQuestionOrders(
   questions: Question[],
   categories: Category[]
 ) {
-  console.log("Updating question orders", { questions, categories });
   const questionUpdatePromises = questions.map((question) =>
     prisma.question.update({
       where: { id: question.id },
