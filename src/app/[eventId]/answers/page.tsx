@@ -56,8 +56,8 @@ export default function AnswersPage() {
   return (
     <EventPageTemplate currentPage={Page.Answers}>
       <CallToActionCopyUrl>
-        Share this Answer Sheet page with your question markers. Don't share it
-        with the contestants!
+        Share this Answer Sheet page with your question markers. Don&apos;t
+        share it with the contestants!
       </CallToActionCopyUrl>
 
       <StyledTable>

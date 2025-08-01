@@ -21,7 +21,7 @@ export default function Present() {
 
   useEffect(() => {
     fetchResults();
-  }, []);
+  }, [fetchResults]);
 
   useEffect(() => {
     if (isQuestionLoading) return;
