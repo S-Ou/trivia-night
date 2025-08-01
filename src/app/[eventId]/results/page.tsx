@@ -15,13 +15,7 @@ import {
 } from "@/components/ConfigForm";
 import { toast } from "sonner";
 import { EventPageTemplate, Page } from "../pageTemplate";
-
-const InfoText = styled.p`
-  font-size: 0.9rem;
-  text-align: center;
-  text-wrap: balance;
-  width: 75%;
-`;
+import { CallToActionText } from "@/components/atomic";
 
 const StyledTable = styled.table`
   border-collapse: collapse;
@@ -184,10 +178,10 @@ export default function ResultsPage() {
 
   return (
     <EventPageTemplate currentPage={Page.Results}>
-      <InfoText>
+      <CallToActionText>
         Input live results below. These can be updated at any time and the live
         results can be viewed when presenting.
-      </InfoText>
+      </CallToActionText>
       <StyledTable>
         <thead>
           <tr>

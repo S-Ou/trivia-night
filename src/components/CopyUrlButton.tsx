@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import styled from "styled-components";
 import { Clipboard } from "lucide-react";
 import { ReactNode } from "react";
+import { CallToActionText } from "./atomic";
 
 const CallToActionWrapper = styled.div`
   align-items: center;
@@ -10,11 +11,6 @@ const CallToActionWrapper = styled.div`
   flex-direction: column;
   gap: 0.5rem;
   width: 30rem;
-`;
-
-const CallToActionText = styled.span`
-  text-align: center;
-  text-wrap: balance;
 `;
 
 const TextFieldRoot = styled(TextField.Root)`

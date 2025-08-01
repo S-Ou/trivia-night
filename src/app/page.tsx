@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { CallToActionText } from "@/components/atomic";
 
 const TextFieldRoot = styled(TextField.Root)`
   background-image: none;
@@ -74,6 +75,11 @@ export default function HomePage() {
         </TabNav.Link>
       }
     >
+      <CallToActionText>
+        Make trivia night hosting easy! Avoid the stress of creating
+        presentation slides and focus on creating a fun event by letting this
+        web app do the heavy lifting for you.
+      </CallToActionText>
       <TextFieldRoot
         placeholder="Enter existing event ID"
         inputMode="numeric"
