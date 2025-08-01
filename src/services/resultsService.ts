@@ -15,7 +15,7 @@ export async function fetchResults(eventId: number) {
 export async function updateResults(eventId: number, results: Results[]) {
   const updatePromises = results.map((result) => {
     return prisma.results.upsert({
-      where: { eventId_playerId: { eventId, playerId: result.playerId } },
+      where: { playerId: result.playerId },
       update: { score: result.score, playerName: result.playerName },
       create: {
         eventId,

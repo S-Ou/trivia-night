@@ -25,17 +25,30 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ eventId: string }> }
 ) {
+  console.time("total-request");
+  console.time("parse-request");
   const { results } = await request.json();
   const eventId = parseInt((await params).eventId, 10);
+  console.timeEnd("parse-request");
 
   if (!Array.isArray(results)) {
     return new Response("Invalid input", { status: 400 });
   }
 
   try {
+    console.log(`Updating ${results.length} results for event ${eventId}`);
+    console.time("updateResults");
     const updatedResults = await updateResults(eventId, results);
+    console.timeEnd("updateResults");
 
-    return new Response(JSON.stringify(updatedResults), { status: 200 });
+    console.time("serialize-response");
+    const response = new Response(JSON.stringify(updatedResults), {
+      status: 200,
+    });
+    console.timeEnd("serialize-response");
+    console.timeEnd("total-request");
+
+    return response;
   } catch (error) {
     console.error("Error saving results:", error);
     return new Response("Internal Server Error", { status: 500 });
