@@ -138,7 +138,7 @@ export default function HomeSlide({
       {results && results.length > 0 && (
         <ResultsLink href={resultsLink}>
           <Trophy size={32} />
-          Current Results
+          {nextCategoryIndex !== null ? "Current Results" : "Final Results"}
         </ResultsLink>
       )}
     </BaseWrapper>

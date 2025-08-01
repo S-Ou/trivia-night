@@ -5,6 +5,7 @@ import { useSlideComponents } from "@/contexts/ThemeContext";
 import { useEventContext } from "@/contexts/EventContext";
 import { useQuestionContext } from "@/contexts/QuestionContext";
 import { useEffect } from "react";
+import { useResultsContext } from "@/contexts/ResultsContext";
 
 export default function Present() {
   const { event } = useEventContext();
@@ -14,8 +15,13 @@ export default function Present() {
     nextCategoryIndex,
     setNextCategoryIndex,
   } = useQuestionContext();
+  const { fetchResults } = useResultsContext();
 
   const { HomeSlide } = useSlideComponents();
+
+  useEffect(() => {
+    fetchResults();
+  }, []);
 
   useEffect(() => {
     if (isQuestionLoading) return;
