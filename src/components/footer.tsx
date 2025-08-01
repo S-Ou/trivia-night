@@ -19,6 +19,9 @@ const StyledFooter = styled.footer`
   opacity: 0.7;
 
   a {
+    text-align: center;
+    text-wrap: balance;
+
     &:hover {
       text-decoration: underline;
     }
