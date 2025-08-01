@@ -147,7 +147,13 @@ export default function ResultsPage() {
   }
 
   function handleDelete(playerId: string) {
-    deleteResult(playerId);
+    deleteResult(playerId)
+      .then(() => {
+        toast.success("Player deleted successfully");
+      })
+      .catch(() => {
+        toast.error("Failed to delete player");
+      });
   }
 
   const handleUpdate = (
