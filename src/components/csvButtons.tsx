@@ -1,10 +1,10 @@
 import { Button } from "@radix-ui/themes";
-import { exportCsv, parseCsvFile, RowData } from "@/utils/csvHandler";
 import { toast } from "sonner";
 import { useQuestionContext } from "@/contexts/QuestionContext";
 import { useRef } from "react";
 import styled from "styled-components";
 import { useEventId } from "@/contexts/EventIdContext";
+import { exportCsv, parseCsvFile, RowData } from "@/utils/csvHandler";
 
 const StyledButton = styled(Button).attrs({
   size: "3",
@@ -54,7 +54,7 @@ export function ImportButton() {
         Import from CSV
       </StyledButton>
       <input
-        accept=".csv"
+        accept=".csv,.tsv"
         onChange={handleImport}
         ref={inputRef}
         style={{ display: "none" }}
@@ -79,7 +79,7 @@ export function ExportButton() {
   async function handleExport() {
     await fetchQuestions()
       .then((questions) => {
-        exportCsv(questions);
+        exportCsv(questions, `questions-${eventId}.csv`);
         toast.success("Questions exported to CSV!");
       })
       .catch((error) => {

@@ -535,7 +535,8 @@ export default function QuestionsPage() {
         <ExportButton />
       </ButtonWrapper>
       <Text size={"2"}>
-        Click &quot;Export&quot; to obtain the CSV file format
+        Click &quot;Export&quot; to obtain the CSV file format. Export, edit,
+        then reimport to update questions.
       </Text>
       {!questions.length && <ExampleQuestionsButton />}
       <Separator size="4" />

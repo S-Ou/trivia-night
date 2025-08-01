@@ -109,7 +109,10 @@ export const csvTemplate = {
 export function exportCsv(data: Array<object>, filename = "export.csv") {
   const csv = Papa.unparse(data);
 
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  // Add UTF-8 BOM for better Excel compatibility
+  const csvWithBOM = "\uFEFF" + csv;
+
+  const blob = new Blob([csvWithBOM], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
 
   const link = document.createElement("a");
