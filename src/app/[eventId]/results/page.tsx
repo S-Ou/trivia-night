@@ -129,8 +129,13 @@ export default function ResultsPage() {
     });
 
     if (isChanged) {
-      updateResults(updatedResults);
-      toast.success("Result updated successfully");
+      updateResults(updatedResults)
+        .then(() => {
+          toast.success("Result updated successfully");
+        })
+        .catch(() => {
+          toast.error("Failed to update result");
+        });
     }
   }
 
@@ -142,7 +147,13 @@ export default function ResultsPage() {
       score: 0,
     };
     const updatedResults = [...results, newPlayer];
-    updateResults(updatedResults);
+    updateResults(updatedResults)
+      .then(() => {
+        toast.success("Player added successfully");
+      })
+      .catch(() => {
+        toast.error("Failed to add player");
+      });
   }
 
   function handleDelete(playerId: string) {

@@ -150,12 +150,23 @@ export const ResultsProvider = ({ children }: ResultsProviderProps) => {
       if (!eventId) throw new Error("No event ID available");
       return updateResultsData(eventId, results);
     },
-    onSuccess: (updatedResults) => {
-      // Update the cache with the new results data
-      queryClient.setQueryData(["results", eventId], updatedResults);
+    onMutate: async (newResults) => {
+      await queryClient.cancelQueries({ queryKey: ["results", eventId] });
+
+      const previousResults = queryClient.getQueryData(["results", eventId]);
+
+      queryClient.setQueryData(
+        ["results", eventId],
+        calculatePlaces(newResults)
+      );
+
+      return { previousResults };
     },
-    onError: (error) => {
-      console.error("Error updating results:", error);
+    onError: (err, newResults, context) => {
+      queryClient.setQueryData(["results", eventId], context?.previousResults);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["results", eventId] });
     },
   });
 
