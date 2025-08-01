@@ -24,10 +24,10 @@ export function addEventUpdatedAtMiddleware(prisma: PrismaClient) {
             eventId = question?.eventId;
           }
         } else if (params.model === "Category") {
-          const categoryName = params.args?.where?.name;
-          if (categoryName) {
+          const categoryId = params.args?.where?.id;
+          if (categoryId) {
             const category = await prisma.category.findUnique({
-              where: { name: categoryName },
+              where: { id: categoryId },
               select: { eventId: true },
             });
             eventId = category?.eventId;
