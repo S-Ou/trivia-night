@@ -16,11 +16,12 @@ const Subtitle = styled.p`
 `;
 
 export function TitleSlide({
-  category: { categories, currentCategoryIndex },
-  question: { questions },
+  category: { currentCategory },
+  question: { currentQuestions },
   showAnswers,
 }: CategorySlideProps) {
-  const category = categories[currentCategoryIndex ?? 0];
+  const category = currentCategory!;
+  const questions = currentQuestions!;
 
   return (
     <BaseSlide>
