@@ -33,6 +33,10 @@ const ButtonWrapper = styled.div`
 const QuestionSetWrapper = styled.div`
   padding-inline: 1rem;
   width: 100%;
+
+  @media (max-width: 768px) {
+    padding-inline: 0rem;
+  }
 `;
 
 const CategoryList = styled.div`
@@ -70,6 +74,10 @@ const CategoryHeaderContent = styled.div`
 
 const CategoryContent = styled(Accordion.Content)`
   padding: 1rem;
+
+  @media (max-width: 768px) {
+    padding: 0.5rem;
+  }
 `;
 
 const QuestionList = styled.div`
@@ -106,6 +114,12 @@ const QuestionHeaderContent = styled.div`
   gap: 0.5rem;
   padding-inline: 0.5rem;
   text-wrap: balance;
+
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+    gap: 0.2rem;
+    padding-inline: 0.25rem;
+  }
 `;
 
 const QuestionContent = styled.div``;
@@ -113,6 +127,10 @@ const QuestionContent = styled.div``;
 const OptionsWrapper = styled.div`
   display: block;
   font-size: 1rem;
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
 `;
 
 const OptionItem = styled.div<{ $draggable?: boolean; $isDragging?: boolean }>`

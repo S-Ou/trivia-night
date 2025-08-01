@@ -18,13 +18,19 @@ const StyledFooter = styled.footer`
   letter-spacing: 0.02em;
   opacity: 0.7;
 
-  a {
+  a,
+  span {
     text-align: center;
     text-wrap: balance;
+  }
 
-    &:hover {
-      text-decoration: underline;
-    }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1rem;
   }
 `;
 

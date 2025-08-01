@@ -31,6 +31,10 @@ const StyledTable = styled.table`
   th {
     text-align: left;
   }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const PlaceTH = styled.th`
