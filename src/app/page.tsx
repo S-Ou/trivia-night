@@ -34,6 +34,7 @@ const StyledTextFieldButton = styled(Button)`
 export default function HomePage() {
   const router = useRouter();
   const [inputValue, setInputValue] = useState("");
+  const [isCreatingEvent, setIsCreatingEvent] = useState(false);
 
   function handleNavigation(eventId: number) {
     router.push(`./${eventId}`);
@@ -55,6 +56,7 @@ export default function HomePage() {
   }
 
   async function handleCreateNewEvent() {
+    setIsCreatingEvent(true);
     try {
       const response = await fetch("/api/event", {
         method: "POST",
@@ -71,6 +73,7 @@ export default function HomePage() {
     } catch (error) {
       console.error("Error creating event:", error);
       toast.error("Failed to create new event.");
+      setIsCreatingEvent(false);
     }
   }
 
@@ -102,8 +105,12 @@ export default function HomePage() {
           </TextFieldSlot>
         </TextFieldRoot>
         or
-        <Button size={"3"} onClick={handleCreateNewEvent}>
-          Create new event
+        <Button
+          size={"3"}
+          onClick={handleCreateNewEvent}
+          disabled={isCreatingEvent}
+        >
+          {isCreatingEvent ? "Loading..." : "Create new event"}
         </Button>
       </InputWrapper>
     </PageTemplate>
