@@ -7,7 +7,7 @@ import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Trivia Night",
-  description: "Trivia",
+  description: "Make trivia night hosting easy!",
 };
 
 export default function RootLayout({
