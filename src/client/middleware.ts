@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client/edge";
+import { PrismaClient } from "@/generated/prisma";
 
 export function addEventUpdatedAtMiddleware(prisma: PrismaClient) {
   prisma.$use(async (params, next) => {
