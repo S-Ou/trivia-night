@@ -13,6 +13,7 @@ export default function PresentResultsPage() {
   const { fetchResults } = useResultsContext();
   const { fetchEvent } = useEventContext();
   const [revealedRows, setRevealedRows] = useState<Set<string>>(new Set());
+  const [resultsLoaded, setResultsLoaded] = useState(false);
 
   const { ResultSlide } = useSlideComponents();
 
@@ -34,7 +35,11 @@ export default function PresentResultsPage() {
   }, [router]);
 
   useEffect(() => {
-    Promise.all([fetchEvent(), fetchResults()]);
+    Promise.all([fetchEvent(), fetchResults()]).then(() => {
+      setTimeout(() => {
+        setResultsLoaded(true);
+      }, 1000);
+    });
   }, [fetchEvent, fetchResults]);
 
   const slideProps = GetSlideProps();
@@ -45,6 +50,7 @@ export default function PresentResultsPage() {
         {...slideProps}
         revealedRows={revealedRows}
         handleReveal={handleReveal}
+        resultsLoaded={resultsLoaded}
       />
     </SlideThemeVariables>
   );

@@ -59,7 +59,9 @@ export function ResultSlide({
   result: { results, isLoading: isResultsLoading },
   revealedRows,
   handleReveal,
+  resultsLoaded,
 }: ResultSlideProps) {
+  console.log(event?.hideResults, resultsLoaded);
   return (
     <BaseSlide>
       <Title>Results</Title>
@@ -70,7 +72,8 @@ export function ResultSlide({
           <tbody>
             {results.map((result) => {
               const isHidden =
-                event?.hideResults && !revealedRows.has(result.playerId);
+                (event?.hideResults && !revealedRows.has(result.playerId)) ||
+                !resultsLoaded;
               return (
                 <tr key={result.playerId}>
                   <PlaceTD>
@@ -85,7 +88,7 @@ export function ResultSlide({
                       <RevealOverlay
                         onClick={() => handleReveal(result.playerId)}
                       >
-                        click to reveal
+                        {resultsLoaded ? `click to reveal` : `loading...`}
                       </RevealOverlay>
                     )}
                   </PlayerTD>

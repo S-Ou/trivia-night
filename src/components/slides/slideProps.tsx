@@ -37,6 +37,7 @@ export type HomeSlideProps = SlideProps & {
 export type ResultSlideProps = SlideProps & {
   revealedRows: Set<string>;
   handleReveal: (playerId: string) => void;
+  resultsLoaded: boolean;
 };
 
 export type CategorySlideProps = SlideProps & { showAnswers: boolean };
