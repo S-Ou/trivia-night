@@ -3,6 +3,7 @@
   --foreground: #171717;
 
   --font-family: "Mona Sans", Arial, Helvetica, sans-serif;
+  --code-font-family: "Hubot Sans", Arial, Helvetica, sans-serif;
 }
 
 html,
@@ -15,8 +16,21 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-family) !important;
+
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+code,
+pre,
+kbd,
+samp,
+tt {
+  font-family: var(--code-font-family) !important;
+}
+
+*[style*="monospace"] {
+  font-family: var(--code-font-family) !important;
 }
 
 .radix-themes {
@@ -57,6 +71,15 @@ button {
   src: url("../fonts/mona-sans.woff2") format("woff2 supports variations"),
     url("../fonts/mona-sans.woff2") format("woff2 variations"),
     url("../fonts/mona-sans.ttf") format("truetype");
+  font-weight: 200 900;
+  font-stretch: 75% 125%;
+}
+
+@font-face {
+  font-family: "Hubot Sans";
+  src: url("../fonts/hubot-sans.woff2") format("woff2 supports variations"),
+    url("../fonts/hubot-sans.woff2") format("woff2 variations"),
+    url("../fonts/hubot-sans.ttf") format("truetype");
   font-weight: 200 900;
   font-stretch: 75% 125%;
 }
