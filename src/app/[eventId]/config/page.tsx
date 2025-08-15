@@ -13,7 +13,24 @@ import { Skull, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useSlideTheme } from "@/contexts/ThemeContext";
-import { cleanHexString } from "@/utils/color";
+import { cleanHexString, getContrastRatio } from "@/utils/color";
+import styled from "styled-components";
+
+const TextContrastExample = styled.div<{
+  $backgroundColor: string;
+  $foregroundColor: string;
+}>`
+  background-color: ${({ $backgroundColor }) => $backgroundColor};
+  border-radius: var(--radius-2);
+  color: ${({ $foregroundColor }) => $foregroundColor};
+  padding-block: 0.5rem;
+  padding-inline: 1rem;
+`;
+
+const TextContrastHighlightText = styled.span<{ $color: string }>`
+  color: ${({ $color }) => $color};
+  font-weight: bold;
+`;
 
 export default function ConfigPage() {
   const router = useRouter();
@@ -171,9 +188,38 @@ export default function ConfigPage() {
     }
   }
 
+  var colorContrast = Math.min(
+    getContrastRatio(foregroundColor, backgroundColor),
+    getContrastRatio(accentColor, backgroundColor)
+  );
+  console.log(
+    getContrastRatio(foregroundColor, backgroundColor),
+    getContrastRatio(accentColor, backgroundColor)
+  );
+
+  var colorContrastLabel =
+    colorContrast > 7
+      ? "easy"
+      : colorContrast > 4.5
+      ? "reasonable"
+      : colorContrast > 3
+      ? "not preferable"
+      : "difficult";
+
   return (
     <EventPageTemplate currentPage={Page.Config}>
       <ConfigForm fields={configFields} />
+
+      <TextContrastExample
+        $backgroundColor={backgroundColor}
+        $foregroundColor={foregroundColor}
+      >
+        This text color is{" "}
+        <TextContrastHighlightText $color={accentColor}>
+          {colorContrastLabel}
+        </TextContrastHighlightText>{" "}
+        to read
+      </TextContrastExample>
 
       <Separator size="3" />
 
