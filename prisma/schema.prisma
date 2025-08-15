@@ -17,6 +17,10 @@ model Event {
   description String?
   themeId    String?
 
+  themeBackgroundColor String?
+  themeForegroundColor String?
+  themeAccentColor String?
+
   hideResults Boolean @default(false)
 
   createdAt DateTime @default(now())

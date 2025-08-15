@@ -13,6 +13,7 @@ import { Skull, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useSlideTheme } from "@/contexts/ThemeContext";
+import { cleanHexString } from "@/utils/color";
 
 export default function ConfigPage() {
   const router = useRouter();
@@ -23,11 +24,18 @@ export default function ConfigPage() {
   const [description, setDescription] = useState("");
   const [hideResults, setHideResults] = useState(event?.hideResults || false);
 
+  const [backgroundColor, setBackgroundColor] = useState("#ffffff");
+  const [foregroundColor, setForegroundColor] = useState("#000000");
+  const [accentColor, setAccentColor] = useState("#3e63dd");
+
   useEffect(() => {
     if (event && !isLoading) {
       setTitle(event.title || "");
       setDescription(event.description || "");
       setHideResults(event.hideResults || false);
+      setBackgroundColor(event.themeBackgroundColor || "#ffffff");
+      setForegroundColor(event.themeForegroundColor || "#000000");
+      setAccentColor(event.themeAccentColor || "#3e63dd");
     }
   }, [event, isLoading]);
 
@@ -46,6 +54,9 @@ export default function ConfigPage() {
       description,
       hideResults,
       themeId: currentTheme.id,
+      backgroundColor,
+      foregroundColor,
+      accentColor,
     });
   };
 
@@ -100,6 +111,42 @@ export default function ConfigPage() {
       onChange: (val) => {
         setTheme(val as string);
         handleUpdate("themeId", val as string);
+      },
+    },
+    {
+      key: "themeAccentColor",
+      label: "Accent color",
+      type: ConfigComponentType.ColorPicker,
+      value: accentColor || "#3e63dd",
+      onChange: (val) => setAccentColor(val as string),
+      onBlur: () => {
+        const cleaned = cleanHexString(accentColor);
+        setAccentColor(cleaned);
+        handleUpdate("themeAccentColor", cleaned);
+      },
+    },
+    {
+      key: "themeForegroundColor",
+      label: "Foreground color",
+      type: ConfigComponentType.ColorPicker,
+      value: foregroundColor || "#000000",
+      onChange: (val) => setForegroundColor(val as string),
+      onBlur: () => {
+        const cleaned = cleanHexString(foregroundColor);
+        setForegroundColor(cleaned);
+        handleUpdate("themeForegroundColor", cleaned);
+      },
+    },
+    {
+      key: "themeBackgroundColor",
+      label: "Background color",
+      type: ConfigComponentType.ColorPicker,
+      value: backgroundColor || "#ffffff",
+      onChange: (val) => setBackgroundColor(val as string),
+      onBlur: () => {
+        const cleaned = cleanHexString(backgroundColor);
+        setBackgroundColor(cleaned);
+        handleUpdate("themeBackgroundColor", cleaned);
       },
     },
   ];

@@ -1,6 +1,16 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, FocusEvent } from "react";
 import styled from "styled-components";
-import { Select, Switch, TextArea, TextField } from "@radix-ui/themes";
+import {
+  Button,
+  Popover,
+  Select,
+  Switch,
+  TextArea,
+  TextField,
+} from "@radix-ui/themes";
+import { HexColorPicker } from "react-colorful";
+import { Pipette } from "lucide-react";
+import { isLightColor } from "@/utils/color";
 
 const ConfigWrapper = styled.div`
   align-items: center;
@@ -50,11 +60,25 @@ const StyledSwitch = styled(Switch)``;
 
 const StyledSelect = styled(Select.Root)``;
 
+const StyledColorPickerWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  width: 100%;
+`;
+
+const StyledColorPickerButton = styled(Button)`
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
 export enum ConfigComponentType {
   Select,
   Switch,
   TextArea,
   TextField,
+  ColorPicker,
 }
 
 export type ConfigField = {
@@ -130,6 +154,46 @@ export function ConfigComponent({
               ))}
             </Select.Content>
           </StyledSelect>
+        ) : type === ConfigComponentType.ColorPicker ? (
+          <StyledColorPickerWrapper>
+            <Popover.Root>
+              <Popover.Trigger>
+                <StyledColorPickerButton
+                  variant="solid"
+                  style={{
+                    backgroundColor: value as string,
+                  }}
+                >
+                  <Pipette
+                    size={16}
+                    color={
+                      isLightColor(value as string) ? "#000000" : "#ffffff"
+                    }
+                  />
+                </StyledColorPickerButton>
+              </Popover.Trigger>
+              <Popover.Content>
+                <HexColorPicker
+                  color={value as string}
+                  onChange={(color) => onChange(color)}
+                  onBlur={onBlur}
+                />
+              </Popover.Content>
+            </Popover.Root>
+            <StyledTextField
+              placeholder={label}
+              value={value as string}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                onChange(e.target.value)
+              }
+              onBlur={onBlur}
+              disabled={disabled}
+              $error={error}
+              style={{
+                fontFamily: "monospace",
+              }}
+            />
+          </StyledColorPickerWrapper>
         ) : null}
       </ConfigInput>
     </>

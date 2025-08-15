@@ -5,6 +5,9 @@ export interface UpdateEventDTO {
   description?: string;
   hideResults?: boolean;
   themeId?: string;
+  themeBackgroundColor?: string;
+  themeForegroundColor?: string;
+  themeAccentColor?: string;
 }
 
 export async function fetchEvent(eventId: number) {

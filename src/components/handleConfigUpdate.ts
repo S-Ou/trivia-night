@@ -12,9 +12,22 @@ export type HandleConfigUpdateParams = {
   description: string | null;
   hideResults: boolean;
   themeId?: string;
+  backgroundColor?: string;
+  foregroundColor?: string;
+  accentColor?: string;
   setTitle?: (val: string) => void;
   setDescription?: (val: string) => void;
   setHideResults?: (val: boolean) => void;
+};
+
+const keyToFieldMap: Record<string, keyof UpdateEventDTO> = {
+  title: "title",
+  description: "description",
+  hideResults: "hideResults",
+  themeId: "themeId",
+  themeBackgroundColor: "themeBackgroundColor",
+  themeForegroundColor: "themeForegroundColor",
+  themeAccentColor: "themeAccentColor",
 };
 
 export function handleConfigUpdate({
@@ -27,6 +40,9 @@ export function handleConfigUpdate({
   description,
   hideResults,
   themeId,
+  backgroundColor,
+  foregroundColor,
+  accentColor,
 }: HandleConfigUpdateParams) {
   if (!event) {
     toast.error("Event not found");
@@ -38,57 +54,52 @@ export function handleConfigUpdate({
     return;
   }
 
-  if (
-    (key === "title" && value === event.title) ||
-    (key === "description" && value === event.description) ||
-    (key === "hideResults" && value === event.hideResults) ||
-    (key === "themeId" && value === event.themeId)
-  ) {
+  // Check if value is unchanged
+  const eventFieldMap: Record<string, any> = {
+    title: event.title,
+    description: event.description,
+    hideResults: event.hideResults,
+    themeId: event.themeId,
+    themeBackgroundColor: event.themeBackgroundColor,
+    themeForegroundColor: event.themeForegroundColor,
+    themeAccentColor: event.themeAccentColor,
+  };
+  if (key in eventFieldMap && value === eventFieldMap[key]) {
     return;
   }
 
-  let updatePromise: Promise<void> | undefined;
-  switch (key) {
-    case "title": {
-      updatePromise = updateEvent({
-        title: (value as string).trim(),
-        description: description?.trim() || undefined,
-        hideResults,
-        themeId,
-      });
-      break;
+  // Build update object
+  const updateObj: UpdateEventDTO = {
+    title: title.trim(),
+    description: description?.trim() || undefined,
+    hideResults,
+    themeId,
+    themeBackgroundColor: backgroundColor,
+    themeForegroundColor: foregroundColor,
+    themeAccentColor: accentColor,
+  };
+
+  // Only override the changed field
+  const field = keyToFieldMap[key];
+  if (field && field in updateObj) {
+    // Handle string fields
+    if (
+      field === "title" ||
+      field === "description" ||
+      field === "themeBackgroundColor" ||
+      field === "themeForegroundColor" ||
+      field === "themeAccentColor" ||
+      field === "themeId"
+    ) {
+      updateObj[field] = typeof value === "string" ? value.trim() : "";
     }
-    case "description": {
-      updatePromise = updateEvent({
-        title: title.trim(),
-        description: (value as string).trim() || undefined,
-        hideResults,
-        themeId,
-      });
-      break;
-    }
-    case "hideResults": {
-      updatePromise = updateEvent({
-        title: title.trim(),
-        description: description?.trim() || undefined,
-        hideResults: value as boolean,
-        themeId,
-      });
-      break;
-    }
-    case "themeId": {
-      updatePromise = updateEvent({
-        title: title.trim(),
-        description: description?.trim() || undefined,
-        hideResults,
-        themeId: value as string,
-      });
-      break;
+    // Handle boolean fields
+    else if (field === "hideResults") {
+      updateObj[field] = typeof value === "boolean" ? value : false;
     }
   }
-  if (updatePromise) {
-    updatePromise
-      .then(() => toast.success("Config saved!"))
-      .catch(() => toast.error("Failed to save config"));
-  }
+
+  updateEvent(updateObj)
+    .then(() => toast.success("Config saved!"))
+    .catch(() => toast.error("Failed to save config"));
 }
