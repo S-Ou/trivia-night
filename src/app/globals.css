@@ -4,6 +4,10 @@
 
   --font-family: "Mona Sans", Arial, Helvetica, sans-serif;
   --code-font-family: "Hubot Sans", Arial, Helvetica, sans-serif;
+
+  --slide-bg-color: #ffffff;
+  --slide-fg-color: #000000;
+  --slide-accent-color: #3e63dd;
 }
 
 html,

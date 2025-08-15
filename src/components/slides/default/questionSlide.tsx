@@ -62,7 +62,7 @@ const OptionDenominator = styled.strong<{ $isCorrect?: boolean }>`
   ${({ $isCorrect }) =>
     $isCorrect === true
       ? `
-        color: var(--accent-10);
+        color: var(--slide-accent-color);
         opacity: 0.8;
       `
       : ""}
@@ -86,7 +86,7 @@ const OptionContent = styled.span<{
   ${({ $isCorrect }) =>
     $isCorrect === true
       ? `
-        color: var(--accent-10);
+        color: var(--slide-accent-color);
         font-weight: 600;
       `
       : $isCorrect === false

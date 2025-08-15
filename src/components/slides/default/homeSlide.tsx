@@ -5,11 +5,14 @@ import { HomeSlideProps } from "../slideProps";
 
 const BaseWrapper = styled.div`
   align-items: start;
+  background-color: var(--slide-bg-color);
+  color: var(--slide-fg-color);
   display: flex;
   flex-direction: column;
   gap: 1rem;
   height: 100%;
-  justify-content: center;
+  justify-content: start;
+  min-height: 100vh;
   padding-block: 8rem;
   padding-inline: 10rem;
 `;
@@ -61,7 +64,7 @@ const CategoryLink = styled(Link)<{ $isNextLink: boolean }>`
   ${({ $isNextLink }) =>
     $isNextLink &&
     `
-    color: var(--accent-10);
+    color: var(--slide-accent-color);
     svg {
       transform: translateX(-0.5rem);
     }

@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { GetSlideProps } from "@/components/slides/slideProps";
 import { useSlideComponents } from "@/contexts/ThemeContext";
+import { SlideThemeVariables } from "@/components/SlideThemeVariables";
 
 enum PageState {
   Title,
@@ -128,10 +129,10 @@ export default function CategoryPage() {
   };
 
   return (
-    <>
+    <SlideThemeVariables>
       {pageState === PageState.Title && <TitleSlide {...slideProps} />}
       {pageState === PageState.Question && <QuestionSlide {...slideProps} />}
       {pageState === PageState.Summary && <SummarySlide {...slideProps} />}
-    </>
+    </SlideThemeVariables>
   );
 }

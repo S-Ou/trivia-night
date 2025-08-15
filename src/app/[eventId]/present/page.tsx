@@ -6,6 +6,7 @@ import { useEventContext } from "@/contexts/EventContext";
 import { useQuestionContext } from "@/contexts/QuestionContext";
 import { useEffect } from "react";
 import { useResultsContext } from "@/contexts/ResultsContext";
+import { SlideThemeVariables } from "@/components/SlideThemeVariables";
 
 export default function Present() {
   const { event } = useEventContext();
@@ -49,10 +50,12 @@ export default function Present() {
   const slideProps = GetSlideProps();
 
   return (
-    <HomeSlide
-      {...slideProps}
-      getCategoryLink={getCategoryLink}
-      resultsLink="./results"
-    />
+    <SlideThemeVariables>
+      <HomeSlide
+        {...slideProps}
+        getCategoryLink={getCategoryLink}
+        resultsLink="./results"
+      />
+    </SlideThemeVariables>
   );
 }

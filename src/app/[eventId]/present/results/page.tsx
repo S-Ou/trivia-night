@@ -6,6 +6,7 @@ import { useResultsContext } from "@/contexts/ResultsContext";
 import { useRouter } from "next/navigation";
 import { GetSlideProps } from "@/components/slides/slideProps";
 import { useSlideComponents } from "@/contexts/ThemeContext";
+import { SlideThemeVariables } from "@/components/SlideThemeVariables";
 
 export default function PresentResultsPage() {
   const router = useRouter();
@@ -39,10 +40,12 @@ export default function PresentResultsPage() {
   const slideProps = GetSlideProps();
 
   return (
-    <ResultSlide
-      {...slideProps}
-      revealedRows={revealedRows}
-      handleReveal={handleReveal}
-    />
+    <SlideThemeVariables>
+      <ResultSlide
+        {...slideProps}
+        revealedRows={revealedRows}
+        handleReveal={handleReveal}
+      />
+    </SlideThemeVariables>
   );
 }
