@@ -188,16 +188,12 @@ export default function ConfigPage() {
     }
   }
 
-  var colorContrast = Math.min(
-    getContrastRatio(foregroundColor, backgroundColor),
-    getContrastRatio(accentColor, backgroundColor)
-  );
-  console.log(
+  const colorContrast = Math.min(
     getContrastRatio(foregroundColor, backgroundColor),
     getContrastRatio(accentColor, backgroundColor)
   );
 
-  var colorContrastLabel =
+  const colorContrastLabel =
     colorContrast > 7
       ? "easy"
       : colorContrast > 4.5

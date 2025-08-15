@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo } from "react";
+import React, { CSSProperties, useMemo } from "react";
 import { useEventContext } from "@/contexts/EventContext";
 
 /**
@@ -15,16 +15,16 @@ export function SlideThemeVariables({
 }) {
   const { event } = useEventContext();
 
-  const styleVars = useMemo<React.CSSProperties>(() => {
+  const styleVars = useMemo(() => {
     const bg = event?.themeBackgroundColor || "#ffffff";
     const fg = event?.themeForegroundColor || "#000000";
     const accent = event?.themeAccentColor || "#3e63dd";
     return {
       // Custom properties consumed by slide components
-      ["--slide-bg-color" as any]: bg,
-      ["--slide-fg-color" as any]: fg,
-      ["--slide-accent-color" as any]: accent,
-    };
+      "--slide-bg-color": bg,
+      "--slide-fg-color": fg,
+      "--slide-accent-color": accent,
+    } as CSSProperties;
   }, [
     event?.themeBackgroundColor,
     event?.themeForegroundColor,

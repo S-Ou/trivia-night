@@ -55,7 +55,7 @@ export function handleConfigUpdate({
   }
 
   // Check if value is unchanged
-  const eventFieldMap: Record<string, any> = {
+  const eventFieldMap: Record<string, string | boolean | null> = {
     title: event.title,
     description: event.description,
     hideResults: event.hideResults,
