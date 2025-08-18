@@ -8,6 +8,8 @@ import { useQuestionContext } from "@/contexts/QuestionContext";
 import { useCategoryDragDrop } from "./shared/DragDropHook";
 import { DragGrip } from "./shared/SharedComponents";
 import { Questions } from "./Questions";
+import { Question } from "@/types/Question";
+import { Category } from "@/generated/prisma";
 
 export const ButtonWrapper = styled.div`
   display: flex;
@@ -107,10 +109,10 @@ export function Categories() {
     setLocalCombinedQuestions(combinedQuestions);
   }, [categories, combinedQuestions]);
 
-  const { handleDragEnd } = useCategoryDragDrop({
+  const { handleDragEnd } = useCategoryDragDrop<Category>({
     categories: localCategories,
     onReorder: setLocalCategories,
-    updateFunction: async (questions: any, newCategories: any[]) => {
+    updateFunction: async (questions: Question[] | null, newCategories: Category[]) => {
       const categoriesWithIndex = newCategories.map((cat, idx) => ({
         ...cat,
         index: idx,

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { Question } from "@/types/Question";
 
 interface DragDropResult {
   source: { index: number };
@@ -9,7 +10,7 @@ interface DragDropResult {
 interface UseDragDropOptions<T> {
   items: T[];
   onReorder: (newItems: T[]) => void;
-  updateFunction: (items: T[], categories?: any) => Promise<void>;
+  updateFunction: (items: T[], categories?: T[]) => Promise<void>;
   successMessage: string;
   errorMessage: string;
 }
@@ -54,7 +55,7 @@ export function useDragDrop<T>({
 interface UseCategoryDragDropOptions<T> {
   categories: T[];
   onReorder: (newCategories: T[]) => void;
-  updateFunction: (questions: any, categories: T[]) => Promise<void>;
+  updateFunction: (questions: Question[] | null, categories: T[]) => Promise<void>;
   successMessage: string;
   errorMessage: string;
 }

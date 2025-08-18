@@ -1,5 +1,6 @@
 import { prisma } from "@/client";
-import { Category, Question } from "@/generated/prisma";
+import { Category, Question as PrismaQuestion } from "@/generated/prisma";
+import { Question } from "@/types/Question";
 import { getImageUrls } from "@/utils/imageUtils";
 
 export async function fetchQuestions(eventId?: number) {
@@ -26,15 +27,21 @@ export async function fetchQuestions(eventId?: number) {
   // Add parsed image URLs helper
   return questions.map((question) => ({
     ...question,
-    parsedImageUrls: getImageUrls(question as any), // Type assertion needed due to Prisma/custom type mismatch
+    category: question.Category,
+    options: question.Option,
+    parsedImageUrls: getImageUrls({
+      ...question,
+      category: question.Category,
+      options: question.Option,
+    } as Question),
   }));
 }
 
 export async function updateQuestionOrders(
-  questions: Question[],
-  categories: Category[]
+  questions: Question[] | null,
+  categories: Category[] | null
 ) {
-  const questionUpdatePromises = questions.map((question) =>
+  const questionUpdatePromises = questions?.map((question) =>
     prisma.question.update({
       where: { id: question.id },
       data: {
@@ -42,14 +49,14 @@ export async function updateQuestionOrders(
         optionOrder: question.optionOrder,
       },
     })
-  );
+  ) || [];
 
-  const categoryUpdatePromises = categories.map((category) =>
+  const categoryUpdatePromises = categories?.map((category) =>
     prisma.category.update({
       where: { id: category.id },
       data: { index: category.index },
     })
-  );
+  ) || [];
 
   await prisma.$transaction([
     ...questionUpdatePromises,

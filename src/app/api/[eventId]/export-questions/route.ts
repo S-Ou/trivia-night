@@ -25,7 +25,7 @@ async function processQuestions(eventId: number): Promise<ExportQuestion[]> {
         try {
           const parsed = JSON.parse(q.imageUrls);
           if (Array.isArray(parsed)) urls.push(...parsed);
-        } catch (e) {
+        } catch (_) {
           // ignore parsing errors
         }
       }
@@ -44,7 +44,7 @@ async function processQuestions(eventId: number): Promise<ExportQuestion[]> {
       try {
         const parsed = JSON.parse(q.imageUrls);
         if (Array.isArray(parsed)) imageUrls.push(...parsed);
-      } catch (e) {
+      } catch (_) {
         // ignore parsing errors
       }
     }

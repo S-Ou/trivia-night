@@ -56,9 +56,9 @@ export function parseCsvFileWithDuplicateColumns(
         } else {
           // Handle duplicate column names by creating arrays
           if (Array.isArray(row[header])) {
-            (row[header] as any).push(value);
+            (row[header] as string[]).push(value);
           } else {
-            row[header] = [row[header], value] as any;
+            row[header] = [row[header], value] as unknown as string;
           }
         }
       });
