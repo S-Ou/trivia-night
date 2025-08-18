@@ -79,7 +79,7 @@ export function Questions({ questions, categoryName }: QuestionsProps) {
     setOrderedQuestions(questions);
   }, [questions]);
 
-  const { handleDragEnd, isSaving } = useDragDrop({
+  const { handleDragEnd } = useDragDrop({
     items: orderedQuestions,
     onReorder: setOrderedQuestions,
     updateFunction: async (newOrder: Question[]) => {

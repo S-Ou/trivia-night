@@ -107,7 +107,7 @@ export function Categories() {
     setLocalCombinedQuestions(combinedQuestions);
   }, [categories, combinedQuestions]);
 
-  const { handleDragEnd, isSaving } = useCategoryDragDrop({
+  const { handleDragEnd } = useCategoryDragDrop({
     categories: localCategories,
     onReorder: setLocalCategories,
     updateFunction: async (questions: any, newCategories: any[]) => {

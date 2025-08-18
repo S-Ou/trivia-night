@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useQuestionContext } from "@/contexts/QuestionContext";
 import { toast } from "sonner";
 
 interface DragDropResult {

@@ -78,7 +78,7 @@ export function Options({
     setOrderedOptions(indexToPermutation(order, options.length));
   }, [options, order]);
 
-  const { handleDragEnd, isSaving } = useDragDrop({
+  const { handleDragEnd } = useDragDrop({
     items: orderedOptions,
     onReorder: (newOrder: number[]) => {
       setOrderedOptions(newOrder);
