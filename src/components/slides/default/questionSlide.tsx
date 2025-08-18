@@ -137,7 +137,8 @@ export function QuestionSlide({
   showAnswers = false,
 }: CategorySlideProps) {
   const category = currentCategory!;
-  const question = currentQuestions![currentQuestionIndex ?? 0];
+  currentQuestionIndex ??= 0;
+  const question = currentQuestions![currentQuestionIndex];
 
   const order = question.options
     ? indexToPermutation(question.optionOrder, question.options.length)
@@ -157,7 +158,9 @@ export function QuestionSlide({
       <CategoryTitle>{category.name}</CategoryTitle>
       <Separator size="3" />
       <QuestionWrapper $hasImage={!!question.imageUrl}>
-        <QuestionText>{question.question}</QuestionText>
+        <QuestionText>
+          {currentQuestionIndex + 1}. {question.question}
+        </QuestionText>
       </QuestionWrapper>
       {question.imageUrl && (
         <Image src={question.imageUrl} alt="Question Image" />
