@@ -122,11 +122,24 @@ const QuestionHeaderContent = styled.div`
   }
 `;
 
-const QuestionContent = styled.div``;
+const QuestionContent = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-bottom: 1rem;
+`;
+
+const QuestionImage = styled.img`
+  max-width: 80%;
+  border-radius: 1rem;
+  max-height: 50vh;
+`;
 
 const OptionsWrapper = styled.div`
   display: block;
   font-size: 1rem;
+  width: 100%;
 
   @media (max-width: 768px) {
     font-size: 0.8rem;
@@ -419,6 +432,12 @@ function Questions({
                         questions={orderedQuestions}
                         setOrderedQuestions={setOrderedQuestions}
                       />
+                      {question.imageUrl && (
+                        <QuestionImage
+                          src={question.imageUrl}
+                          alt="Question Image"
+                        />
+                      )}
                     </QuestionContent>
                   </QuestionItem>
                 )}
