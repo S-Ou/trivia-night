@@ -18,6 +18,7 @@ import {
 import {
   ChevronDown,
   GripVertical,
+  ImageOff,
   PencilLine,
   SquareCheck,
 } from "lucide-react";
@@ -250,6 +251,21 @@ const OptionGrip = styled.span`
   justify-content: center;
 `;
 
+const ImagePreviewContainer = styled(Flex)`
+  min-height: 100px;
+`;
+
+const ImageErrorText = styled(Text)<{ $isVisible?: boolean }>`
+  display: ${({ $isVisible }) => ($isVisible ? "flex" : "none")};
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+`;
+
+const PreviewImage = styled(QuestionImage)<{ $isVisible?: boolean }>`
+  display: ${({ $isVisible }) => ($isVisible ? "block" : "none")};
+`;
+
 function Categories() {
   const {
     combinedQuestions,
@@ -466,6 +482,40 @@ function Questions({
 }
 
 function ImageTrigger({ question }: { question: Question }) {
+  const [imageUrl, setImageUrl] = useState(question.imageUrl || "");
+  const [isSaving, setIsSaving] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const { updateQuestion } = useQuestionContext();
+
+  const handleSave = async () => {
+    if (isSaving) return;
+
+    setIsSaving(true);
+    try {
+      await updateQuestion(question.id, { imageUrl });
+      toast.success("Image URL updated successfully!");
+    } catch (error) {
+      console.error("Error updating image URL:", error);
+      toast.error("Failed to update image URL");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
+  const handleImageLoad = () => {
+    setImageError(false);
+  };
+
+  // Reset error state when URL changes
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImageUrl(e.target.value);
+    setImageError(false);
+  };
+
   return (
     <Dialog.Root>
       <Dialog.Trigger>
@@ -489,10 +539,36 @@ function ImageTrigger({ question }: { question: Question }) {
               Image URL
             </Text>
             <TextField.Root
-              defaultValue={question.imageUrl ?? ""}
+              value={imageUrl}
+              onChange={handleUrlChange}
               placeholder="Enter image URL"
             />
           </label>
+          {imageUrl && (
+            <div>
+              <Text as="div" size="2" mb="1" weight="bold">
+                Preview
+              </Text>
+              <ImagePreviewContainer
+                justify="center"
+                align="center"
+                direction="column"
+                gap="2"
+              >
+                <PreviewImage
+                  src={imageUrl}
+                  alt="Image preview"
+                  onError={handleImageError}
+                  onLoad={handleImageLoad}
+                  $isVisible={!imageError}
+                />
+                <ImageErrorText size="2" color="red" $isVisible={imageError}>
+                  <ImageOff size={16} />
+                  Image not found or failed to load
+                </ImageErrorText>
+              </ImagePreviewContainer>
+            </div>
+          )}
         </Flex>
 
         <Flex gap="3" mt="4" justify="end">
@@ -502,7 +578,9 @@ function ImageTrigger({ question }: { question: Question }) {
             </Button>
           </Dialog.Close>
           <Dialog.Close>
-            <Button>Save</Button>
+            <Button onClick={handleSave} disabled={isSaving}>
+              {isSaving ? "Saving..." : "Save"}
+            </Button>
           </Dialog.Close>
         </Flex>
       </Dialog.Content>

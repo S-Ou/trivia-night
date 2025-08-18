@@ -51,3 +51,19 @@ export async function updateQuestionOrders(
     ...categoryUpdatePromises,
   ]);
 }
+
+export async function updateQuestion(
+  questionId: string,
+  data: Partial<Question>
+) {
+  return await prisma.question.update({
+    where: { id: questionId },
+    data: {
+      ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl }),
+      ...(data.indexWithinCategory !== undefined && {
+        indexWithinCategory: data.indexWithinCategory,
+      }),
+      ...(data.optionOrder !== undefined && { optionOrder: data.optionOrder }),
+    },
+  });
+}

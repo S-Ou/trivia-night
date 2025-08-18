@@ -25,6 +25,10 @@ interface QuestionContextType {
     updatedQuestions: Question[] | null,
     updatedCategories: Category[] | null
   ) => Promise<void>;
+  updateQuestion: (
+    questionId: string,
+    data: Partial<Question>
+  ) => Promise<void>;
   isUpdating: boolean;
 }
 
@@ -44,6 +48,9 @@ export const QuestionContext = createContext<QuestionContextType>({
   },
   updateQuestionOrders: async () => {
     throw new Error("updateQuestionOrders not implemented in default context");
+  },
+  updateQuestion: async () => {
+    throw new Error("updateQuestion not implemented in default context");
   },
   isUpdating: false,
 });
@@ -89,6 +96,25 @@ async function updateQuestionsData(
   return response.json();
 }
 
+async function updateQuestionData(
+  eventId: string,
+  questionId: string,
+  data: Partial<Question>
+) {
+  const response = await fetch(`/api/${eventId}/questions/${questionId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to update question: ${response.statusText}`);
+  }
+  return response.json();
+}
+
 interface QuestionProviderProps {
   children: React.ReactNode;
 }
@@ -130,6 +156,24 @@ export const QuestionProvider = ({ children }: QuestionProviderProps) => {
     },
   });
 
+  // Mutation for updating individual question
+  const updateQuestionMutation = useMutation({
+    mutationFn: ({
+      questionId,
+      data,
+    }: {
+      questionId: string;
+      data: Partial<Question>;
+    }) => updateQuestionData(eventId.toString(), questionId, data),
+    onSuccess: () => {
+      // Invalidate and refetch questions data
+      queryClient.invalidateQueries({ queryKey: ["questions", eventId] });
+    },
+    onError: (error) => {
+      console.error("Error updating question:", error);
+    },
+  });
+
   const questions: Question[] = useMemo(
     () => data?.questions || [],
     [data?.questions]
@@ -162,6 +206,13 @@ export const QuestionProvider = ({ children }: QuestionProviderProps) => {
     });
   }
 
+  async function updateQuestion(questionId: string, data: Partial<Question>) {
+    await updateQuestionMutation.mutateAsync({
+      questionId,
+      data,
+    });
+  }
+
   function getCategory(index: number): CategoryBundle {
     if (index < 0 || index >= categories.length) {
       throw new Error("Category index out of bounds");
@@ -184,7 +235,9 @@ export const QuestionProvider = ({ children }: QuestionProviderProps) => {
         nextCategoryIndex,
         setNextCategoryIndex,
         updateQuestionOrders,
-        isUpdating: updateMutation.isPending,
+        updateQuestion,
+        isUpdating:
+          updateMutation.isPending || updateQuestionMutation.isPending,
       }}
     >
       {children}
