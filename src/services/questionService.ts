@@ -41,22 +41,24 @@ export async function updateQuestionOrders(
   questions: Question[] | null,
   categories: Category[] | null
 ) {
-  const questionUpdatePromises = questions?.map((question) =>
-    prisma.question.update({
-      where: { id: question.id },
-      data: {
-        indexWithinCategory: question.indexWithinCategory,
-        optionOrder: question.optionOrder,
-      },
-    })
-  ) || [];
+  const questionUpdatePromises =
+    questions?.map((question) =>
+      prisma.question.update({
+        where: { id: question.id },
+        data: {
+          indexWithinCategory: question.indexWithinCategory,
+          optionOrder: question.optionOrder,
+        },
+      })
+    ) || [];
 
-  const categoryUpdatePromises = categories?.map((category) =>
-    prisma.category.update({
-      where: { id: category.id },
-      data: { index: category.index },
-    })
-  ) || [];
+  const categoryUpdatePromises =
+    categories?.map((category) =>
+      prisma.category.update({
+        where: { id: category.id },
+        data: { index: category.index },
+      })
+    ) || [];
 
   await prisma.$transaction([
     ...questionUpdatePromises,

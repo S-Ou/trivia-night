@@ -112,7 +112,10 @@ export function Categories() {
   const { handleDragEnd } = useCategoryDragDrop<Category>({
     categories: localCategories,
     onReorder: setLocalCategories,
-    updateFunction: async (questions: Question[] | null, newCategories: Category[]) => {
+    updateFunction: async (
+      questions: Question[] | null,
+      newCategories: Category[]
+    ) => {
       const categoriesWithIndex = newCategories.map((cat, idx) => ({
         ...cat,
         index: idx,

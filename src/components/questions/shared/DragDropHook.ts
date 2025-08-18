@@ -55,7 +55,10 @@ export function useDragDrop<T>({
 interface UseCategoryDragDropOptions<T> {
   categories: T[];
   onReorder: (newCategories: T[]) => void;
-  updateFunction: (questions: Question[] | null, categories: T[]) => Promise<void>;
+  updateFunction: (
+    questions: Question[] | null,
+    categories: T[]
+  ) => Promise<void>;
   successMessage: string;
   errorMessage: string;
 }
