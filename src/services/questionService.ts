@@ -1,5 +1,5 @@
 import { prisma } from "@/client";
-import { Category, Question as PrismaQuestion } from "@/generated/prisma";
+import { Category } from "@/generated/prisma";
 import { Question } from "@/types/Question";
 import { getImageUrls } from "@/utils/imageUtils";
 
