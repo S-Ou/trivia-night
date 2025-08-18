@@ -1,7 +1,7 @@
 import { Button } from "@radix-ui/themes";
 import { toast } from "sonner";
 import { useQuestionContext } from "@/contexts/QuestionContext";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import styled from "styled-components";
 import { useEventId } from "@/contexts/EventIdContext";
 import { exportCsv, parseCsvFile, RowData } from "@/utils/csvHandler";
@@ -93,38 +93,72 @@ export function ExportButton() {
 export function ExampleQuestionsButton() {
   const { fetchQuestions } = useQuestionContext();
   const { eventId } = useEventId();
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleExampleImport() {
-    const response = await fetch("/questions-example.csv");
-    if (!response.ok) {
-      toast.error("Failed to fetch example questions");
-      throw new Error("Failed to fetch example questions");
-    }
-    const csvText = await response.text();
-    const file = new File([csvText], "questions-example.csv", {
-      type: "text/csv",
-    });
-    parseCsvFile(file, async (questions) => {
-      const importResponse = await fetch(`/api/${eventId}/import-questions`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ questions }),
+    if (isLoading) return;
+
+    setIsLoading(true);
+    const loadingToast = toast.loading("Importing example questions...");
+
+    try {
+      const response = await fetch("/questions-example.csv");
+      if (!response.ok) {
+        toast.error("Failed to fetch example questions");
+        throw new Error("Failed to fetch example questions");
+      }
+      const csvText = await response.text();
+      const file = new File([csvText], "questions-example.csv", {
+        type: "text/csv",
       });
 
-      if (!importResponse.ok) {
-        const errorBody = await importResponse.json();
-        const errorMessage = errorBody.error || importResponse.statusText;
-        toast.error(`Failed to import example questions: ${errorMessage}`);
-        throw new Error(errorMessage);
-      }
-      toast.success("Example questions imported successfully!");
-      fetchQuestions();
-    });
+      await new Promise<void>((resolve, reject) => {
+        parseCsvFile(file, async (questions) => {
+          try {
+            const importResponse = await fetch(
+              `/api/${eventId}/import-questions`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ questions }),
+              }
+            );
+
+            if (!importResponse.ok) {
+              const errorBody = await importResponse.json();
+              const errorMessage = errorBody.error || importResponse.statusText;
+              toast.error(
+                `Failed to import example questions: ${errorMessage}`
+              );
+              reject(new Error(errorMessage));
+              return;
+            }
+            toast.success("Example questions imported successfully!");
+            fetchQuestions();
+            resolve();
+          } catch (error) {
+            console.error("Error in parseCsvFile callback:", error);
+            toast.error("Failed to import example questions");
+            reject(error);
+          }
+        });
+      });
+    } catch (error) {
+      console.error("Error importing example questions:", error);
+      // Error toasts are already handled above
+    } finally {
+      toast.dismiss(loadingToast);
+      setIsLoading(false);
+    }
   }
 
   return (
-    <Button variant="surface" onClick={handleExampleImport}>
-      Load Example Questions
+    <Button
+      variant="surface"
+      onClick={handleExampleImport}
+      disabled={isLoading}
+    >
+      {isLoading ? "Loading..." : "Load Example Questions"}
     </Button>
   );
 }

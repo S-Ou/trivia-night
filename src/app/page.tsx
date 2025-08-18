@@ -57,6 +57,8 @@ export default function HomePage() {
 
   async function handleCreateNewEvent() {
     setIsCreatingEvent(true);
+    const loadingToast = toast.loading("Creating new event...");
+    
     try {
       const response = await fetch("/api/event", {
         method: "POST",
@@ -73,6 +75,8 @@ export default function HomePage() {
     } catch (error) {
       console.error("Error creating event:", error);
       toast.error("Failed to create new event.");
+    } finally {
+      toast.dismiss(loadingToast);
       setIsCreatingEvent(false);
     }
   }
