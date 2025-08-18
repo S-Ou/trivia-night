@@ -1,6 +1,5 @@
 import { fetchQuestions } from "@/services/questionService";
 import { csvTemplate } from "@/utils/csvHandler";
-import { getImageUrls } from "@/utils/imageUtils";
 import { NextResponse } from "next/server";
 
 interface ExportQuestion {

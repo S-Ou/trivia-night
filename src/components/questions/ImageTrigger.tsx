@@ -78,18 +78,32 @@ const PreviewImage = styled(QuestionImage)<{ $isVisible?: boolean }>`
   max-width: 150px;
 `;
 
-const DeleteImageButton = styled(IconButton)`
+const ImageCountBadge = styled.div`
   position: absolute;
-  top: -8px;
-  right: -8px;
-  background: white;
-  border: 1px solid #ccc;
+  top: 0.25rem;
+  right: 0.25rem;
+  background-color: var(--accent-9);
+  color: white;
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+`;
+
+const AddImageButton = styled(Button)``;
+
+const ImageUrlInput = styled(TextField.Root)`
+  flex: 1;
+`;
+
+const ImageUrlsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 `;
 
 interface ImageTriggerProps {
@@ -173,25 +187,7 @@ export function ImageTrigger({ question }: ImageTriggerProps) {
           <QuestionImageButton>
             <QuestionImage src={currentImageUrls[0]} alt="Question Image" />
             {currentImageUrls.length > 1 && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: "4px",
-                  right: "4px",
-                  background: "rgba(0,0,0,0.7)",
-                  color: "white",
-                  borderRadius: "50%",
-                  width: "20px",
-                  height: "20px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "12px",
-                  fontWeight: "bold",
-                }}
-              >
-                +{currentImageUrls.length - 1}
-              </div>
+              <ImageCountBadge>+{currentImageUrls.length - 1}</ImageCountBadge>
             )}
           </QuestionImageButton>
         ) : (
@@ -213,34 +209,31 @@ export function ImageTrigger({ question }: ImageTriggerProps) {
             <Text as="div" size="2" mb="2" weight="bold">
               Image URLs
             </Text>
-            {imageUrls.map((url, index) => (
-              <ImageUrlRow key={index}>
-                <TextField.Root
-                  value={url}
-                  onChange={(e) => handleUrlChange(index, e.target.value)}
-                  placeholder={`Enter image URL ${index + 1}`}
-                  style={{ flex: 1 }}
-                />
-                {imageUrls.length > 1 && (
-                  <IconButton
-                    variant="soft"
-                    color="red"
-                    onClick={() => removeImageUrl(index)}
-                    size="2"
-                  >
-                    <Trash2 size={14} />
-                  </IconButton>
-                )}
-              </ImageUrlRow>
-            ))}
-            <Button
-              variant="soft"
-              onClick={addImageUrl}
-              style={{ marginTop: "0.5rem" }}
-            >
-              <Plus size={16} />
-              Add another image
-            </Button>
+            <ImageUrlsContainer>
+              {imageUrls.map((url, index) => (
+                <ImageUrlRow key={index}>
+                  <ImageUrlInput
+                    value={url}
+                    onChange={(e) => handleUrlChange(index, e.target.value)}
+                    placeholder={`Enter image URL ${index + 1}`}
+                  />
+                  {imageUrls.length > 1 && (
+                    <IconButton
+                      variant="soft"
+                      color="red"
+                      onClick={() => removeImageUrl(index)}
+                      size="2"
+                    >
+                      <Trash2 size={14} />
+                    </IconButton>
+                  )}
+                </ImageUrlRow>
+              ))}
+              <AddImageButton variant="soft" onClick={addImageUrl}>
+                <Plus size={16} />
+                Add another image
+              </AddImageButton>
+            </ImageUrlsContainer>
           </div>
 
           {imageUrls.some((url) => url.trim()) && (
