@@ -72,7 +72,7 @@ const OptionContent = styled.span<{
   $isCorrect?: boolean;
   $isShortAnswer?: boolean;
 }>`
-  font-size: 3.5rem;
+  font-size: ${({ $isShortAnswer }) => ($isShortAnswer ? "4.5rem" : "3rem")};
   font-weight: 300;
   letter-spacing: 0.005em;
   line-height: 1.2;
