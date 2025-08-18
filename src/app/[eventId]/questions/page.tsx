@@ -7,7 +7,14 @@ import {
   ExampleQuestionsButton,
 } from "../../../components/csvButtons";
 import styled from "styled-components";
-import { Separator, Text } from "@radix-ui/themes";
+import {
+  Button,
+  Dialog,
+  Flex,
+  Separator,
+  Text,
+  TextField,
+} from "@radix-ui/themes";
 import {
   ChevronDown,
   GripVertical,
@@ -126,14 +133,26 @@ const QuestionContent = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.2rem;
   padding-bottom: 1rem;
 `;
 
 const QuestionImage = styled.img`
-  max-width: 80%;
   border-radius: 1rem;
   max-height: 50vh;
+  max-width: 80%;
+`;
+
+const QuestionImageButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.9;
+  }
 `;
 
 const OptionsWrapper = styled.div`
@@ -432,12 +451,7 @@ function Questions({
                         questions={orderedQuestions}
                         setOrderedQuestions={setOrderedQuestions}
                       />
-                      {question.imageUrl && (
-                        <QuestionImage
-                          src={question.imageUrl}
-                          alt="Question Image"
-                        />
-                      )}
+                      <ImageTrigger question={question} />
                     </QuestionContent>
                   </QuestionItem>
                 )}
@@ -448,6 +462,51 @@ function Questions({
         )}
       </Droppable>
     </DragDropContext>
+  );
+}
+
+function ImageTrigger({ question }: { question: Question }) {
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger>
+        {question.imageUrl ? (
+          <QuestionImageButton>
+            <QuestionImage src={question.imageUrl} alt="Question Image" />
+          </QuestionImageButton>
+        ) : (
+          <Button variant="soft">Add Image</Button>
+        )}
+      </Dialog.Trigger>
+      <Dialog.Content maxWidth="450px">
+        <Dialog.Title>Edit image</Dialog.Title>
+        <Dialog.Description size="2" mb="4">
+          Edit the image for this question.
+        </Dialog.Description>
+
+        <Flex direction="column" gap="3">
+          <label>
+            <Text as="div" size="2" mb="1" weight="bold">
+              Image URL
+            </Text>
+            <TextField.Root
+              defaultValue={question.imageUrl ?? ""}
+              placeholder="Enter image URL"
+            />
+          </label>
+        </Flex>
+
+        <Flex gap="3" mt="4" justify="end">
+          <Dialog.Close>
+            <Button variant="soft" color="gray">
+              Cancel
+            </Button>
+          </Dialog.Close>
+          <Dialog.Close>
+            <Button>Save</Button>
+          </Dialog.Close>
+        </Flex>
+      </Dialog.Content>
+    </Dialog.Root>
   );
 }
 
