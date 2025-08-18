@@ -25,19 +25,19 @@ const QuestionImageButton = styled.button`
 `;
 
 const ImagePreviewContainer = styled.div`
-  min-height: 100px;
-  display: flex;
-  justify-content: center;
   align-items: center;
+  display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  justify-content: center;
+  min-height: 100px;
 `;
 
 const ImageErrorText = styled(Text)<{ $isVisible?: boolean }>`
-  display: ${({ $isVisible }) => ($isVisible ? "flex" : "none")};
   align-items: center;
-  justify-content: center;
+  display: ${({ $isVisible }) => ($isVisible ? "flex" : "none")};
   gap: 0.5rem;
+  justify-content: center;
 `;
 
 const PreviewImage = styled(QuestionImage)<{ $isVisible?: boolean }>`

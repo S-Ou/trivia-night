@@ -56,8 +56,6 @@ const QuestionContent = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
-  padding-bottom: 1rem;
 `;
 
 const QuestionGrip = styled(DragGrip)`
