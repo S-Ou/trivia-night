@@ -88,15 +88,35 @@ export function convertToQuestionData(row: RowData): Question {
   const category = row["Category"];
   const order = row["Option Order"] ? parseInt(row["Option Order"], 10) : null;
 
-  // Handle multiple Image URL columns
-  const imageUrlValue = row["Image URL"];
+  // Handle multiple Image URL columns (both "Image URL" and "Image URL 1", "Image URL 2", etc.)
   let imageUrls: string[] = [];
 
-  if (imageUrlValue) {
-    if (Array.isArray(imageUrlValue)) {
-      imageUrls = imageUrlValue.filter((url) => url && url.trim());
-    } else if (imageUrlValue.trim()) {
-      imageUrls = [imageUrlValue.trim()];
+  // Check for indexed Image URL columns (Image URL 1, Image URL 2, etc.)
+  const imageUrlColumns = Object.keys(row)
+    .filter((key) => key.match(/^Image URL \d+$/))
+    .sort((a, b) => {
+      const numA = parseInt(a.replace(/^Image URL /, ""), 10);
+      const numB = parseInt(b.replace(/^Image URL /, ""), 10);
+      return numA - numB;
+    });
+
+  // Collect all image URLs from indexed columns
+  imageUrlColumns.forEach((column) => {
+    const value = row[column];
+    if (value && typeof value === "string" && value.trim()) {
+      imageUrls.push(value.trim());
+    }
+  });
+
+  // Fallback to legacy "Image URL" column if no indexed columns found
+  if (imageUrls.length === 0) {
+    const imageUrlValue = row["Image URL"];
+    if (imageUrlValue) {
+      if (Array.isArray(imageUrlValue)) {
+        imageUrls = imageUrlValue.filter((url) => url && url.trim());
+      } else if (imageUrlValue.trim()) {
+        imageUrls = [imageUrlValue.trim()];
+      }
     }
   }
 
@@ -154,7 +174,7 @@ export function convertToQuestionData(row: RowData): Question {
 export const csvTemplate = {
   Category: "",
   Question: "",
-  "Image URL": "",
+  "Image URL 1": "",
   "Correct Option": "",
   "Option 2": "",
   "Option 3": "",

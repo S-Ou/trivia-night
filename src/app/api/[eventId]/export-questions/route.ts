@@ -72,15 +72,11 @@ async function processQuestions(eventId: number): Promise<ExportQuestion[]> {
       "Option Order": q.optionOrder,
     };
 
-    // Add image URLs - use multiple columns with same name for multiple images
-    uniqueImageUrls.forEach((url, index) => {
-      if (index === 0) {
-        row["Image URL"] = url;
-      } else {
-        // For CSV export with multiple Image URL columns, we'll add them with indices
-        row[`Image URL ${index + 1}`] = url;
-      }
-    });
+    // Add image URLs - ensure we have maxImages columns, padding with empty strings
+    for (let i = 0; i < maxImages; i++) {
+      const url = uniqueImageUrls[i] || "";
+      row[`Image URL ${i + 1}`] = url;
+    }
 
     return row;
   });
