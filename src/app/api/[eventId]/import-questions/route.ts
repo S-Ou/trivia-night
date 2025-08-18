@@ -44,7 +44,7 @@ async function createQuestions(
       question: q.question,
       questionType: q.questionType,
       categoryId: categories.find((c) => c.name === q.category.name)?.id ?? 0,
-      imageUrl: q.imageUrl,
+      imageUrl: null, // Deprecated - use imageUrls instead
       imageUrls: q.imageUrls,
       indexWithinCategory: indexMap
         .set(q.categoryId, (indexMap.get(q.categoryId) ?? -1) + 1)

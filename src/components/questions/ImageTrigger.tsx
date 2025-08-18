@@ -128,7 +128,7 @@ export function ImageTrigger({ question }: ImageTriggerProps) {
       const validUrls = imageUrls.filter((url) => url.trim());
       await updateQuestion(question.id, {
         imageUrls: setImageUrls(validUrls),
-        imageUrl: validUrls[0] || null, // Keep backward compatibility
+        imageUrl: null, // Deprecate the single imageUrl field
       });
       toast.success("Image URLs updated successfully!");
     } catch (error) {

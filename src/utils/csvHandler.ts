@@ -126,7 +126,7 @@ export function convertToQuestionData(row: RowData): Question {
     eventId: 0, // Default
     question: question,
     questionType: options.length > 0 ? "multiChoice" : "shortAnswer",
-    imageUrl: imageUrls[0] || null,
+    imageUrl: null, // Deprecated - use imageUrls instead
     imageUrls: imageUrls.length > 0 ? setImageUrls(imageUrls) : null,
     categoryId: 0, // Default
     category: {

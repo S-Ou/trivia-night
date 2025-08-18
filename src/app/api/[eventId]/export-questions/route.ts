@@ -20,7 +20,7 @@ async function processQuestions(eventId: number): Promise<ExportQuestion[]> {
     1, // At least one Image URL column
     ...questions.map((q) => {
       const urls = [];
-      if (q.imageUrl) urls.push(q.imageUrl);
+      // Prioritize imageUrls field over legacy imageUrl
       if (q.imageUrls) {
         try {
           const parsed = JSON.parse(q.imageUrls);
@@ -29,6 +29,8 @@ async function processQuestions(eventId: number): Promise<ExportQuestion[]> {
           // ignore parsing errors
         }
       }
+      // Fallback to legacy imageUrl if imageUrls is not available
+      if (urls.length === 0 && q.imageUrl) urls.push(q.imageUrl);
       return [...new Set(urls)].length;
     })
   );
@@ -36,9 +38,8 @@ async function processQuestions(eventId: number): Promise<ExportQuestion[]> {
   const csvRows = questions.map((q) => {
     const opts = q.Option;
 
-    // Get image URLs manually for this context
+    // Get image URLs - prioritize imageUrls over legacy imageUrl
     const imageUrls = [];
-    if (q.imageUrl) imageUrls.push(q.imageUrl);
     if (q.imageUrls) {
       try {
         const parsed = JSON.parse(q.imageUrls);
@@ -47,6 +48,9 @@ async function processQuestions(eventId: number): Promise<ExportQuestion[]> {
         // ignore parsing errors
       }
     }
+    // Fallback to legacy imageUrl if imageUrls is not available
+    if (imageUrls.length === 0 && q.imageUrl) imageUrls.push(q.imageUrl);
+
     const uniqueImageUrls = [
       ...new Set(imageUrls.filter((url) => url && url.trim())),
     ];

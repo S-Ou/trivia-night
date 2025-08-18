@@ -13,12 +13,7 @@ import { Question } from "@/types/Question";
 export function getImageUrls(question: Question): string[] {
   const urls: string[] = [];
 
-  // Add legacy imageUrl if it exists
-  if (question.imageUrl && question.imageUrl.trim()) {
-    urls.push(question.imageUrl.trim());
-  }
-
-  // Add parsed imageUrls if they exist
+  // Prioritize new imageUrls field
   if (question.imageUrls) {
     try {
       const parsed = JSON.parse(question.imageUrls);
@@ -30,6 +25,11 @@ export function getImageUrls(question: Question): string[] {
     } catch (error) {
       console.warn("Failed to parse imageUrls JSON:", error);
     }
+  }
+
+  // Fallback to legacy imageUrl only if imageUrls is empty or invalid
+  if (urls.length === 0 && question.imageUrl && question.imageUrl.trim()) {
+    urls.push(question.imageUrl.trim());
   }
 
   // Remove duplicates and return
