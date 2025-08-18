@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { GripVertical, PencilLine, SquareCheck } from "lucide-react";
 import styled from "styled-components";
 import { Option, QuestionType } from "@/generated/prisma";
@@ -8,7 +8,12 @@ import { Question } from "@/types/Question";
 import { permutationToIndex, indexToPermutation } from "@/utils/permutations";
 import { letterIndex } from "@/utils";
 import { useQuestionContext } from "@/contexts/QuestionContext";
-import { toast } from "sonner";
+import { useDragDrop } from "./shared/DragDropHook";
+import {
+  AnimatedLabel,
+  DragGrip,
+  DraggableItemWrapper,
+} from "./shared/SharedComponents";
 
 const OptionsWrapper = styled.div`
   display: block;
@@ -20,18 +25,14 @@ const OptionsWrapper = styled.div`
   }
 `;
 
-const OptionItem = styled.div<{ $draggable?: boolean; $isDragging?: boolean }>`
+const OptionItem = styled(DraggableItemWrapper)<{ $draggable?: boolean }>`
   align-items: center;
-  background-color: var(--accent-4);
-  border-radius: max(var(--radius-3), var(--radius-full));
   color: var(--foreground);
   display: flex;
   margin-bottom: 0.5rem;
-  opacity: ${({ $isDragging }) => ($isDragging ? 0.5 : 1)};
   padding-block: 0.25rem;
   padding-inline: 0.5rem;
   user-select: none;
-  width: 100%;
 `;
 
 const OptionItemContent = styled.div`
@@ -41,17 +42,6 @@ const OptionItemContent = styled.div`
   gap: 0.5rem;
 `;
 
-const AnimatedLabel = styled(motion.span).attrs({
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
-  transition: { duration: 0.3 },
-})`
-  display: inline-block;
-  min-width: 2ch;
-  font-weight: 500;
-`;
-
 const OptionIconWrapper = styled.span`
   align-items: center;
   display: inline-flex;
@@ -59,14 +49,7 @@ const OptionIconWrapper = styled.span`
   min-width: 2ch;
 `;
 
-const OptionGrip = styled.span`
-  align-items: center;
-  aspect-ratio: 1 / 1;
-  cursor: grab;
-  display: flex;
-  height: 100%;
-  justify-content: center;
-`;
+const OptionGrip = styled(DragGrip)``;
 
 interface OptionsProps {
   options: Option[];
@@ -88,44 +71,38 @@ export function Options({
   const [orderedOptions, setOrderedOptions] = useState(
     indexToPermutation(order, options.length)
   );
-  const [isSaving, setIsSaving] = useState(false);
   const isMultiChoice = type === "multiChoice";
+  const { updateQuestionOrders } = useQuestionContext();
 
   useEffect(() => {
     setOrderedOptions(indexToPermutation(order, options.length));
   }, [options, order]);
 
-  const { updateQuestionOrders } = useQuestionContext();
-  const onDragEnd = async (result: {
-    source: { index: number };
-    destination?: { index: number } | null;
-  }) => {
-    if (isSaving) return;
-    if (!result.destination) return;
-    setIsSaving(true);
-    const newOrder = Array.from(orderedOptions);
-    const [removed] = newOrder.splice(result.source.index, 1);
-    newOrder.splice(result.destination.index, 0, removed);
-    setOrderedOptions(newOrder);
-    const updatedQuestions = questions.map((q) =>
-      q.id === questionId
-        ? { ...q, optionOrder: permutationToIndex(newOrder) }
-        : q
-    );
-    setOrderedQuestions(updatedQuestions);
-    await updateQuestionOrders(updatedQuestions, null)
-      .then(() => {
-        toast.success("Options updated successfully");
-      })
-      .catch((error) => {
-        console.error("Error updating options:", error);
-        toast.error("Failed to update options");
-      });
-    setIsSaving(false);
-  };
+  const { handleDragEnd, isSaving } = useDragDrop({
+    items: orderedOptions,
+    onReorder: (newOrder: number[]) => {
+      setOrderedOptions(newOrder);
+      const updatedQuestions = questions.map((q) =>
+        q.id === questionId
+          ? { ...q, optionOrder: permutationToIndex(newOrder) }
+          : q
+      );
+      setOrderedQuestions(updatedQuestions);
+    },
+    updateFunction: async (newOrder: number[]) => {
+      const updatedQuestions = questions.map((q) =>
+        q.id === questionId
+          ? { ...q, optionOrder: permutationToIndex(newOrder) }
+          : q
+      );
+      await updateQuestionOrders(updatedQuestions, null);
+    },
+    successMessage: "Options updated successfully",
+    errorMessage: "Failed to update options",
+  });
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext onDragEnd={handleDragEnd}>
       <Droppable droppableId={`options-droppable-${questionId}`}>
         {(provided) => (
           <OptionsWrapper ref={provided.innerRef} {...provided.droppableProps}>

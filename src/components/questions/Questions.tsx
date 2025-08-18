@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { GripVertical } from "lucide-react";
 import styled from "styled-components";
 import { Question } from "@/types/Question";
 import { useQuestionContext } from "@/contexts/QuestionContext";
-import { toast } from "sonner";
+import { useDragDrop } from "./shared/DragDropHook";
+import { AnimatedLabel, DragGrip } from "./shared/SharedComponents";
 import { Options } from "./Options";
 import { ImageTrigger } from "./ImageTrigger";
 
@@ -59,24 +60,8 @@ const QuestionContent = styled.div`
   padding-bottom: 1rem;
 `;
 
-const AnimatedLabel = styled(motion.span).attrs({
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
-  transition: { duration: 0.3 },
-})`
-  display: inline-block;
-  min-width: 2ch;
-  font-weight: 500;
-`;
-
-const QuestionGrip = styled.span`
-  align-items: center;
-  cursor: grab;
-  display: flex;
-  height: 100%;
+const QuestionGrip = styled(DragGrip)`
   padding-inline: 0.25rem;
-  justify-content: center;
 `;
 
 interface QuestionsProps {
@@ -86,41 +71,28 @@ interface QuestionsProps {
 
 export function Questions({ questions, categoryName }: QuestionsProps) {
   const [orderedQuestions, setOrderedQuestions] = useState(questions);
-  const [isSaving, setIsSaving] = useState(false);
+  const { updateQuestionOrders } = useQuestionContext();
 
   useEffect(() => {
     setOrderedQuestions(questions);
   }, [questions]);
 
-  const { updateQuestionOrders } = useQuestionContext();
-  const onDragEnd = async (result: {
-    source: { index: number };
-    destination?: { index: number } | null;
-  }) => {
-    if (isSaving) return;
-    if (!result.destination) return;
-    setIsSaving(true);
-    const newOrder = Array.from(orderedQuestions);
-    const [removed] = newOrder.splice(result.source.index, 1);
-    newOrder.splice(result.destination.index, 0, removed);
-    const updatedQuestions = newOrder.map((q, idx) => ({
-      ...q,
-      indexWithinCategory: idx,
-    }));
-    setOrderedQuestions(updatedQuestions);
-    await updateQuestionOrders(updatedQuestions, null)
-      .then(() => {
-        toast.success("Questions updated successfully");
-      })
-      .catch((error) => {
-        console.error("Error updating questions:", error);
-        toast.error("Failed to update questions");
-      });
-    setIsSaving(false);
-  };
+  const { handleDragEnd, isSaving } = useDragDrop({
+    items: orderedQuestions,
+    onReorder: setOrderedQuestions,
+    updateFunction: async (newOrder: Question[]) => {
+      const updatedQuestions = newOrder.map((q, idx) => ({
+        ...q,
+        indexWithinCategory: idx,
+      }));
+      await updateQuestionOrders(updatedQuestions, null);
+    },
+    successMessage: "Questions updated successfully",
+    errorMessage: "Failed to update questions",
+  });
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext onDragEnd={handleDragEnd}>
       <Droppable droppableId={`questions-droppable-${categoryName}`}>
         {(provided) => (
           <QuestionList ref={provided.innerRef} {...provided.droppableProps}>

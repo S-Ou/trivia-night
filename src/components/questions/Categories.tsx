@@ -5,7 +5,8 @@ import { ChevronDown, GripVertical } from "lucide-react";
 import { Text } from "@radix-ui/themes";
 import styled from "styled-components";
 import { useQuestionContext } from "@/contexts/QuestionContext";
-import { toast } from "sonner";
+import { useCategoryDragDrop } from "./shared/DragDropHook";
+import { DragGrip } from "./shared/SharedComponents";
 import { Questions } from "./Questions";
 
 export const ButtonWrapper = styled.div`
@@ -78,17 +79,11 @@ const AccordionChevron = styled.span`
   }
 `;
 
-const CategoryGrip = styled.span`
-  align-items: center;
-  aspect-ratio: 1 / 1;
-  cursor: grab;
-  display: flex;
-  height: 100%;
-  justify-content: center;
-  max-width: 2.5rem;
-  min-width: 2.5rem;
+const CategoryGrip = styled(DragGrip)<{ $size?: number }>`
   color: var(--accent-contrast);
   opacity: 0.9;
+  max-width: 2.5rem;
+  min-width: 2.5rem;
 `;
 
 export function Categories() {
@@ -102,7 +97,6 @@ export function Categories() {
   const [localCategories, setLocalCategories] = useState(categories);
   const [localCombinedQuestions, setLocalCombinedQuestions] =
     useState(combinedQuestions);
-  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     fetchQuestions();
@@ -113,30 +107,19 @@ export function Categories() {
     setLocalCombinedQuestions(combinedQuestions);
   }, [categories, combinedQuestions]);
 
-  const onDragEnd = async (result: {
-    source: { index: number };
-    destination?: { index: number } | null;
-  }) => {
-    if (isSaving) return;
-    if (!result.destination) return;
-    setIsSaving(true);
-    const newOrder = Array.from(localCategories);
-    const [removed] = newOrder.splice(result.source.index, 1);
-    newOrder.splice(result.destination.index, 0, removed);
-    setLocalCategories(newOrder);
-    await updateQuestionOrders(
-      null,
-      newOrder.map((cat, idx) => ({ ...cat, index: idx }))
-    )
-      .then(() => {
-        toast.success("Categories updated successfully");
-      })
-      .catch((error) => {
-        console.error("Error updating categories:", error);
-        toast.error("Failed to update categories");
-      });
-    setIsSaving(false);
-  };
+  const { handleDragEnd, isSaving } = useCategoryDragDrop({
+    categories: localCategories,
+    onReorder: setLocalCategories,
+    updateFunction: async (questions: any, newCategories: any[]) => {
+      const categoriesWithIndex = newCategories.map((cat, idx) => ({
+        ...cat,
+        index: idx,
+      }));
+      await updateQuestionOrders(null, categoriesWithIndex);
+    },
+    successMessage: "Categories updated successfully",
+    errorMessage: "Failed to update categories",
+  });
 
   if (isLoading && localCategories.length === 0) {
     return <Text size="2">Loading...</Text>;
@@ -153,7 +136,7 @@ export function Categories() {
 
   return (
     <QuestionSetWrapper>
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="categories-droppable">
           {(provided) => (
             <Accordion.Root
