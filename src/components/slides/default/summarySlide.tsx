@@ -15,14 +15,14 @@ const SummaryTitle = styled.h2`
 `;
 
 const SummaryList = styled.table`
-  border-spacing: 2rem 0.2rem;
-  margin-top: 10vh;
+  border-spacing: 2rem 1rem;
+  margin-top: 3rem;
   padding: 0;
-  width: 50vw;
+  width: 60vw;
 `;
 
 const SummaryItem = styled.tr`
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 300;
 `;
 

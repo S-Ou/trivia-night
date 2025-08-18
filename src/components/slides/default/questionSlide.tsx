@@ -24,7 +24,7 @@ const QuestionWrapper = styled.div<{ $hasImage?: boolean }>`
 `;
 
 const QuestionText = styled.h2`
-  font-size: 8rem;
+  font-size: 5rem;
   line-height: 1.1;
   text-align: center;
   text-wrap: balance;
@@ -33,7 +33,7 @@ const QuestionText = styled.h2`
 const Image = styled.img`
   border-radius: 1rem;
   height: auto;
-  max-height: 30vh;
+  max-height: 40vh;
   max-width: 800%;
 `;
 
@@ -72,7 +72,7 @@ const OptionContent = styled.span<{
   $isCorrect?: boolean;
   $isShortAnswer?: boolean;
 }>`
-  font-size: 2.5rem;
+  font-size: 3.5rem;
   font-weight: 300;
   letter-spacing: 0.005em;
   line-height: 1.2;
@@ -103,7 +103,7 @@ const ShortAnswerWrapper = styled.div`
   width: 100%;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
+  font-size: 3.5rem;
   font-weight: 400;
   padding-top: 2rem;
 `;
