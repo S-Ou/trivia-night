@@ -62,6 +62,10 @@ const QuestionContent = styled.div`
 
 const QuestionGrip = styled(DragGrip)`
   padding-inline: 0.25rem;
+  flex-shrink: 0;
+  width: 2.5rem;
+  min-width: 2.5rem;
+  max-width: 2.5rem;
 `;
 
 interface QuestionsProps {
