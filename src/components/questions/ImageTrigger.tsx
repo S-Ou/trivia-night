@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Button, Dialog, Flex, Text, TextField } from "@radix-ui/themes";
-import { ImageOff, ImagePlus } from "lucide-react";
+import { ImageOff, ImagePlus, Upload } from "lucide-react";
 import styled from "styled-components";
 import { Question } from "@/types/Question";
 import { useQuestionContext } from "@/contexts/QuestionContext";
@@ -51,8 +51,76 @@ interface ImageTriggerProps {
 export function ImageTrigger({ question }: ImageTriggerProps) {
   const [imageUrl, setImageUrl] = useState(question.imageUrl || "");
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { updateQuestion } = useQuestionContext();
+
+  const uploadToImgur = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const response = await fetch("https://api.imgur.com/3/image", {
+        method: "POST",
+        headers: {
+          Authorization: "Client-ID 546c25a59c58ad7", // This is a public client ID for demos
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to upload image to Imgur");
+      }
+
+      const data = await response.json();
+      return data.data.link;
+    } catch (error) {
+      console.error("Imgur upload error:", error);
+      throw error;
+    }
+  };
+
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select a valid image file");
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Image must be smaller than 10MB");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      toast.info("Uploading image...");
+      const imgurUrl = await uploadToImgur(file);
+      setImageUrl(imgurUrl);
+      setImageError(false);
+      toast.success("Image uploaded successfully!");
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("Failed to upload image. Please try again.");
+    } finally {
+      setIsUploading(false);
+      // Reset the input so the same file can be selected again if needed
+      if (event.target) {
+        event.target.value = "";
+      }
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
 
   const handleSave = async () => {
     if (isSaving) return;
@@ -114,6 +182,35 @@ export function ImageTrigger({ question }: ImageTriggerProps) {
               placeholder="Enter image URL"
             />
           </label>
+          <label>
+            <Text as="div" size="2" mb="1" weight="bold">
+              Upload Image
+            </Text>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileUpload}
+              style={{ display: "none" }}
+            />
+            <Button
+              variant="soft"
+              onClick={handleUploadClick}
+              disabled={isUploading}
+            >
+              {isUploading ? (
+                <>
+                  <Upload size={16} />
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <ImagePlus size={16} />
+                  Upload
+                </>
+              )}
+            </Button>
+          </label>
           {imageUrl && (
             <div>
               <Text as="div" size="2" mb="1" weight="bold">
@@ -143,7 +240,7 @@ export function ImageTrigger({ question }: ImageTriggerProps) {
             </Button>
           </Dialog.Close>
           <Dialog.Close>
-            <Button onClick={handleSave} disabled={isSaving}>
+            <Button onClick={handleSave} disabled={isSaving || isUploading}>
               {isSaving ? "Saving..." : "Save"}
             </Button>
           </Dialog.Close>
