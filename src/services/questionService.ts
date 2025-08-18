@@ -1,5 +1,6 @@
 import { prisma } from "@/client";
 import { Category, Question } from "@/generated/prisma";
+import { getImageUrls } from "@/utils/imageUtils";
 
 export async function fetchQuestions(eventId?: number) {
   const questions = await prisma.question.findMany({
@@ -22,7 +23,11 @@ export async function fetchQuestions(eventId?: number) {
     },
   });
 
-  return questions;
+  // Add parsed image URLs helper
+  return questions.map((question) => ({
+    ...question,
+    parsedImageUrls: getImageUrls(question as any), // Type assertion needed due to Prisma/custom type mismatch
+  }));
 }
 
 export async function updateQuestionOrders(
@@ -60,6 +65,7 @@ export async function updateQuestion(
     where: { id: questionId },
     data: {
       ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl }),
+      ...(data.imageUrls !== undefined && { imageUrls: data.imageUrls }),
       ...(data.indexWithinCategory !== undefined && {
         indexWithinCategory: data.indexWithinCategory,
       }),

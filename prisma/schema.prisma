@@ -45,6 +45,7 @@ model Question {
   questionType QuestionType
   categoryId Int
   imageUrl  String?
+  imageUrls String? // JSON array as string
   indexWithinCategory Int
   optionOrder Int
 

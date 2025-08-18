@@ -7,4 +7,6 @@ import {
 export interface Question extends PrismaQuestion {
   category: Category;
   options: Option[];
+  // Helper method to get parsed image URLs
+  parsedImageUrls?: string[];
 }

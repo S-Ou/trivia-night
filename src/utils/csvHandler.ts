@@ -2,14 +2,16 @@ import { Question } from "@/types/Question";
 import { decode } from "iconv-lite";
 import Papa from "papaparse";
 import { Buffer } from "buffer";
+import { setImageUrls } from "./imageUtils";
 
 export interface RowData {
   [key: string]: string;
 }
 
-export function parseCsvFile(
+// Custom parser to handle duplicate column names
+export function parseCsvFileWithDuplicateColumns(
   file: File,
-  callback: (data: RowData[]) => void
+  callback: (data: RowData[], headers: string[]) => void
 ): void {
   const reader = new FileReader();
 
@@ -25,16 +27,56 @@ export function parseCsvFile(
       decodedText = decode(Buffer.from(bytes), "windows-1252");
     }
 
-    Papa.parse<RowData>(decodedText, {
-      header: true,
-      skipEmptyLines: true,
-      complete: (results) => {
-        callback(results.data);
-      },
-    });
+    // Parse CSV manually to handle duplicate headers
+    const lines = decodedText.split("\n");
+    if (lines.length === 0) {
+      callback([], []);
+      return;
+    }
+
+    // Parse first line as headers
+    const headerLine = lines[0];
+    const headerResult = Papa.parse<string[]>(headerLine);
+    const headers = headerResult.data[0] || [];
+
+    // Parse data rows
+    const dataRows: RowData[] = [];
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+
+      const rowResult = Papa.parse<string[]>(line);
+      const rowData = rowResult.data[0] || [];
+
+      const row: RowData = {};
+      headers.forEach((header, index) => {
+        const value = rowData[index] || "";
+        if (!row[header]) {
+          row[header] = value;
+        } else {
+          // Handle duplicate column names by creating arrays
+          if (Array.isArray(row[header])) {
+            (row[header] as any).push(value);
+          } else {
+            row[header] = [row[header], value] as any;
+          }
+        }
+      });
+
+      dataRows.push(row);
+    }
+
+    callback(dataRows, headers);
   };
 
   reader.readAsArrayBuffer(file);
+}
+
+export function parseCsvFile(
+  file: File,
+  callback: (data: RowData[]) => void
+): void {
+  parseCsvFileWithDuplicateColumns(file, (data) => callback(data));
 }
 
 export function convertToQuestionData(row: RowData): Question {
@@ -45,6 +87,18 @@ export function convertToQuestionData(row: RowData): Question {
     .filter((opt) => row[opt]);
   const category = row["Category"];
   const order = row["Option Order"] ? parseInt(row["Option Order"], 10) : null;
+
+  // Handle multiple Image URL columns
+  const imageUrlValue = row["Image URL"];
+  let imageUrls: string[] = [];
+
+  if (imageUrlValue) {
+    if (Array.isArray(imageUrlValue)) {
+      imageUrls = imageUrlValue.filter((url) => url && url.trim());
+    } else if (imageUrlValue.trim()) {
+      imageUrls = [imageUrlValue.trim()];
+    }
+  }
 
   const allOptions = [correctOption, ...options.map((opt) => row[opt])];
 
@@ -72,7 +126,8 @@ export function convertToQuestionData(row: RowData): Question {
     eventId: 0, // Default
     question: question,
     questionType: options.length > 0 ? "multiChoice" : "shortAnswer",
-    imageUrl: row["Image URL"] || "",
+    imageUrl: imageUrls[0] || null,
+    imageUrls: imageUrls.length > 0 ? setImageUrls(imageUrls) : null,
     categoryId: 0, // Default
     category: {
       id: 0, // Default

@@ -5,6 +5,7 @@ import { indexToPermutation } from "@/utils/permutations";
 import { PencilLine } from "lucide-react";
 import { CategorySlideProps } from "../slideProps";
 import { letterIndex } from "@/utils";
+import { getImageUrls, hasImages } from "@/utils/imageUtils";
 
 const CategoryTitle = styled.h1`
   font-size: 3rem;
@@ -30,11 +31,25 @@ const QuestionText = styled.h2`
   text-wrap: balance;
 `;
 
+const ImagesContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+  max-width: 100%;
+`;
+
 const Image = styled.img`
   border-radius: 1rem;
   height: auto;
   max-height: 40vh;
-  max-width: 800%;
+  max-width: calc(50% - 0.5rem);
+  object-fit: contain;
+
+  &:only-child {
+    max-width: 80%;
+  }
 `;
 
 const OptionsWrapper = styled.div`
@@ -153,17 +168,23 @@ export function QuestionSlide({
         .sort((a, b) => order.indexOf(a.index) - order.indexOf(b.index))
     : [];
 
+  const imageUrls = getImageUrls(question);
+
   return (
     <BaseSlide>
       <CategoryTitle>{category.name}</CategoryTitle>
       <Separator size="3" />
-      <QuestionWrapper $hasImage={!!question.imageUrl}>
+      <QuestionWrapper $hasImage={hasImages(question)}>
         <QuestionText>
           {currentQuestionIndex + 1}. {question.question}
         </QuestionText>
       </QuestionWrapper>
-      {question.imageUrl && (
-        <Image src={question.imageUrl} alt="Question Image" />
+      {imageUrls.length > 0 && (
+        <ImagesContainer>
+          {imageUrls.map((url, index) => (
+            <Image key={index} src={url} alt={`Question Image ${index + 1}`} />
+          ))}
+        </ImagesContainer>
       )}
       <OptionsWrapper>
         {question.questionType === "multiChoice" ? (
