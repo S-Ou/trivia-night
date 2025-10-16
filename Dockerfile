@@ -22,13 +22,15 @@ ENV NEXT_DISABLE_SOURCEMAPS=1
 ENV NEXT_IGNORE_TYPECHECK=1
 ENV NEXT_IGNORE_ESLINT=1
 
-# Build faster
-RUN pnpm build --turbo
+# Build
+RUN pnpm build
 
 # ---------- RUNNER ----------
 FROM node:22-bookworm AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+
+LABEL org.opencontainers.image.source="https://github.com/S-Ou/trivia-night"
 
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
