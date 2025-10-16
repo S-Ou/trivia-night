@@ -1,0 +1,12 @@
+.next
+node_modules
+dist
+coverage
+.turbo
+.env
+.env.*
+pnpm-debug.log
+*.tgz
+*.log
+generated
+**/migrations
