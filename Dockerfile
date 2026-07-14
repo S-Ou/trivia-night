@@ -6,12 +6,12 @@ WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # Copy dependency files first
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml .npmrc ./
 
 # Use cache mount for pnpm store
 RUN --mount=type=cache,target=/pnpm-store \
     pnpm config set store-dir /pnpm-store && \
-    PNPM_ENABLE_PRE_POST_SCRIPTS=true pnpm install --frozen-lockfile
+    pnpm install --frozen-lockfile
 
 # Copy rest of source
 COPY . .
