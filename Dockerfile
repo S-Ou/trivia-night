@@ -7,6 +7,7 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # Copy dependency files first
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY prisma ./prisma
 
 # Use cache mount for pnpm store
 RUN --mount=type=cache,target=/pnpm-store \
