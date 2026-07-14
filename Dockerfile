@@ -11,8 +11,7 @@ COPY package.json pnpm-lock.yaml ./
 # Use cache mount for pnpm store
 RUN --mount=type=cache,target=/pnpm-store \
     pnpm config set store-dir /pnpm-store && \
-    pnpm config set enable-pre-post-scripts true && \
-    pnpm install --frozen-lockfile
+    PNPM_ENABLE_PRE_POST_SCRIPTS=true pnpm install --frozen-lockfile
 
 # Copy rest of source
 COPY . .
